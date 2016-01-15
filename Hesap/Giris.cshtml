@@ -1,0 +1,180 @@
+﻿@{    
+
+if (WebSecurity.IsAuthenticated)
+    {
+        Response.Redirect("~/Panel");
+    }
+  
+  var returnUrl="Panel";
+
+  var dil="tr";
+   
+   if (Request.Url.GetLeftPart(UriPartial.Authority).Contains("azureboard.com"))
+     {
+         dil="en";
+     }
+     else
+     {
+         dil="tr";
+         Culture=UICulture="tr-TR";
+     }
+
+  if (!string.IsNullOrEmpty(Request.QueryString["returnUrl"]))
+   {
+    returnUrl=Request.QueryString["returnUrl"];
+   }
+   var ePosta=Request["txtEposta"];
+   var parola=Request["txtParola"];
+   var mesajGirisBasarisiz="";
+   var mesajHesapPasif="";
+  
+   if (IsPost)
+   {
+       var db=Database.Open("fb1ae");
+       
+       if (db.QueryValue("SELECT count(*) FROM Profiles WHERE ePosta=@0 AND Aktif=0",ePosta)>0)
+       {
+           mesajHesapPasif="Bu kullanıcı hesabı sistem yöneticisi tarafından askıya alındı.";
+          
+          
+       }
+
+       else
+       {
+            if (WebSecurity.Login(ePosta.Trim(),parola.Trim(),true))
+            {
+                db.Execute("INSERT INTO Ziyaret(UserID,IP) VALUES(@0,@1)",WebSecurity.GetUserId(ePosta.Trim()),Request.UserHostAddress);
+                        
+
+               if (string.IsNullOrEmpty(returnUrl))
+               {
+                   Response.Redirect("~/Panel");
+               }
+               else
+               {
+              
+                   Response.Redirect("~/" + returnUrl);
+               }
+            }
+            else 
+            {
+               mesajGirisBasarisiz="Giriş başarısız. Lütfen kullanıcı adını ve parolanı kontrol et";
+            }
+        }
+        db.Close();
+    }
+}
+
+
+         
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!--Head-->
+<head>
+    <meta charset="utf-8" />
+    <title>@Resources.Resource.lblGiris</title>
+
+    <meta name="description" content="login page" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="shortcut icon" href="assets/img/favicon.png" type="image/x-icon">
+
+     <!--Basic Styles-->
+    <link href="@Href("~/Shared/TemaBeyond/assets/css/bootstrap.min.css")" rel="stylesheet" />
+    <link id="bootstrap-rtl-link" href="" rel="stylesheet" />
+    <link href="@Href("~/Shared/TemaBeyond/assets/css/font-awesome.min.css")" rel="stylesheet" />
+    <link href="@Href("~/Shared/TemaBeyond/assets/css/weather-icons.min.css")" rel="stylesheet" />
+
+    <!--Fonts-->
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300"
+          rel="stylesheet" type="text/css">
+
+    <!--Beyond styles-->
+    <link id="beyond-link" href="@Href("~/Shared/TemaBeyond/assets/css/beyond.min.css")" rel="stylesheet" />
+    <link href="@Href("~/Shared/TemaBeyond/assets/css/demo.min.css")" rel="stylesheet" />
+    <link href="@Href("~/Shared/TemaBeyond/assets/css/typicons.min.css")" rel="stylesheet" />
+    <link href="@Href("~/Shared/TemaBeyond/assets/css/animate.min.css")" rel="stylesheet" />
+    <link id="skin-link" href="" rel="stylesheet" type="text/css" />
+    <script src="@Href("~/Shared/TemaBeyond/assets/js/skins.min.js")"></script>
+    
+    <!--Skin Script: Place this script in head to load scripts for skins and rtl support-->
+    
+</head>
+<!--Head Ends-->
+<!--Body-->
+<body>
+     
+    <div class="login-container animated fadeInDown">
+       
+        @if (!string.IsNullOrEmpty(mesajGirisBasarisiz))
+        {
+             <p class="alert alert-danger">@mesajGirisBasarisiz</p>
+        }
+
+         @if (!string.IsNullOrEmpty(mesajHesapPasif))
+        {
+            <p class="alert alert-danger">@mesajHesapPasif</p>
+        }
+       
+        <div class="loginbox bg-white">
+            
+            <div class="loginbox-title">@Resources.Resource.lblGiris</div>
+            <form method="post" action="#" id="frmGiris">
+            <div class="loginbox-textbox">
+                 <span class="input-icon icon-right">
+                    <input type="text" class="form-control" id="txtEposta" name="txtEposta" value="@ePosta"  placeholder="@Resources.Resource.lblEposta" required autofocus="true" />
+                        <i class="fa fa-user"></i>
+                 </span>
+            </div>
+            <div class="loginbox-textbox">
+
+                <span class="input-icon icon-right">
+                    <input type="password" class="form-control" placeholder="@Resources.Resource.lblParola" id="txtParola" name="txtParola" required />
+                        <i class="fa fa-lock"></i>
+                 </span>
+                
+            </div>
+                
+            <div class="loginbox-forgot">
+                <a href="@Href("~/Hesap/ParolamiUnuttum")">@Resources.Resource.lblParolamiUnuttum</a>
+            </div>
+            <div class="loginbox-submit">
+                <button type="button" class="btn btn-primary btn-block" id="btnGiris">@Resources.Resource.lblGiris</button>
+            </div>
+                </form>
+            <hr>
+            <div class="loginbox-submit">
+                <a href="@Href("~/Hesap/Yeni?returnUrl=" + returnUrl)" class="btn btn-primary btn-block">@Resources.Resource.lblOgrenciKayit</a>
+            </div>
+            <div class="loginbox-submit">
+                <a href="@Href("~/Hesap/YeniEgitmen?returnUrl=" + returnUrl)" class="btn btn-primary btn-block">@Resources.Resource.lblEgitmenKayit</a>
+            </div>
+           
+        </div>
+        
+    </div>
+
+    <!--Basic Scripts-->
+    <script src="@Href("~/Shared/TemaBeyond/assets/js/jquery.min.js")"></script>
+    <script src="@Href("~/Shared/TemaBeyond/assets/js/bootstrap.min.js")"></script>
+    <script src="@Href("~/Shared/TemaBeyond/assets/js/slimscroll/jquery.slimscroll.min.js")"></script>
+
+    <!--Beyond Scripts-->
+    <script src="@Href("~/Shared/TemaBeyond/assets/js/beyond.min.js")"></script>
+    <script src="@Href(string.Format("~/Shared/Javascript/Dil/{0}/Hesap/Giris.js",dil))"></script>
+    <script src="@Href("~/Shared/Javascript/Hesap/Giris.min.js")"></script>
+    <script>
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+          ga('create', 'UA-68446414-1', 'auto');
+          ga('send', 'pageview');
+
+    </script>
+
+</body>
+<!--Body Ends-->
+</html>

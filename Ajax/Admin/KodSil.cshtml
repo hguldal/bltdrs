@@ -1,0 +1,19 @@
+﻿@{
+    
+  //Oturum yoksa veya rol admin değilse hata döndür.
+
+  if (WebSecurity.IsAuthenticated==false || Roles.IsUserInRole("Admin")==false)
+     {
+        Response.StatusCode=400;
+        Response.End();
+    }
+
+   var kodID=Request["KodID"];
+   var db=Database.Open("fb1ae");
+   
+   db.Execute("UPDATE EgitmenKayitKodlari SET Silindi=1 WHERE KodID=@0",kodID);
+   db.Close();
+   Response.Write("OK");
+   Response.End();
+
+}

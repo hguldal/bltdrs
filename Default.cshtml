@@ -1,0 +1,23 @@
+﻿@{
+    
+   var dil="tr";
+   
+   if (Request.Url.GetLeftPart(UriPartial.Authority).ToLower().Contains("azureboard.com"))
+     {
+         dil="en";
+     }
+     else
+     {
+         dil="tr";
+         
+     }
+     if (dil=="tr")
+     {
+        Response.Redirect("~/Web/");
+        }
+        else
+        {
+            Response.Redirect("~/Web/en/");
+        }
+}
+

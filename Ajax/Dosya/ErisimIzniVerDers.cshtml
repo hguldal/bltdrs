@@ -1,0 +1,61 @@
+﻿@{
+  if (!WebSecurity.IsAuthenticated)
+   
+        {
+            Response.StatusCode=401;
+            Response.End();
+                   
+        }  
+
+    var DosyaID=Request["DosyaID"];
+    var DersID=Request["DersID"];
+    
+
+    if (string.IsNullOrEmpty(DosyaID) || string.IsNullOrEmpty(DersID))
+     {
+    
+       Response.StatusCode=500;
+       Response.End();
+     }
+
+     var db=Database.Open("fb1ae");
+ 
+     var queryDosya=db.QuerySingle("SELECT * FROM Dosya WHERE DosyaID=@0 AND UserID=@1",DosyaID,WebSecurity.CurrentUserId);
+
+    if (WebSecurity.CurrentUserId!=queryDosya.UserID)
+    {
+        Response.StatusCode=400;
+        Response.End();
+    }
+
+    
+
+    if (db.QueryValue("SELECT COUNT(*) FROM DosyaIzinDers WHERE DosyaID=@0 AND DersID=@1",DosyaID,DersID)>0)
+    {
+        db.Close();
+        Response.Write("zatenvar");
+
+        Response.End();
+    }
+     db.Execute("INSERT INTO DosyaIzinDers(DosyaID,DersID) VALUES(@0,@1)",DosyaID,DersID);
+     db.Execute("INSERT INTO DersDosyalari(DosyaID,DersID) VALUES(@0,@1)",DosyaID,DersID);
+
+    // Derse dosya eklenmiş olması yeni bir aktivite anlamına geliyor. Yeni bir aktivite oluştur.
+    var queryEklenenDosya=db.QuerySingle("SELECT * FROM Dosya WHERE DosyaID=@0",DosyaID);
+    db.Execute("INSERT INTO Aktivite(UserID,DersID,Renk,Ikon,URL,IlaveMetin,IliskiliOge,EylemID) VALUES(@0,@1,@2,@3,@4,@5,@6,@7)",WebSecurity.CurrentUserId,DersID,"success","fa-file-text-o",Href("~/Dosya/Indir?DosyaID=" + DosyaID),queryEklenenDosya.Aciklama,"drsdsy" + DosyaID.ToString(),1);
+   
+    // Yeni bir aktivite oluşturulması dersi takip edenlere yeni bir bildirim oluşturulmasını gerektiriyor. Yeni bir bildirim oluştur.
+    db.Execute("INSERT INTO Bildirim(Url,EylemiYapanUserID,IliskiliOge,EylemID,DersID) VALUES(@0,@1,@2,@3,@4)","~/Ders/?DersID=" + DersID + "&Liste=dosya",WebSecurity.CurrentUserId,"drsdsy" + DosyaID.ToString(),2,DersID);
+    var eklenenBildirimID=db.GetLastInsertId();
+
+    // Bu bildirimi öğrencilerin okuması gerekiyor. 
+    db.Execute("INSERT INTO BildirimOkunmasiGereken(UserID,BildirimID) SELECT UserID,@0 FROM DersTakip WHERE DersID=@1 AND Durum=2",eklenenBildirimID,DersID);
+
+
+
+     db.Close();
+     Response.Write("OK");
+     Response.End();
+     
+    
+     }

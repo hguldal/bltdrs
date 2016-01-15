@@ -1,0 +1,30 @@
+﻿@{
+if (!WebSecurity.IsAuthenticated)
+    {
+        Response.StatusCode = 401;
+        Response.End();
+        
+    }
+
+    var q=Request["sorgu"];
+    var db=Database.Open("fb1ae");
+    var sorguIfadesi="";
+    using (db)
+    {
+     if (string.IsNullOrEmpty(q))
+     {
+         sorguIfadesi="SELECT * FROM Dosya WHERE Silindi=0 AND UserID=" + WebSecurity.CurrentUserId;
+     }
+     else
+     {
+          sorguIfadesi="SELECT * FROM Dosya WHERE Silindi=0 AND (UserID=" + WebSecurity.CurrentUserId + " AND (DosyaAdi LIKE N'" + q + "%'  OR Aciklama LIKE N'" + q + "%'))";
+     }
+
+    var sonuclar=db.Query(sorguIfadesi);
+    Json.Write(sonuclar, Response.Output);
+    db.Close();   
+    Response.ContentType = "application/json";
+    Response.End();
+    
+   }
+}

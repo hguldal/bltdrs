@@ -1,0 +1,166 @@
+﻿@{
+    if (!WebSecurity.IsAuthenticated)
+    {
+        Response.Redirect("~/Hesap/Giris?returnUrl=Odev/OdevGonderisi?OdevGonderiID=" + Request.QueryString["OdevGonderiID"]);
+    }
+   
+    Layout = "~/Shared/_LayoutYeni.cshtml";
+
+    var OdevGonderiID=Request.QueryString["OdevGonderiID"];
+    var db=Database.Open("fb1ae");
+
+    var queryKullanici=db.QuerySingle("SELECT * FROM Profiles WHERE userID=@0",WebSecurity.CurrentUserId);
+   
+    var dil=queryKullanici.Dil;   
+    if (dil=="tr")
+       {
+           Culture=UICulture="tr-TR";
+       }
+        
+    if (string.IsNullOrEmpty(OdevGonderiID))
+    {
+        Response.Redirect("~/Shared/Hata");
+        Response.End();
+    }  
+
+   var queryOdevGonderisi=db.QuerySingle("SELECT * FROM OdevGonderisi WHERE Silindi=0 AND OdevGonderiID=@0",OdevGonderiID);
+ 
+
+   var queryOdev=db.QuerySingle("SELECT * FROM Odev WHERE OdevID=@0",queryOdevGonderisi.OdevID);
+
+   var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0",queryOdev.DersID);
+
+ 
+   var dersSorumlusu=(queryDers.UserID==WebSecurity.CurrentUserId);
+
+   if (dersSorumlusu==false)
+   {
+      Response.Redirect("~/Shared/Hata");
+       Response.End();
+   }
+
+   db.Close();
+  
+   
+}
+
+@section Gezinti {
+    <li class="active">@Resources.Resource.lblOdevGonderisi</li>
+}
+
+
+@section SayfaBasligi
+{
+   <h1>@Resources.Resource.lblOdevGonderisi</h1>
+}
+
+<i class="fa fa-clock-o hide" id="spnOdevGonderiID" data-OdevGonderiID="@OdevGonderiID"></i><br>
+
+<div class="row">
+     <div class="col-md-6 column">
+             <table class="table">
+                <tr>
+                    <td><strong>@Resources.Resource.lblDers</strong></td>         
+                </tr>
+                <tr>
+                    <td><a href="#" id="lnkDersAdi">@queryDers.DersAdi</a> </td>
+                </tr>
+                <tr>
+                    <td><strong>@Resources.Resource.lblOdev</strong></td>
+                </tr>
+            
+                <tr>
+                    <td>@queryOdev.Baslik</td>
+                </tr>
+
+                <tr>
+                    <td><strong>@Resources.Resource.lblAciklama</strong></td>
+                </tr>
+            
+                <tr>
+                    <td>@queryOdev.Aciklama</td>
+                </tr>
+           </table>
+
+    </div>
+
+    <div class="col-md-6 column">
+             <table class="table">
+                <tr>
+                    <td><strong>@Resources.Resource.lblOdeviGonderen</strong></td>         
+                </tr>
+                <tr>
+                    <td>@HelperProfil.KucukKunye(queryOdevGonderisi.UserID) </td>
+                </tr>
+
+                 @if (queryOdevGonderisi.Aciklama!=null)
+                 {
+                    <tr>
+                        <td><strong>@Resources.Resource.lblGonderenOgrencininMesaji</strong></td>
+                    </tr>
+            
+                    <tr>
+                        <td>@queryOdevGonderisi.Aciklama</td>
+                    </tr>
+                }
+                <tr>
+                    <td><strong>@Resources.Resource.lblOdeviGondermeTarihi</strong></td>
+                </tr>
+            
+                <tr>
+                    <td>@Genel.DateLabel(queryOdevGonderisi.GonderiTarihi,dil)</td>
+                </tr>
+
+                  <tr>
+                    <td><strong>@Resources.Resource.lblOdevDosyasi</strong></td>
+                </tr>
+            
+                <tr>
+                    <td>
+                        <a href="@Href("~/Dosya/Indir?DosyaID=")@queryOdevGonderisi.DosyaID" class="btn btn-info"><i class="fa fa-download"></i> @Resources.Resource.lblKarşıdanYukle</a>
+                    </td>
+                </tr>
+
+                 <tr>
+                    <td><strong>@Resources.Resource.lblDurum</strong></td>
+                </tr>
+            
+                <tr>
+                    <td>
+                    <select name="cmbDurum" id="cmbDurum" class="form-control">
+                        <option value="1" @if (queryOdevGonderisi.Durum==1) {<text> selected </text>}> @Resources.Resource.lblInceleniyor ...</option>
+                        <option value="2" @if (queryOdevGonderisi.Durum==2) {<text> selected </text>}> @Resources.Resource.lblIncelendi</option>
+                    </select>
+                    </td>
+                </tr>
+
+                 <tr>
+                    <td><strong>@Resources.Resource.lblDegerlendirmePuani</strong></td>
+                </tr>
+            
+                <tr>
+                    <td><input type="text" name="txtDegerlendirmePuani" id="txtDegerlendirmePuani" class="form-control" placeholder="@Resources.Resource.msgOdevDegerlendirmePuaniniBuAlanaYaz" value="@if (queryOdevGonderisi.DegerlendirmePuani!=-1){<text>@queryOdevGonderisi.DegerlendirmePuani</text>}">
+                    
+                    </td>
+                </tr>
+
+                  <tr>
+                    <td><strong>@Resources.Resource.lblDersSorumlusuMesaji</strong></td>
+                </tr>
+            
+                <tr>
+                    <td><textarea class="form-control" placeholder="@Resources.Resource.msgOgrenciyeOdevileIlgiliMesajYaz" id="txtDersSorumlusuMesaji">@queryOdevGonderisi.DersSorumlusuMesaji</textarea></td>
+                </tr>
+                 
+                 <tr><td><button class="btn btn-success" id="btnOdevGonderiDegKaydet"> @Resources.Resource.lblBilgileriKaydet</button></td></tr>
+           </table>
+
+    </div>
+</div>
+
+@section js
+{
+   <script src="@Href(string.Format("~/Shared/Javascript/Dil/{0}/Odev/OdevGonderisi.js",dil))"></script>
+   <script src="@Href("~/Shared/Javascript/Odev/OdevGonderisi.min.js")"></script>
+
+}

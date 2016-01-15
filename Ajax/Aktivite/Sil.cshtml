@@ -1,0 +1,73 @@
+﻿@{
+    // Oturum açmamış kullanıcı için hata kodu döndür. (Oturum açmamış bir kullanıcının beğeni yapmasını engellemek için)
+    // Bu prosedür tüm kullanıcı türleri için çalıştırılabilir.
+  
+    if (!WebSecurity.IsAuthenticated)
+    {
+         Response.StatusCode=403;
+         Response.End();
+    }
+  
+
+   if (string.IsNullOrEmpty(Request["AktiviteID"]))
+   {
+        Response.StatusCode=500;
+        Response.End();  
+   } 
+   
+   // Silinecek aktiviteID sini al
+   var aktiviteID=Request["AktiviteID"];
+
+   var db=Database.Open("fb1ae");
+
+   // Veritabanından aktivite bilgilerini oku
+   var queryAktivite=db.QuerySingle("SELECT * FROM Aktivite WHERE AktiviteID=@0",aktiviteID);
+
+   // Eğer böyle bir aktivite yoksa hata döndür.
+   if (queryAktivite==null)
+   {
+        db.Close();
+        Response.StatusCode=500;  
+        Response.End();  
+   } 
+
+   // Kullanıcı bu aktiviteyi silebilir mi ? (Sadece dersin sahibi ve aktivitenin sahibi bu işlemi yapabilir)
+   bool silebilir=false;
+
+   // Silme işlemini yapmaya çalışan kullanıcı aktivitenin sahibi ise ona silme hakkı ver.
+   if (WebSecurity.CurrentUserId==queryAktivite.UserID)
+   {
+       silebilir=true;
+   }
+   
+   else
+   {
+     // Silme işlemini yapmaya çalışan kullanıcı dersin sahibi ise de ona silme hakkı ver
+      var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0",queryAktivite.DersID);
+
+      if (queryDers.UserID==WebSecurity.CurrentUserId)
+      {
+          silebilir=true;
+      }
+   }
+    
+      if (silebilir)
+      {
+          // Aktiviteye ait beğenileri sil (Çünkü artık durmasına gerek yok)
+          db.Execute("UPDATE AktiviteBegeni SET Silindi=1 WHERE AktiviteID=@0",aktiviteID);
+          // Aktiviteyi sil
+          db.Execute("UPDATE Aktivite SET Silindi=1 WHERE AktiviteID=@0",aktiviteID);
+          db.Execute("update Bildirim set silindi=1 WHERE IliskiliOge=@0","aktbgn" + aktiviteID.ToString());
+          db.Close();
+          Response.Write("OK");
+          Response.End();
+      }
+      else // Aksi halde silme işlemi için yetkisiz bir erişim var. Hata kodu döndür.
+      {
+          db.Close();
+          Response.StatusCode=403;
+          Response.End();
+      }
+
+} 
+

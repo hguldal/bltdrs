@@ -1,0 +1,42 @@
+﻿@{
+  // Bu prosedürü sadece oturumu açmış ve dersin sahibi olan kullanıcı çalıştırabilir.
+  if (WebSecurity.IsAuthenticated==false || Roles.IsUserInRole("Ogretici")==false) 
+        {
+            Response.StatusCode=401;
+            Response.End();
+        }  
+
+    // Gelen değerleri oku (Gelen değerler: Veritabanı tablosundaki alanın adı,değeri ve değiştirelecek olan satırın ID si)
+    var DersID=Request["pk"];
+    var alan=Request["name"];
+    var deger=Request["value"];
+
+    // Gelen değerler boş ise hata kodu döndür.
+    if (string.IsNullOrEmpty(DersID) || string.IsNullOrEmpty(alan) || string.IsNullOrEmpty(deger))
+     {
+    
+       Response.StatusCode=500;
+       Response.End();
+     }
+
+    var db=Database.Open("fb1ae");
+ 
+    // Ders bilgilerini veritabanından oku.
+    var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0 AND UserID=@1",DersID,WebSecurity.CurrentUserId);
+
+    // Eğer kullanıcı dersin sahibi değilse bu işlemi yapmaya izni yok hata kodu döndür.
+    if (WebSecurity.CurrentUserId!=queryDers.UserID)
+    {
+        db.Close();
+        Response.StatusCode=400;
+        Response.End();
+    }
+
+    // Ders bilgilerini yeni değerlerle güncelle
+     db.Execute("UPDATE Ders SET " + alan  +"=@0 WHERE DersID=@1",deger,DersID);
+     db.Close();
+     Response.Write("OK");
+     Response.End();
+     
+    
+}

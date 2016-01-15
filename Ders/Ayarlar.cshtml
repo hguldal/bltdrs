@@ -1,0 +1,189 @@
+﻿@{
+   if (!WebSecurity.IsAuthenticated)
+    {
+        Response.Redirect("~/Hesap/Giris?returnUrl=Ders/Ayarlar?DersID=" + Request.QueryString["DersID"]);
+    }
+
+    if (!Roles.IsUserInRole("Ogretici"))
+    {
+        Response.Redirect("~/Shared/Hata?Kod=kullaniciegitmendegil");
+        Response.End();
+    }
+   
+    Layout = "~/Shared/_LayoutYeni.cshtml";
+   
+    var DersID=Request.QueryString["DersID"];
+    
+    var db=Database.Open("fb1ae");
+    var queryKullanici=db.QuerySingle("SELECT * FROM Profiles WHERE userID=@0",WebSecurity.CurrentUserId);
+   
+    var dil=queryKullanici.Dil;
+ 
+    if (dil=="tr")
+       {
+           Culture=UICulture="tr-TR";
+       }
+
+    if (string.IsNullOrEmpty(DersID))
+    {
+        Response.Redirect("~/Shared/Hata?Kod=dersbulunamadi");
+        Response.End();
+    }  
+
+     var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0 AND UserID=@1",DersID,WebSecurity.CurrentUserId);
+
+     if (queryDers==null)
+        {
+            Response.Redirect("~/Shared/Hata?Kod=dersbulunamadi");
+            Response.End();
+        }  
+    
+    var queryOnayliOgrenciler=db.Query("SELECT * FROM DersTakip WHERE DersID=@0 AND Durum=2",DersID);
+    var queryDersAdresKodu=db.QueryValue("SELECT Kod FROM Yonlendir WHERE Url=@0","~/Ders/?DersID=" + DersID);
+    db.Close();
+}
+
+@section css
+{
+ <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+    
+}
+
+@section Gezinti {
+    <li class="active">@Resources.Resource.lblDersAyarlari</li>
+}
+
+
+@section SayfaBasligi
+{
+   <h1>@Resources.Resource.lblDersAyarlari</h1>
+}
+
+<span class="glyphicon glyphicon-cog hide" id="spnDersID" data-DersID="@DersID"></span>
+  
+<hr>
+<div class="row">
+     <div class="col-md-12 column">
+           
+    <div class="col-md-6 column">
+        
+        <table class="table">
+            <tr>
+                <td><strong>@Resources.Resource.lblDersinAdi</strong></td>         
+            </tr>
+            <tr>
+                <td><a href="#" id="lnkDersAdi">@queryDers.DersAdi</a> </td>
+            </tr>
+            <tr>
+                <td><strong>@Resources.Resource.lblDersinSorumlusu</strong></td>
+            </tr>
+            
+            <tr>
+                <td>@HelperProfil.KucukKunye(queryDers.UserID)</td>
+            </tr>
+
+            <tr>
+                <td><strong>@Resources.Resource.lblAciklama</strong></td>
+            </tr>
+            
+            <tr>
+                <td><a href="#" id="lnkAciklama">@queryDers.Aciklama</a></td>
+            </tr>
+
+            <tr>
+                <td><strong>@Resources.Resource.lblAdres</strong></td>
+            </tr>
+
+             <tr>
+                <td>@Request.Url.GetLeftPart(UriPartial.Authority)/<a href="#" id="lnkDersAdresKodu">@queryDersAdresKodu</a> </td>
+            </tr>
+
+            <tr>
+                <td><strong>@Resources.Resource.lblHaftalikSaat</strong></td>
+            </tr>   
+            
+            <tr>
+                <td>
+                    <select id="cmbHaftalikSaat" data-ilkdeger="@queryDers.HaftalikSaat">
+                        <option value="1">1</option>
+                        <option value="2">2</option>             
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                    </select>
+                </td>
+                </tr>
+            
+         
+
+        </table>
+    
+    </div>
+
+     
+
+    <div class="col-md-6 column">
+        <table class="table">
+        
+             <tr>
+                <td><strong>@Resources.Resource.lblDersinDurumu</strong></td>
+            </tr>  
+            <tr>
+                <td>
+                    <select id="cmbArsivlendi" data-ilkdeger="@queryDers.Arsivlendi" >
+                        <option value="0">@Resources.Resource.lblAktif</option>
+                        <option value="1">@Resources.Resource.lblPasifArsivde</option>             
+                    </select>
+                </td>
+             </tr>
+
+               <tr>
+                <td><strong>@Resources.Resource.lblOgrencilerinDerseKabulSekli</strong></td>
+            </tr>   
+            
+            <tr>
+                <td>
+                    <select id="cmbKabulSekli" data-ilkdeger="@queryDers.KabulSekli">
+                        <option value="1">@Resources.Resource.lblHerkeseAcik</option>
+                        <option value="2">@Resources.Resource.lblDersSorumlusuOnayi</option>
+                       
+                    </select>
+                </td>
+                </tr>    
+            <tr>
+                <td><strong>@Resources.Resource.lblAramalardaGorunsun</strong></td>
+            </tr>   
+            
+            <tr>
+                <td>
+                    <select id="cmbAramalardaGoster" data-ilkdeger="@queryDers.AramalardaGoster" >
+                        <option value="1">@Resources.Resource.lblEvet</option>
+                        <option value="0">@Resources.Resource.lblHayir</option>             
+                    </select>
+                </td>
+                </tr>
+           
+        
+        </table>
+    
+    </div>
+                
+           
+     </div>
+    </div>
+</div>
+@section js
+{
+   <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+   <script src="@Href("~/Shared/Plugins/datatables/jquery.dataTables.min.js")"></script>
+   <script src="@Href("~/Shared/Plugins/datatables/dataTables.bootstrap.js")"></script>
+   <script src="@Href(string.Format("~/Shared/Javascript/Dil/{0}/Ders/Ayarlar.js",dil))"></script>   
+   <script src="@Href("~/Shared/Javascript/Ders/Ayarlar.min.js")"></script>
+   
+}
+
+
+

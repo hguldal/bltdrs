@@ -1,0 +1,80 @@
+﻿@{
+  
+    if (WebSecurity.IsAuthenticated==false ||Roles.IsUserInRole("Ogrenci")==false)
+     {
+        
+        Response.StatusCode=401;
+        Response.End(); 
+     }
+  
+     var DersID=Request["DersID"];   
+     
+     
+     if (string.IsNullOrEmpty(DersID))
+     {
+      
+       Response.StatusCode=500;
+       Response.End();
+     }
+
+     
+       var db=Database.Open("fb1ae");
+
+        if (db.QueryValue("SELECT COUNT(*) FROM DersTakip WHERE DersID=@0 AND UserID=@1",DersID,WebSecurity.CurrentUserId)>0)
+            {
+               db.Close();
+               Response.StatusCode=501; //zaten bir istek var veya ders takip ediliyor...
+               Response.End();
+            }
+      
+       if (db.QueryValue("SELECT COUNT(*) FROM Ders WHERE DersID=@0 AND KabulSekli=1",DersID)==1)
+           {
+            
+
+                   db.Execute("INSERT INTO DersTakip(DersID,UserID,Durum,OnayTarihi) VALUES(@0,@1,@2,@3)",DersID,WebSecurity.CurrentUserId,2,DateTime.Now);
+
+                   var queryOgrenci=db.QuerySingle("SELECT * FROM Profiles WHERE UserID=@0",WebSecurity.CurrentUserId);
+           
+                   var queryDersinOdevleri=db.Query("SELECT * FROM Odev WHERE DersID=@0 AND Silindi=0 AND SonTeslimTarihi>=1",DersID,DateTime.Now);
+           
+                   if (queryDersinOdevleri!=null)
+                        {
+                           foreach(var odev in queryDersinOdevleri)
+                           {
+                               db.Execute("INSERT INTO Gorev(UserID,Baslik,Aciklama,Url,BitisTarihi) VALUES(@0,@1,@2,@3,@4)",WebSecurity.CurrentUserId,odev.Baslik,odev.Aciklama,Href("~/Odev/Goster?OdevID=") + odev.OdevID,odev.SonTeslimTarihi);
+                           }
+                        }
+
+                      //Bildirim oluştur.
+
+                       var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0",DersID);
+                       db.Execute("INSERT INTO Bildirim(Url,EylemiYapanUserID,EylemID,DersID) VALUES(@0,@1,@2,@3)","~/Ders/?DersID=" + DersID + "&Liste=onaybekleyen",WebSecurity.CurrentUserId,3,DersID);
+                       var eklenenBildirimID=db.GetLastInsertId();
+                       db.Execute("INSERT INTO BildirimOkunmasiGereken(UserID,BildirimID) VALUES(@0,@1)",queryDers.UserID,eklenenBildirimID); 
+               db.Close();   
+               Response.Write("derstakipediliyor");
+               Response.End();
+
+           }
+
+           else
+           {
+ 
+
+               db.Execute("INSERT INTO DersTakip(DersID,UserID,Durum) VALUES(@0,@1,1)",DersID,WebSecurity.CurrentUserId);
+           
+              var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0",DersID);
+
+               //Bildirim oluştur.
+               db.Execute("INSERT INTO Bildirim(Url,EylemiYapanUserID,IliskiliOge,EylemID,DersID) VALUES(@0,@1,@2,@3,@4)","~/Ders/?DersID=" + DersID + "&Liste=onaybekleyen",WebSecurity.CurrentUserId,"drsistg" + WebSecurity.CurrentUserId.ToString() + DersID.ToString(),5,DersID);
+               var eklenenBildirimID=db.GetLastInsertId();
+               db.Execute("INSERT INTO BildirimOkunmasiGereken(UserID,BildirimID) VALUES(@0,@1)",queryDers.UserID,eklenenBildirimID); 
+               
+               db.Close();   
+               Response.Write("takipistegigonderildi");
+               Response.End();
+           }
+
+ 
+}
+

@@ -1,0 +1,519 @@
+﻿@{
+    if (!WebSecurity.IsAuthenticated)
+    {
+        Response.Redirect("~/Hesap/Giris?returnUrl=Ders/?DersID=" + Request.QueryString["DersID"]);
+    }
+   
+    Layout = "~/Shared/_LayoutYeni.cshtml";  
+    
+    var DersID=Request.QueryString["DersID"];
+    var db=Database.Open("fb1ae");
+    var liste=Request.QueryString["Liste"];
+ 
+ 
+    if (string.IsNullOrEmpty(DersID))
+    {
+        Response.Redirect("~/Shared/Hata?Kod=dersbulunamadi");
+        Response.End();
+    }
+
+   if (string.IsNullOrEmpty(liste))
+    {
+        liste="aktivite";
+    }
+    var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0",DersID);
+    var queryKullanici=db.QuerySingle("SELECT * FROM Profiles WHERE UserID=@0",WebSecurity.CurrentUserId);
+    var dil=queryKullanici.Dil;   
+
+    if (dil=="tr")
+       {
+           Culture=UICulture="tr-TR";
+       }
+
+
+    if (queryDers==null)
+    {
+        Response.Redirect("~/Shared/Hata?Kod=dersbulunamadi");
+        Response.End();
+    }
+   
+    var takipEdiyor=(db.QueryValue("SELECT COUNT(*) FROM DersTakip WHERE UserID=@0 AND DersID=@1 AND Durum=2",WebSecurity.CurrentUserId,DersID)>0);
+    
+    var dersSahibi=(queryDers.UserID==WebSecurity.CurrentUserId);
+
+    if (dersSahibi==false && queryDers.Arsivlendi==1)
+    {
+        Response.Redirect("~/Shared/Hata?Kod=derseerisimengellendi");
+        Response.End();  
+    }
+    var admin=Roles.IsUserInRole("Admin");
+    
+    IEnumerable<dynamic> queryAktiviteler=null;
+    IEnumerable<dynamic> queryPano=null;
+    IEnumerable<dynamic> queryOdevler=null;
+    IEnumerable<dynamic> queryDosyalar=null;
+    
+    if (liste=="aktivite")
+     {
+       queryAktiviteler=db.Query("SELECT * FROM Aktivite WHERE Aktivite.DersID=@0 AND Silindi=0 ORDER BY AktiviteID DESC",DersID);
+     }
+     else if (liste=="odev")
+     {
+       queryOdevler=db.Query("SELECT * FROM Odev WHERE DersID=@0 AND Silindi=0 ORDER BY EklenmeTarihi DESC",DersID); 
+     }
+     else if (liste=="dosya")
+     {
+      queryDosyalar=db.Query("SELECT * FROM DersDosyalari INNER JOIN Dosya ON DersDosyalari.DosyaID=Dosya.DosyaID WHERE DersDosyalari.DersID=@0 AND Dosya.Silindi=0 AND Dosya.YuklenmeTuru<>2 ORDER BY EklenmeTarihi DESC",DersID);
+   
+     }
+     else if (liste=="pano")
+     {
+       queryPano=db.Query("SELECT * FROM DersPano WHERE DersID=@0 AND Silindi=0 ORDER BY ID DESC",DersID);
+     }
+    
+     var jitsiKanal="drs" + DersID.ToString();
+    db.Close();
+
+}
+
+@section css
+{
+    
+   <link rel="stylesheet" href="@Href("~/Shared/Plugins/daterangepicker/daterangepicker-bs3.css")">
+   
+}
+
+@section Gezinti {
+  
+    <li class="active">@queryDers.DersAdi</li>
+}
+
+
+@section SayfaBasligi
+{
+   <h1>@queryDers.DersAdi</h1>
+}
+
+<div class="row" id="divDersRow" data-DersID="@DersID" >
+ <div class="col-lg-12">
+       <h1>@queryDers.DersAdi 
+      @if (takipEdiyor)
+        {
+         <small class="pull-right"><small class="alert alert-success">@Resources.Resource.msgBuDersiTakipEdiyorsunuz</small></small> 
+        }
+        else if (takipEdiyor==false && Roles.IsUserInRole("Ogrenci"))
+        {
+           <small class="pull-right"><button class="btn btn-success btnDersiTakipEt" data-DersID="@queryDers.DersID"><i class="fa fa-plus"></i> @Resources.Resource.lblDersiTakipEt</button></small> 
+        }</h1>
+        <br>
+       <p>@queryDers.Aciklama</p>
+     
+  <hr>
+      <div>
+      @HelperProfil.KucukKunye(queryDers.UserID)
+       
+     </div>
+     <hr>
+ </div>
+                    
+</div>
+
+<div class="row">
+   <div class="col-lg-12">
+
+      <ul class="nav nav-pills">
+  
+           @if (queryDers.UserID==WebSecurity.CurrentUserId || takipEdiyor || admin)
+           {     
+              <li role="presentation"><a href="@Href("~/Ders/?DersID=")@DersID&Liste=aktivite" class="text-center"><i class="fa fa-home fa-2x"></i><br> @Resources.Resource.lblAnasayfa</a></li>
+              <li role="presentation"><a href="@Href("~/Ders/?DersID=")@DersID&Liste=dosya" class="text-center"><i class="fa fa-folder fa-2x"></i><br> @Resources.Resource.lblDosyalar</a></li>
+              <li role="presentation"><a href="@Href("~/Ders/?DersID=")@DersID&Liste=odev" class="text-center"><i class="fa fa-clock-o fa-2x"></i><br> @Resources.Resource.lblOdevler</a></li>
+              <li role="presentation"><a href="@Href("~/Ders/?DersID=")@DersID&Liste=pano" class="text-center"><i class="fa fa-clipboard fa-2x"></i><br> @Resources.Resource.lblDersPanosu</a></li>
+              <li role="presentation"><a href="http://meet.jit.si/@jitsiKanal" class="text-center" target="_blank"><i class="fa fa-comment fa-2x"></i><br> @Resources.Resource.lblCanliDers</a></li>
+             <li role="presentation"><a href="@Href("~/Ders/?DersID=")@DersID&Liste=takipci" class="text-center"><i class="fa fa-user  fa-2x"></i><br> @Resources.Resource.lblOgrenciler</a></li>
+          
+            }
+
+          @if (queryDers.UserID==WebSecurity.CurrentUserId)
+          {
+              <li role="presentation"><a href="@Href("~/Ders/?DersID=")@DersID&Liste=onaybekleyen" class="text-center"><i class="fa fa-warning  fa-2x"></i><br> @Resources.Resource.lblOnayBekleyenOgrenciler</a></li>
+              <li role="presentation"><a href="@Href("~/Ders/Ayarlar?DersID=")@DersID" class="text-center"><i class="fa fa-cog  fa-2x"></i><br> @Resources.Resource.lblAyarlar</a></li>
+
+          }
+
+          @if (takipEdiyor)
+          {
+              <li role="presentation"><a href="#" class="text-center text-danger btnDersTakibiBirak" data-DersID="@DersID"><i class="fa fa-remove  fa-2x"></i><br> @Resources.Resource.lblTakibiBirak</a></li>
+          }
+ 
+        </ul>
+
+    </div>
+</div>
+
+ @if (queryDers.UserID==WebSecurity.CurrentUserId || takipEdiyor)
+           {   
+<div class="row">
+   
+   <div class="col-lg-12">
+      
+       @if (liste=="aktivite")
+       {
+          
+            <h3>@Resources.Resource.lblAnasayfa</h3>
+            <table id="lstAktiviteler" class="table table-hover">
+        <thead>
+            <tr>
+                <th></th>
+               <th></th>
+                
+            </tr>
+        </thead>
+         <tbody>
+            @foreach (var item in queryAktiviteler)
+            {
+                <tr>
+                    <td>
+                       <span class="text-@item.Renk">
+                           <i class="fa @item.Ikon fa-fw fa-2x"></i>
+                           @if (item.UserID!=null)
+                           {
+                            @HelperProfil.YaziliKunye(item.UserID)
+                           }
+                       </span>
+                        @if (item.DersID!=null) {
+                            <a href="@item.URL">
+                               @db.QueryValue("SELECT DersAdi FROM Ders WHERE DersID=@0",item.DersID) @Resources.Resource.lblDersinde
+                            </a>
+                        }
+                        <a href="@item.URL">   
+                           @item.Metin
+                        </a>
+                    
+                    </td>
+                    <td class="text-right">@Genel.DateLabel(item.Tarih,dil)</td>
+                    
+                </tr>
+            }
+         </tbody>
+    </table>
+       
+        }
+        else if (liste=="takipci")
+        {
+            <h3>@Resources.Resource.lblOgrenciler<br></h3>
+
+            <div> 
+            @if (queryDers.Arsivlendi==0 && dersSahibi)
+                {
+                <label>Yeni Bir Öğrenci Ekle</label>
+                <input type="text" class="form-control" id="txtOgrenciler" placeholder="@Resources.Resource.lblOgrenciAra"><br> 
+                }
+            </div>
+               
+
+            @HelperDersTakip.DerseGoreKullanicilar(DersID.AsInt(),2)
+            
+
+        }
+        else if (liste=="onaybekleyen")
+        {
+            <h3>@Resources.Resource.lblOnayBekleyenOgrenciler</h3>
+            @HelperDersTakip.DerseGoreKullanicilar(DersID.AsInt(),1)
+        }
+
+      
+        else if (liste=="dosya")
+        {
+            <div>
+                <h3>@Resources.Resource.lblDosyalar</h3>
+            <br>
+            @if (dersSahibi && queryDers.Arsivlendi==0)
+                {
+                 <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalDerseDosyaEkle">
+                    <i class="fa fa-plus-circle"></i> @Resources.Resource.lblYeniBirDokumanEkle
+                </button>
+                }
+                <br><br>
+
+                    <table id="lstDersDosyalari" class="table table-hover">
+        <thead>
+            <tr>
+                <th> @Resources.Resource.lblAciklama</th>
+                <th> @Resources.Resource.lblDosyaAdi</th>
+                <th> @Resources.Resource.lblBoyut</th>
+                
+                <th></th>
+                
+            </tr>
+        </thead>
+         <tbody>
+            @foreach (var dosya in queryDosyalar)
+            {
+                
+                <tr>
+                    <td><i class="fa fa-file-text-o fa-2x text-success"></i> <a href="@Href("~/Dosya/Indir?DosyaID=")@dosya.DosyaID"> @dosya.Aciklama </a> </td>
+                    <td><a href="@Href("~/Dosya/Indir?DosyaID=")@dosya.DosyaID"> @dosya.DosyaAdi</a></td>
+                    <td>
+
+                   
+                       @Genel.StorageLabel((double)dosya.Boyut)
+                       
+                    </td>
+                  
+                    <td>
+                        <a href="@Href("~/Dosya/Indir?DosyaID=")@dosya.DosyaID" class="btn btn-info btn-sm"><i class="fa fa-cloud-download"></i></a>
+                       @if (dosya.UserID==WebSecurity.CurrentUserId)
+                       {
+                            
+                            <a href="@Href("~/Dosya/Ayarlar?DosyaID=")@dosya.DosyaID" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.lblDosyaAyarlari"><i class="fa fa-cog"></i></a>    
+                            <a href="@Href("~/Dosya/Indirenler?DosyaID=")@dosya.DosyaID" class="btn btn-success btn-sm" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.lblDosyayiYukleyenKullanicilar"><i class="fa fa-arrow-circle-o-down"></i></a>
+                            <button class="btn btn-danger btn-sm btnDosyayiCikar" data-DosyaID="@dosya.DosyaID" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.lblDosyayiDerstenKaldir"><i class="fa fa-remove"></i></button>
+
+                       }
+                    </td>
+                   
+                </tr>
+            }
+         </tbody>
+    </table>
+                </div>
+           
+        }
+        else if (liste=="pano")
+        {
+           
+            <div>
+                <h3>@Resources.Resource.lblDersPanosu</h3>
+                  <br>
+                @if (queryDers.Arsivlendi==0)
+                {
+                <textarea class="form-control" placeholder="@Resources.Resource.msgPanoyaEklemekIstediginMesajiYaz" id="txtPanoMesaji"></textarea>
+                <br>
+                <button class="btn btn-success" id="btnPanoMesajiGonder"> @Resources.Resource.lblGonder</button>
+                }
+                
+            </div>
+            <div>
+                <br>
+                    <table class="table table-hover" id="tableDersPanosu">
+        
+         
+            @foreach (var item in queryPano)
+            {
+                <tr>
+                    
+                    <td>@HelperProfil.KucukKunye(item.PaylasanUserID)</td>
+                    <td>@item.Metin</td>
+                    <td class="text-right">@Genel.DateLabel(item.Tarih,dil)</td>
+                    @if (queryDers.UserID==WebSecurity.CurrentUserId || item.PaylasanUserID==WebSecurity.CurrentUserId)
+                    {
+                      <td class="text-right"><button class="btn btn-danger panoOgesiSil btn-xs" data-PanoOgeID="@item.ID"><i class="fa fa-remove"></i></button></td>
+                    }
+                    
+                    
+                </tr>
+            }
+         
+    </table>
+            </div>
+        }
+        else if (liste=="odev")
+        {
+         
+            <div>
+                <h3>@Resources.Resource.lblOdevler</h3>
+               <br>
+                @if (dersSahibi && queryDers.Arsivlendi==0)
+                {
+                 <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalDerseOdevVer">
+                    <i class="fa fa-plus-circle"></i> @Resources.Resource.lblYeniBirOdevVer
+                </button>
+                }
+                  <br><br>
+                    <table id="lstOdevler" class="table table-hover">
+        <thead>
+            <tr>
+                <th>@Resources.Resource.lblOdev</th>
+                
+                <th></th>
+               
+            </tr>
+        </thead>
+         <tbody>
+            @foreach (var odev in queryOdevler)
+            {
+                <tr>
+                    <td><i class="fa fa-clock-o fa-2x text-success"></i> <a href="@Href("~/Odev/Goster?OdevID=")@odev.OdevID"> @odev.Baslik </a></td>
+                      <td> 
+                    <a href="@Href("~/Odev/Goster?OdevID=")@odev.OdevID" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.lblOdeveGozat"><i class="fa fa-search-plus"></i> </a>
+                        @if (WebSecurity.CurrentUserId==queryDers.UserID)
+                        {
+                            
+                            <a href="@Href("~/Odev/Ayarlar?OdevID=")@odev.OdevID" class="btn btn-warning" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.lblOdevAyarlari"><i class="fa fa-cog"></i></a>
+                            <a href="@Href("~/Odev/OdevGonderileri?OdevID=")@odev.OdevID" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.lblOdeviniGonderenler"><i class="fa fa-user"></i></a>
+                            <a href="#" class="btn btn-danger btnOdevSil" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.lblOdeviSil" data-OdevID="@odev.OdevID"><i class="fa fa-remove"></i></a>    
+                        }
+                        
+                    </td>
+               </tr>
+            }
+         </tbody>
+    </table>
+                </div>
+        }
+
+        
+       </div>
+</div>
+ <p><br><br></p>
+   }
+
+@if (liste=="odev" && dersSahibi && queryDers.Arsivlendi==0)
+{
+ <div class="modal" id="modalDerseOdevVer" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">@Resources.Resource.lblYeniBirOdevVer</h4>
+      </div>
+      <div class="modal-body">
+        <form method="post" enctype="multipart/form-data" id="frmOdevEkle">
+                    <div class="row">
+                    <div class="col-lg-6">
+                         <label>@Resources.Resource.lblBaslik</label>
+                        <input type="text" id="txtOdevBaslik" class="form-control" name="Baslik">
+                        <label>@Resources.Resource.lblOdevAciklamasi</label>
+                        <textarea name="Aciklama" class="form-control" rows="10"></textarea>
+                        <input type="hidden" value="@DersID" name="DersID" id="txtDersID" class="form-control">
+
+                        <label>@Resources.Resource.lblOdevGonderimi</label>
+                        <select id="cmbOdevGonderimi" class="form-control" name="OdevGonderimi">
+                            <option value="1"> @Resources.Resource.lblAcik</option>
+                            <option value="2"> @Resources.Resource.lblKapali</option>
+                            <option value="3"> @Resources.Resource.lblSonTeslimTarihineGoreOtomatik</option>
+                        </select>
+
+                       <br>
+                            
+                        
+               </div>
+                        <div class="col-lg-6">
+                             <label>@Resources.Resource.lblTeslimTarihi</label>
+                        <input name="SonTeslimTarihi" class="form-control" type="text" >
+                   
+                        <br>
+                        <p><strong>@Resources.Resource.lblDosyaEki</strong></p>
+                        <div role="tabpanel">
+
+                          <!-- Nav tabs -->
+                          <ul class="nav nav-tabs" role="tablist">
+                            <li role="presentation" class="active"><a href="#tabBilgisayar" aria-controls="home" role="tab" data-toggle="tab">@Resources.Resource.lblBilgisayardan</a></li>
+                            <li role="presentation"><a href="#tabDosyalar" aria-controls="profile" role="tab" data-toggle="tab">@Resources.Resource.lblDosyalarimdan</a></li>
+                          </ul>
+
+                          <!-- Tab panes -->
+                          <div class="tab-content">
+                            <div role="tabpanel" class="tab-pane active" id="tabBilgisayar">
+                                <br>
+                                    <input type="file" class="form-control" id="txtBilgisayardanDosya"  name="file" placeholder="@Resources.Resource.lblDosyaSec">
+                            </div>
+                            
+                              <div role="tabpanel" class="tab-pane" id="tabDosyalar">
+                                  <br>
+                                    <select class="form-control" placeholder="@Resources.Resource.lblDosyaBul" id="txtDosyalardanDosya" name="DosyaID">
+                                    </select>
+
+                                    
+                              </div>
+                         </div>
+
+                        </div>
+                        </div>
+                    </div>
+                </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="btnOdevVer"> @Resources.Resource.lblTamam</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">@Resources.Resource.lblIptal</button>
+        
+      </div>
+    </div>
+  </div>
+</div>
+}
+else if (liste=="dosya" && dersSahibi && queryDers.Arsivlendi==0)
+{
+  <div class="modal" id="modalDerseDosyaEkle" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">@Resources.Resource.lblDerseYeniBirDokumanEkle</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+   
+            <div class="col-lg-6">
+              
+                  <input type="hidden" value="@DersID" name="DersID" id="txtDersID">
+  
+                  <label>@Resources.Resource.lblBilgisayardaDosyaSec</label>
+                  <input type="file" class="form-control" id="txtDosya" required name="file" placeholder="@Resources.Resource.lblDosyaSec">
+               
+                  <label>@Resources.Resource.lblAciklama</label>
+                  <textarea class="form-control" id="txtAciklama" placeholder="@Resources.Resource.msgDerseEklenecekDokumanileilgiliKisaAciklamaGir" required></textarea>
+  
+                  <br>
+
+                 <button type="button" class="btn btn-primary" id="btnDosyaEkle"> @Resources.Resource.lblDosyayiYukle</button>
+                
+           </div>
+
+             <div class="col-lg-6">
+
+                     <label>@Resources.Resource.lblDosyalarimdan</label>
+                      <input type="text" class="form-control" placeholder="@Resources.Resource.lblDosyaBul" id="txtDosyalarimdanBul">
+                </div>
+            </div>
+      </div>
+      <div class="modal-footer">
+          
+        <button type="button" class="btn btn-default" data-dismiss="modal">@Resources.Resource.lblKapat</button>
+        
+      </div>
+    </div>
+  </div>
+</div>
+}
+
+
+@section js
+{
+<script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+<script src="@Href("~/Shared/Plugins/datatables/jquery.dataTables.min.js")"></script>
+<script src="@Href("~/Shared/Plugins/datatables/dataTables.bootstrap.js")"></script>
+<script src="http://malsup.github.com/jquery.form.js"></script>
+<script src="@Href(string.Format("~/Shared/Javascript/Dil/{0}/Ders/Default.js",dil))"></script>
+<script src="@Href("~/Shared/Javascript/Ders/Default.min.js")"></script>
+@if (liste=="pano")
+    {
+        <script src="@Href(string.Format("~/Shared/Javascript/Dil/{0}/Ders/MesajPanosu.js",dil))"></script>
+        <script src="@Href("~/Shared/Javascript/Ders/MesajPanosu.min.js")"></script>    
+    }
+    else if (liste=="dosya")
+    {
+        <script src="@Href(string.Format("~/Shared/Javascript/Dil/{0}/Ders/Dosya.js",dil))"></script>
+        <script src="@Href("~/Shared/Javascript/Ders/Dosya.min.js")"></script>    
+    }
+    else if (liste=="odev")
+    {
+        <script src="@Href("~/Shared/Plugins/moment/moment.min.js")"></script>
+        <script src="@Href("~/Shared/Plugins/daterangepicker/daterangepicker.js")"></script>
+        <script src="@Href(string.Format("~/Shared/Javascript/Dil/{0}/Ders/Odev.js",dil))"></script>
+        <script src="@Href("~/Shared/Javascript/Ders/Odev.min.js")"></script>    
+    }
+    
+    
+}

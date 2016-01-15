@@ -1,0 +1,86 @@
+﻿@{
+  
+    var dil="tr";
+   
+   if (Request.Url.GetLeftPart(UriPartial.Authority).Contains("azureboard.com"))
+     {
+         dil="en";
+     }
+     else
+     {
+         dil="tr";
+         Culture=UICulture="tr-TR";
+     }
+}
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!--Head-->
+<head>
+    <meta charset="utf-8" />
+    <title>@Resources.Resource.lblParolamiUnuttum</title>
+
+    <meta name="description" content="register page" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="shortcut icon" href="assets/img/favicon.png" type="image/x-icon">
+
+    <!--Basic Styles-->
+    <link href="@Href("~/Shared/TemaBeyond/assets/css/bootstrap.min.css")" rel="stylesheet" />
+    <link id="bootstrap-rtl-link" href="" rel="stylesheet" />
+    <link href="@Href("~/Shared/TemaBeyond/assets/css/font-awesome.min.css")" rel="stylesheet" />
+    <link href="@Href("~/Shared/TemaBeyond/assets/css/weather-icons.min.css")" rel="stylesheet" />
+
+    <!--Fonts-->
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300"
+          rel="stylesheet" type="text/css">
+
+    <!--Beyond styles-->
+    <link id="beyond-link" href="@Href("~/Shared/TemaBeyond/assets/css/beyond.min.css")" rel="stylesheet" />
+    <link href="@Href("~/Shared/TemaBeyond/assets/css/demo.min.css")" rel="stylesheet" />
+    <link href="@Href("~/Shared/TemaBeyond/assets/css/typicons.min.css")" rel="stylesheet" />
+    <link href="@Href("~/Shared/TemaBeyond/assets/css/animate.min.css")" rel="stylesheet" />
+    <link id="skin-link" href="" rel="stylesheet" type="text/css" />
+    <link href="@Href("~/Shared/Plugins/jquery.growl/jquery.growl.css")" rel="stylesheet" type="text/css">
+    <script src="@Href("~/Shared/TemaBeyond/assets/js/skins.min.js")"></script>
+</head>
+<!--Head Ends-->
+<!--Body-->
+<body>
+    <div class="register-container animated fadeInDown">
+      
+        <div class="registerbox bg-white">
+            <div class="registerbox-title">@Resources.Resource.lblParolamiUnuttum</div>
+
+            <div class="registerbox-caption ">@Resources.Resource.msgEPostaGirGondereBas</div>
+            
+            <div class="registerbox-textbox">
+                <input class="form-control"  id="txtEposta" name="txtEposta" type="email" autofocus="true" />
+            </div>
+            
+            
+            <div class="registerbox-submit">
+                <button type="button" class="btn btn-primary pull-right" id="btnHesapOlustur" > @Resources.Resource.lblGonder</button>
+            </div>
+        </div>
+        
+    </div>
+
+     <!--Basic Scripts-->
+    <script src="@Href("~/Shared/TemaBeyond/assets/js/jquery.min.js")"></script>
+    <script src="@Href("~/Shared/TemaBeyond/assets/js/bootstrap.min.js")"></script>
+    <script src="@Href("~/Shared/TemaBeyond/assets/js/slimscroll/jquery.slimscroll.min.js")"></script>
+
+    <!--Beyond Scripts-->
+    <script src="@Href("~/Shared/TemaBeyond/assets/js/beyond.min.js")"></script>
+    <script src="@Href("~/Shared/Plugins/BlockUI/jquery.blockUI.js")"></script>
+    <script src="@Href("~/Shared/Plugins/jquery.growl/jquery.growl.js")"></script>
+    <script src="@Href("~/Shared/Javascript/Dil/tr/Global.js")"></script>
+    <script src="@Href("~/Shared/Javascript/Global.min.js")"></script>
+    <script src="@Href(string.Format("~/Shared/Javascript/Dil/{0}/Hesap/ParolamiUnuttum.js",dil))"></script>
+    <script src="@Href("~/Shared/Javascript/Hesap/ParolamiUnuttum.min.js")"></script>
+
+</body>
+<!--Body Ends-->
+</html>

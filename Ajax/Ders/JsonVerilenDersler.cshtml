@@ -1,0 +1,38 @@
+﻿@{
+  /*----------------------------------------------------------------------------------
+    Bu prosedür bir öğreticinin verdiği dersleri bulur ve JSON formatında geri döndürür.
+    Bu prosedürü sadece oturumu açmış ve Öğretici rolündeki bir kullanıcı çalıştırabilir.
+  ---------------------------------------------------------------------------------*/
+
+if (WebSecurity.IsAuthenticated==false || Roles.IsUserInRole("Ogretici")==false)
+    {
+        Response.StatusCode = 401;
+        Response.End();
+        
+    }
+    // Sorgu ifadesini oku
+    var q=Request["sorgu"];
+    var db=Database.Open("fb1ae");
+    var sorguIfadesi="";
+
+    // Eğer sorgu ifadesi boşsa kullanıcının tüm derslerini listele
+     if (string.IsNullOrEmpty(q))
+     {
+         sorguIfadesi="SELECT * FROM Ders WHERE Arsivlendi=0 AND UserID=" + WebSecurity.CurrentUserId;
+     }
+     else // aksi halde sorgu ile uyuşan dersleri listele
+     {
+          sorguIfadesi="SELECT * FROM Ders WHERE Arsivlendi=0 AND UserID=" + WebSecurity.CurrentUserId + " AND DersAdi LIKE N'" + q + "%'";
+     }
+
+    //Sorguyu çalıştır
+    var sonuclar=db.Query(sorguIfadesi);
+    
+    //sonuçları JSON formatına dönüştür ve geri döndür.
+    Json.Write(sonuclar, Response.Output);
+    
+    db.Close();   
+    Response.ContentType = "application/json";
+    Response.End();
+   
+}

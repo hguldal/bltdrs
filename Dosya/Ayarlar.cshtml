@@ -1,0 +1,183 @@
+﻿@{
+   if (!WebSecurity.IsAuthenticated)
+    {
+        Response.Redirect("~/Hesap/Giris?returnUrl=Dosya/Ayarlar?DosyaID=" + Request.QueryString["DosyaID"]);
+    }
+   
+    Layout = "~/Shared/_LayoutYeni.cshtml";
+    
+    var DosyaID=Request.QueryString["DosyaID"];
+    var db=Database.Open("fb1ae");
+   
+    var queryKullanici=db.QuerySingle("SELECT * FROM Profiles WHERE userID=@0",WebSecurity.CurrentUserId);
+   
+    var dil=queryKullanici.Dil;
+   
+    if (dil=="tr")
+       {
+           Culture=UICulture="tr-TR";
+       }
+    
+    if (string.IsNullOrEmpty(DosyaID))
+    {
+        Response.Redirect("~/Shared/Hata");
+        Response.End();
+    }  
+
+     var queryDosya=db.QuerySingle("SELECT * FROM Dosya WHERE DosyaID=@0 AND UserID=@1",DosyaID,WebSecurity.CurrentUserId);
+
+     if (queryDosya==null)
+        {
+            Response.Redirect("~/Shared/Hata");
+            Response.End();
+        }  
+  
+      var queryDosyaIzinKisi=db.Query("SELECT * FROM DosyaIzinKisi WHERE DosyaID=@0",DosyaID);
+      var queryDosyaIzinDers=db.Query("SELECT * FROM DersDosyalari INNER JOIN Ders ON DersDosyalari.DersID=Ders.DersID WHERE DosyaID=@0",DosyaID);
+    db.Close();
+}
+
+
+ 
+@section css
+{
+ <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+    
+}
+
+@section Gezinti {
+    <li class="active">@Resources.Resource.lblDosyaAyarlari</li>
+}
+
+
+@section SayfaBasligi
+{
+   <h1>@Resources.Resource.lblDosyaAyarlari</h1>
+}
+
+<span class="glyphicon glyphicon-cog hide" id="spnDosyaID" data-DosyaID="@DosyaID"></span>
+<hr>
+  
+<div class="row">
+         
+    <div class="col-md-6 column">
+        
+        <table class="table">
+            <tr>
+                <td><strong>@Resources.Resource.lblDosyaAdi</strong></td>         
+            </tr>
+            <tr>
+                <td><a href="#" id="lnkDosyaAdi">@queryDosya.DosyaAdi</a></td>         
+            </tr>
+            <tr>
+                <td><strong>@Resources.Resource.lblAciklama</strong></td>         
+            </tr>
+            <tr>
+                <td><a href="#" id="lnkDosyaAciklama">@queryDosya.Aciklama</a> </td>
+            </tr>
+
+             <tr>
+                <td><strong>@Resources.Resource.lblSahibi</strong></td>         
+            </tr>
+            <tr>
+                <td>@HelperProfil.KucukKunye(queryDosya.UserID) </td>
+            </tr>
+            <tr>
+                <td><strong>@Resources.Resource.lblBoyut</strong></td>         
+            </tr>
+            <tr>
+              <td>
+                    @if (queryDosya.Boyut<1048576)
+                        {
+                            var b=Math.Round((double)queryDosya.Boyut/1024,1);
+                            <text>@b KB</text>
+                        }
+                        else
+                        {
+                            var b=Math.Round((double)queryDosya.Boyut/1048576,1);
+                           <text>@b MB</text>
+                        }
+              
+              </td>
+            </tr>
+
+             <tr>
+                <td><strong>@Resources.Resource.lblEklenmeTarihi</strong></td>         
+            </tr>
+
+            <tr><td>@Genel.DateLabel(queryDosya.EklenmeTarihi,dil)</td></tr>
+         
+             <tr>
+                <td><strong>@Resources.Resource.lblErisimSekli</strong></td>
+                 <tr>
+                     <td>
+                         <select id="cmbErisim" data-ilkdeger="@queryDosya.Erisim" >
+                        <option value="1">@Resources.Resource.lblHerkes</option>
+                        <option value="2">@Resources.Resource.lblSadeceIzinVerilenler</option>             
+                    </select>
+                    </td>
+                 </tr>
+            </tr>
+        </table>
+    
+    </div>
+
+    <div class="col-md-6 column">
+        <table class="table">
+        
+            <tr>
+                <td><strong>@Resources.Resource.lblPaylasildigiDersler</strong></td>         
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" class="form-control" placeholder="@Resources.Resource.msgPaylasilacakKisiyiBul" id="txtIzinverilecekKisiler"><br>
+                    <select class="form-control" size="5" id="cmbDosyaErisimIzinleri">
+                        
+                       @foreach (var kisi in queryDosyaIzinKisi)
+                       {
+                           <option value="@kisi.userID">@HelperProfil.YaziliKunye(kisi.UserID)</option>
+                       }
+
+                    </select><br>
+                <button class="btn btn-danger btn-xs" id="btnDosyaErisimIzniKaldir"><i class="fa fa-times"></i> @Resources.Resource.lblSeciliKisiicinPaylasimiDurdur</button>
+               <br>
+                    @if (Roles.IsUserInRole("Ogretici"))
+                    {
+                     <tr>
+                        <td><strong>@Resources.Resource.lblPaylasildigiDersler</strong></td>         
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="text" class="form-control" placeholder="@Resources.Resource.msgPaylasilacakDersiBul" id="txtIzinverilecekDersler"><br>
+                         <select class="form-control" size="5" id="cmbDosyaErisimIzinleriDers">
+                             @foreach (var ders in queryDosyaIzinDers)
+                                {
+                                <option value="@ders.DersID">@ders.DersAdi</option>
+                                }
+                             </select>
+                            <br>
+                    <button class="btn btn-danger btn-xs" id="btnDosyaErisimIzniKaldirDers"><i class="fa fa-times"></i> @Resources.Resource.lblSeciliDersicinPaylasimiDurdur</button>
+                        </td>
+                    </tr>
+
+                      }
+                </td>
+            </tr>
+           
+        
+        </table>
+    
+    </div>
+    
+</div>
+
+
+@section js
+{
+   <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+   <script src="@Href(string.Format("~/Shared/Javascript/Dil/{0}/Dosya/Ayarlar.js",dil))"></script>
+   <script src="@Href("~/Shared/Javascript/Dosya/Ayarlar.min.js")"></script>
+}
+
+
+

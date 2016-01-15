@@ -1,0 +1,38 @@
+﻿@using Microsoft.WindowsAzure.Storage;
+@using Microsoft.WindowsAzure.Storage.Auth;
+@using Microsoft.WindowsAzure.Storage.Blob;
+@{
+     if (WebSecurity.IsAuthenticated==false)
+     {    
+        Response.StatusCode=401;
+        Response.End(); 
+     }
+     
+    var azureKayitAdi=Request["AzureDosyaAdi"];
+    if (string.IsNullOrEmpty(azureKayitAdi))
+    {
+        Response.StatusCode=502;
+        Response.End();
+    }
+    
+    var azureStorageHesapAdi=System.Configuration.ConfigurationManager.AppSettings["AzureStorageHesapAdi"];	
+    var azureStorageHesapAnahtari=System.Configuration.ConfigurationManager.AppSettings["AzureStorageHesapAnahtari"];
+    var connString=string.Format("DefaultEndpointsProtocol=http;AccountName={0};AccountKey={1};",azureStorageHesapAdi,azureStorageHesapAnahtari);
+    CloudStorageAccount storageHesap = CloudStorageAccount.Parse(connString);		
+    var blobClient = storageHesap.CreateCloudBlobClient();
+    var container = blobClient.GetContainerReference("dosyalar");
+    CloudBlockBlob blob = container.GetBlockBlobReference(azureKayitAdi);
+    
+    var SaS = blob.GetSharedAccessSignature(
+               new SharedAccessBlobPolicy()
+               {
+                   Permissions = SharedAccessBlobPermissions.Write | SharedAccessBlobPermissions.List | SharedAccessBlobPermissions.Delete | SharedAccessBlobPermissions.Read ,
+                   SharedAccessExpiryTime = DateTime.UtcNow.AddDays(1),
+               });
+
+    var token= string.Format("{0}{1}", blob.Uri, SaS);
+    
+    Response.Write(token);
+    Response.End();
+}
+

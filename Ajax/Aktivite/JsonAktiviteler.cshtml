@@ -1,0 +1,104 @@
+﻿@{
+    
+ if (!WebSecurity.IsAuthenticated)
+       {
+            Response.StatusCode=401;
+            Response.End();             
+        }  
+    
+    var db=Database.Open("fb1ae");
+    var roller=Roles.GetRolesForUser(WebSecurity.CurrentUserName);
+    var sonAktiviteID="100000000";
+    var queryKullanici=db.QuerySingle("SELECT * FROM Profiles WHERE userID=@0",WebSecurity.CurrentUserId);
+   
+    var dil=queryKullanici.Dil;
+   
+    
+    if (!string.IsNullOrEmpty(Request["SonAktiviteID"]))
+    {
+        sonAktiviteID=Request["SonAktiviteID"];
+    }
+   
+    Dictionary<string, List<Aktivite>> returnJson = new Dictionary<string, List<Aktivite>>();
+    
+    List<Aktivite> listeAktiviteler=new List<Aktivite>();
+  
+    IEnumerable<dynamic> queryAktiviteler=null;
+   
+    if (roller.Contains("Ogretici"))
+     {
+        queryAktiviteler=db.Query("SELECT top 25 * FROM Aktivite WHERE Silindi=0 AND UserID=@0 AND AktiviteID<@1 ORDER BY AktiviteID DESC",WebSecurity.CurrentUserId,sonAktiviteID);
+         
+     }
+    else if (roller.Contains("Ogrenci"))
+    {
+        
+      queryAktiviteler=db.Query("SELECT top 25 * FROM Aktivite WHERE Silindi=0 AND Aktivite.DersID IN (SELECT DersID FROM DersTakip WHERE UserID=@0 AND Durum=2) AND Aktivite.AktiviteID<@1 ORDER BY AktiviteID DESC",WebSecurity.CurrentUserId,sonAktiviteID);  
+        
+    }
+
+    foreach(var aktivite in queryAktiviteler)
+    {
+       Aktivite a=new Aktivite();
+       a.AktiviteID=aktivite.AktiviteID;
+       a.UserID=aktivite.UserID;
+       a.DersID=aktivite.DersID;
+       a.Ikon=aktivite.Ikon;
+       a.IlaveFoto=aktivite.IlaveFoto;
+       a.IlaveMetin=aktivite.IlaveMetin;
+       a.IlaveURL=aktivite.IlaveURL;
+       a.Metin=aktivite.Metin;
+       a.Renk=aktivite.Renk;
+       a.Silindi=aktivite.Silindi;
+       a.Tarih=aktivite.Tarih;
+       a.URL=aktivite.URL;
+       a.UI_BegeniSayisi=db.QueryValue("SELECT count(*) FROM AktiviteBegeni WHERE Silindi=0 AND AktiviteID=@0",aktivite.AktiviteID);
+       a.UI_AktiviteOkundu=db.QueryValue("SELECT count(*) FROM AktiviteOkunan WHERE AktiviteID=@0",aktivite.AktiviteID);
+       a.UI_GorunenTarih=Genel.DateLabel(aktivite.Tarih,dil);
+       
+       var queryAktiviteUser=db.QuerySingle("SELECT * FROM Profiles INNER JOIN Unvan ON Profiles.UnvanID=Unvan.UnvanID  WHERE userID=@0",aktivite.UserID);
+       a.UI_KisiUnvan=queryAktiviteUser.Unvan;
+       a.UI_KisiAd=queryAktiviteUser.Ad;
+       a.UI_KisiAvatar=queryAktiviteUser.Avatar;
+       a.UI_KisiSoyad=queryAktiviteUser.Soyad;
+       a.UI_KisiOnayli=queryAktiviteUser.Onayli;
+      
+       if (aktivite.UserID==WebSecurity.CurrentUserId)
+       {
+           a.UI_SilmeDugmesi=1;
+       }
+       else
+       {
+           a.UI_SilmeDugmesi=0;
+       }
+
+       if (aktivite.DersID!=-1) {
+        a.UI_DersAdi=db.QueryValue("SELECT DersAdi FROM Ders WHERE DersID=@0",aktivite.DersID);
+       }
+
+       if (db.QueryValue("SELECT COUNT(*) FROM AktiviteBegeni WHERE Silindi=0 AND AktiviteID=@0 AND UserID=@1",aktivite.AktiviteID,WebSecurity.CurrentUserId)==0)
+       {
+           a.UI_AktiviteBegendi=0;
+       }
+       else
+       {
+           a.UI_AktiviteBegendi=1;
+       }
+       
+       if (db.QueryValue("SELECT COUNT(*) FROM AktiviteOkunan WHERE AktiviteID=@0 AND UserID=@1",aktivite.AktiviteID,WebSecurity.CurrentUserId)==0)
+       {
+           db.Execute("INSERT INTO AktiviteOkunan(AktiviteID,UserID) VALUES(@0,@1)",aktivite.AktiviteID,WebSecurity.CurrentUserId);
+       }
+
+       listeAktiviteler.Add(a);
+    }
+
+    
+    db.Close(); 
+
+    returnJson.Add("Aktiviteler", listeAktiviteler);
+    Response.Write(Json.Encode(returnJson));
+    Response.End();
+
+}
+

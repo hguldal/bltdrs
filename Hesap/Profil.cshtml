@@ -1,0 +1,178 @@
+﻿@{
+   
+  if (!WebSecurity.IsAuthenticated)
+    {
+        Response.Redirect("~/Hesap/Giris?returnUrl=Hesap/Profil");
+    }
+    Layout = "~/Shared/_LayoutYeni.cshtml";
+
+    var db=Database.Open("fb1ae");
+
+    var queryKullanici=db.QuerySingle("SELECT * FROM Profiles WHERE userID=@0",WebSecurity.CurrentUserId);
+   
+    var dil=queryKullanici.Dil;
+
+    if (dil=="tr")
+       {
+           Culture=UICulture="tr-TR";
+       }
+    var userID=Request["UserID"];
+   
+   if (string.IsNullOrEmpty(userID))
+    {
+       userID=WebSecurity.CurrentUserId.ToString();
+    }
+    var roller=db.QuerySingle("SELECT * FROM webpages_UsersInRoles INNER JOIN webpages_Roles ON webpages_UsersInRoles.RoleId=webpages_Roles.RoleId WHERE webpages_UsersInRoles.userID=@0",userID);
+    var queryUser=db.QuerySingle("select * from Profiles INNER JOIN webpages_Membership ON Profiles.userID= webpages_Membership.userID WHERE Profiles.userID=@0",userID);
+    var universiteAdi="";
+    if (queryUser.KurumID!=0)
+    {
+        universiteAdi=db.QueryValue("SELECT KurumAdi FROM Kurum WHERE KurumID=@0",queryUser.KurumID);
+    }
+   if (queryUser==null)
+    {
+        Response.Redirect("~/Shared/Hata");
+        Response.End();
+    }
+    
+    IEnumerable<dynamic> queryVerdigiDersler=null;
+    IEnumerable<dynamic> queryTakipEttigiDersler=null;
+
+   if (roller.RoleName=="Ogretici")
+       {
+           queryVerdigiDersler=db.Query("SELECT * FROM Ders WHERE UserID=@0 AND Arsivlendi=0",userID);
+       }
+
+    if (roller.RoleName=="Ogrenci")
+       {
+           queryTakipEttigiDersler=db.Query("SELECT * FROM Ders INNER JOIN DersTakip ON Ders.DersID=DersTakip.DersID WHERE Ders.Arsivlendi=0 AND DersTakip.Durum=2 AND DersTakip.UserID=@0",userID);
+       }
+    
+    var enSonGorulmeTarihi=db.QuerySingle("SELECT TOP 1 * FROM Ziyaret WHERE UserID=@0 ORDER BY Tarih DESC",userID);
+    var aktiviteSayisi=db.QueryValue("SELECT COUNT(*) FROM Aktivite WHERE UserID=@0 AND Silindi=0",userID);
+    db.Close(); 
+}
+
+@section Gezinti {
+    <li class="active">@Resources.Resource.lblProfil</li>
+}
+
+
+@section SayfaBasligi
+{
+   <h1>@Resources.Resource.lblProfil</h1>
+}
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="profile-container">
+                                <div class="profile-header row">
+                                    <div class="col-lg-2 col-md-4 col-sm-12 text-center">
+                                        <img src="http://bulutders.blob.core.windows.net/profilresimleri/@queryUser.Avatar" alt="" class="header-avatar" />
+                                    </div>
+                                    <div class="col-lg-5 col-md-8 col-sm-12 profile-info">
+                                        <div class="header-fullname">@HelperProfil.YaziliKunye(Convert.ToInt32(userID))
+                                        
+                                        </div>
+
+
+                                        <div class="header-information">
+                                            @if (!string.IsNullOrEmpty(universiteAdi))
+                                                 {
+                                                 <p>@Genel.BaslikDuzeni(universiteAdi)</p>
+                                                 }
+                                                   
+                                            
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-5 col-md-12 col-sm-12 col-xs-12 profile-stats">
+                                        
+                                        <div class="row">
+                                            
+                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 inlinestats-col">
+                                                @Genel.DateLabel(queryUser.CreateDate,dil) @Resources.Resource.lblKatildi. @if (enSonGorulmeTarihi!=null) {<text>En son @Genel.DateLabel(enSonGorulmeTarihi.Tarih,dil) @Resources.Resource.lblAktifti.</text>}
+                                            </div>
+                                            
+                                        </div>
+                                       
+                                    </div>
+                                </div>
+                                <div class="profile-body">
+                                    <div class="col-lg-12">
+                                        <div class="tabbable">
+                                            <ul class="nav nav-tabs tabs-flat  nav-justified" id="myTab11">
+                                                <li class="active">
+                                                    <a data-toggle="tab" href="#overview">
+                                                        @Resources.Resource.lblDetaylar
+                                                    </a>
+                                                </li>
+                                                
+                                            </ul>
+                                            <div class="tab-content tabs-flat">
+                                                <div id="overview" class="tab-pane active">
+                                                    <div class="row profile-overview">
+                                                        <div class="col-md-12">
+
+                                                             @if (roller.RoleName=="Ogretici")
+                                                                    {
+                                                                       <h6 class="row-title before-red">@Resources.Resource.lblVerildigiDersler</h6>
+                                                                        <div class="row">
+                                                                            <div class="col-lg-12 col-sm-6 col-xs-12">
+                                                                                <table class="table table-hover">
+                                                                                    @foreach (var ders in queryVerdigiDersler)
+                                                                                    {
+                                                                                    <tr>
+                                    
+                                                                                        <td> <h4>
+                                                                                            <a href="@Href("~/Ders/?DersID=")@ders.DersID">@ders.DersAdi </a></h4> 
+                                        
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            <a href="@Href("~/Ders/?DersID=")@ders.DersID" class="btn btn-primary"><i class="fa fa-search-plus"></i> @Resources.Resource.lblDersSayfasinaGit </a>
+                                                                                            
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    }
+                                                                                </table>
+                                                                            </div>
+                                                                        </div>
+                                                                        
+                                                                    }
+                                                                    else if (roller.RoleName=="Ogrenci")
+                                                                    {
+                                                                        <h6 class="row-title before-red">@Resources.Resource.lblTakipEdilenDersler</h6>
+                                                                        <div class="row">
+                                                                            <div class="col-lg-12 col-sm-6 col-xs-12">
+                                                                                <table class="table table-hover">
+                                                                                    @foreach (var ders in queryTakipEttigiDersler)
+                                                                                    {
+                                                                                    <tr>
+                                    
+                                                                                        <td> <h4>
+                                                                                            <a href="@Href("~/Ders/?DersID=")@ders.DersID">@ders.DersAdi </a></h4> 
+                                        
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            <a href="@Href("~/Ders/?DersID=")@ders.DersID" class="btn btn-primary"><i class="fa fa-search-plus"></i> @Resources.Resource.lblDersSayfasinaGozat </a>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    }
+                                                                                </table>
+                                                                             </div>
+                                                                        </div>
+                                                                      
+                                                                          
+                                                                    }
+
+                                                        </div>
+                                                       
+                                                    </div>
+                                                </div>
+                                               
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>

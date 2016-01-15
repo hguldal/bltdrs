@@ -1,0 +1,1001 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="lblAboneOlunanKanallar" xml:space="preserve">
+<value>Abone Olunan Kanallar</value>
+</data>
+<data name="lblAcik" xml:space="preserve">
+<value>Açık</value>
+</data>
+<data name="lblAciklama" xml:space="preserve">
+<value>Açıklama</value>
+</data>
+<data name="lblAd" xml:space="preserve">
+<value>Ad</value>
+</data>
+<data name="lblAdres" xml:space="preserve">
+<value>Adres (Url)</value>
+</data>
+<data name="lblAktif" xml:space="preserve">
+<value>Aktif</value>
+</data>
+<data name="lblAktifDersler" xml:space="preserve">
+<value>Aktif Dersler</value>
+</data>
+<data name="lblAktifti" xml:space="preserve">
+<value>aktifti</value>
+</data>
+<data name="lblAktiviteler" xml:space="preserve">
+<value>Aktiviteler</value>
+</data>
+<data name="lblAnasayfa" xml:space="preserve">
+<value>Anasayfa</value>
+</data>
+<data name="lblAra" xml:space="preserve">
+<value>Ara</value>
+</data>
+<data name="lblAramalardaGorunsun" xml:space="preserve">
+<value>Aramalarda Görünsün:</value>
+</data>
+<data name="lblArsivdekiDersler" xml:space="preserve">
+<value>Arşivdeki Dersler</value>
+</data>
+<data name="lblAyarlar" xml:space="preserve">
+<value>Ayarlar</value>
+</data>
+<data name="lblBaslik" xml:space="preserve">
+<value>Başlık</value>
+</data>
+<data name="lblBegen" xml:space="preserve">
+<value>Beğen</value>
+</data>
+<data name="lblBegeniSayisi" xml:space="preserve">
+<value>Beğeni Sayısı</value>
+</data>
+<data name="lblBegenmektenVazgec" xml:space="preserve">
+<value>Beğenmekten Vazgeç</value>
+</data>
+<data name="lblBilgileriKaydet" xml:space="preserve">
+<value>Bilgileri Kaydet</value>
+</data>
+<data name="lblBilgisayardaDosyaSec" xml:space="preserve">
+<value>Bilgisayardan Dosya Seç:</value>
+</data>
+<data name="lblBilgisayardan" xml:space="preserve">
+<value>Bilgisayardan</value>
+</data>
+<data name="lblBirDersiTakipEt" xml:space="preserve">
+<value>Bir Dersi Takip Et</value>
+</data>
+<data name="lblBoyut" xml:space="preserve">
+<value>Boyut</value>
+</data>
+<data name="lblBulutDers" xml:space="preserve">
+<value>BulutDers</value>
+</data>
+<data name="lblBulutDersCom" xml:space="preserve">
+<value>BulutDers.com</value>
+</data>
+<data name="lblCevrimiciKullanici" xml:space="preserve">
+<value>Çevrimiçi Kullanıcı</value>
+</data>
+<data name="lblCevrimiciKullanicilar" xml:space="preserve">
+<value>Çevrimiçi Kullanıcılar</value>
+</data>
+<data name="lblDahaOncekiAktiviteleriGor" xml:space="preserve">
+<value>Daha Önceki Aktiviteleri Gör...</value>
+</data>
+<data name="lblDegerlendirmePuani" xml:space="preserve">
+<value>Değerlendirme Puanı</value>
+</data>
+<data name="lblDegistir" xml:space="preserve">
+<value>Değiştir</value>
+</data>
+<data name="lblDepolamaAlani" xml:space="preserve">
+<value>Depolama Alanı</value>
+</data>
+<data name="lblDers" xml:space="preserve">
+<value>Ders</value>
+</data>
+<data name="lblDersAra" xml:space="preserve">
+<value>Ders Ara</value>
+</data>
+<data name="lblDersAyarlari" xml:space="preserve">
+<value>Ders Ayarları</value>
+</data>
+<data name="lblDersPanosu" xml:space="preserve">
+<value>Ders Panosu</value>
+</data>
+<data name="lblDersSayfasinaGit" xml:space="preserve">
+<value>Ders Sayfasına Git</value>
+</data>
+<data name="lblDersSorumlusu" xml:space="preserve">
+<value>Ders Sorumlusu</value>
+</data>
+<data name="lblDersSorumlusuMesaji" xml:space="preserve">
+<value>Ders Sorumlusu Mesajı</value>
+</data>
+<data name="msgAdetHatirlaticinizVar" xml:space="preserve">
+<value>adet hatırlatıcınız var</value>
+</data>
+<data name="msgAramakIstediginizKisiYadaDersleIlgiliKelimeGir" xml:space="preserve">
+<value>Aramak istediğiniz kişi yada dersle ilgili bir kaç kelime girin</value>
+</data>
+<data name="msgBuDersiTakipEdiyorsunuz" xml:space="preserve">
+<value>Bu dersi takip ediyorsunuz</value>
+</data>
+<data name="msgBuDersiTakipEtmekIcinOnayGerekiyor" xml:space="preserve">
+<value>Bu dersi takip etmek için ders sorumlusunun onayı gerekmektedir.</value>
+</data>
+<data name="msgBuDersiTakipEtmekIcinSorumluyaBasvur" xml:space="preserve">
+<value>Bu dersi takip etmek için lütfen ders sorumlusuna başvurun</value>
+</data>
+<data name="msgBuDersiZatenTakipEdiyorsunuz" xml:space="preserve">
+<value>Bu dersi zaten takip ediyorsunuz</value>
+</data>
+<data name="msgBuKullaniciHesabiAskiyaAlinmis" xml:space="preserve">
+<value>Bu kullanıcı hesabı sistem yöneticisi tarafından askıya alındı</value>
+</data>
+<data name="msgBulutDerseHosgeldiniz" xml:space="preserve">
+<value>BulutDers'e Hoşgeldiniz</value>
+</data>
+<data name="msgEPostaGirGondereBas" xml:space="preserve">
+<value>Aşağıdaki alana,hesabınızı oluştururken belirlediğiniz e-posta adresinizi giriniz ve Gönder düğmesine tıklayınız. Geçici parolanız bu adrese gönderilecektir.</value>
+</data>
+<data name="lblErisimKodu" xml:space="preserve">
+<value>Erişim Kodu</value>
+</data>
+<data name="lblErisimKodlari" xml:space="preserve">
+<value>Erişim Kodları</value>
+</data>
+<data name="lblErisimSekli" xml:space="preserve">
+<value>Erişim Şekli</value>
+</data>
+<data name="lblErisimTuru" xml:space="preserve">
+<value>Erişim Türü</value>
+</data>
+<data name="lblUyelikBilgileri" xml:space="preserve">
+<value>Üyelik Bilgileri</value>
+</data>
+<data name="lblHesapAyarlari" xml:space="preserve">
+<value>Hesap Ayarları</value>
+</data>
+<data name="lblUyelikTuru" xml:space="preserve">
+<value>Üyelik Türü</value>
+</data>
+<data name="lblIslemler" xml:space="preserve">
+<value>İşlemler</value>
+</data>
+<data name="lblYeniBirDokumanEkle" xml:space="preserve">
+<value>Yeni Bir Döküman Ekle</value>
+</data>
+<data name="lblDerseYeniBirDokumanEkle" xml:space="preserve">
+<value>Derse Yeni Bir Döküman Ekle</value>
+</data>
+<data name="lblEklenmeTarihi" xml:space="preserve">
+<value>Eklenme Tarihi</value>
+</data>
+<data name="lblVerilmeTarihi" xml:space="preserve">
+<value>Verilme Tarihi</value>
+</data>
+<data name="lblTumBildirimler" xml:space="preserve">
+<value>Tüm Bildirimler</value>
+</data>
+<data name="lblOdev" xml:space="preserve">
+<value>Ödev</value>
+</data>
+<data name="lblOdevIslemleri" xml:space="preserve">
+<value>Ödev İşlemleri</value>
+</data>
+<data name="lblOdevDosyasi" xml:space="preserve">
+<value>Ödev Dosyası</value>
+</data>
+<data name="lblOdevTeslimi" xml:space="preserve">
+<value>Ödev Teslimi</value>
+</data>
+<data name="lblOdevAciklamasi" xml:space="preserve">
+<value>Ödev Açıklaması</value>
+</data>
+<data name="lblOdevMetni" xml:space="preserve">
+<value>Ödev Metni</value>
+</data>
+<data name="lblOdevAyarlari" xml:space="preserve">
+<value>Ödev Ayarları</value>
+</data>
+<data name="lblOdevGonderisi" xml:space="preserve">
+<value>Ödev Gönderisi</value>
+</data>
+<data name="lblOdevGonderimiKapali" xml:space="preserve">
+<value>Ödev Gönderimi Kapalı</value>
+</data>
+<data name="lblOdevGonderimi" xml:space="preserve">
+<value>Ödev Gönderimi</value>
+</data>
+<data name="lblOdevBasligi" xml:space="preserve">
+<value>Ödev Başlığı</value>
+</data>
+<data name="lblOdevGonderilmedi" xml:space="preserve">
+<value>Ödev Gönderilmedi</value>
+</data>
+<data name="lblOdevGonderildi" xml:space="preserve">
+<value>Ödev Gönderildi</value>
+</data>
+<data name="lblOdevler" xml:space="preserve">
+<value>Ödevler</value>
+</data>
+<data name="lblVerilenOdevler" xml:space="preserve">
+<value>Verilen Ödevler</value>
+</data>
+<data name="lblDerslerdeVerilenOdevler" xml:space="preserve">
+<value>Derslerde Verilen Ödevler</value>
+</data>
+<data name="lblKanalaErisimIzniOlanKisiler" xml:space="preserve">
+<value>Kanala Erişim İzni Olan Kişiler</value>
+</data>
+<data name="lblSadeceIzinVerilenler" xml:space="preserve">
+<value>Sadece İzin Verilenler</value>
+</data>
+<data name="lblSonTeslimTarihineGoreOtomatik" xml:space="preserve">
+<value>Son Teslim Tarihine Göre Otomatik</value>
+</data>
+<data name="lblDerseGozat" xml:space="preserve">
+<value>Derse Gözat</value>
+</data>
+<data name="lblDersSorumlusuOnayi" xml:space="preserve">
+<value>Ders Sorumlusunun Onayı İle</value>
+</data>
+<data name="lblIptal" xml:space="preserve">
+<value>İptal</value>
+</data>
+<data name="lblTakipIsteginiGeriAl" xml:space="preserve">
+<value>Takip İsteğini Geri Al</value>
+</data>
+<data name="lblGirisParolasiniDegistir" xml:space="preserve">
+<value>Giriş Parolasını Değiştir</value>
+</data>
+<data name="lblParolayiDegistir" xml:space="preserve">
+<value>Parolayı Değiştir</value>
+</data>
+<data name="lblKanalAdi" xml:space="preserve">
+<value>Kanal Adı</value>
+</data>
+<data name="lblKanalAyarlari" xml:space="preserve">
+<value>Kanal Ayarları</value>
+</data>
+<data name="msgDersinMesajKanalinaGitmekIcinTikla" xml:space="preserve">
+<value>Dersin mesajlaşma kanalına gitmek için buraya tıklayın</value>
+</data>
+<data name="msgDersiTakipIcinTikla" xml:space="preserve">
+<value>Dersi takip etmek için aşağıdaki düğmeyi tıklayın</value>
+</data>
+<data name="lblKapat" xml:space="preserve">
+<value>Kapat</value>
+</data>
+<data name="lblKapali" xml:space="preserve">
+<value>Kapalı</value>
+</data>
+<data name="lblOdevinVerilecegiDers" xml:space="preserve">
+<value>Ödevin Verileceği Ders</value>
+</data>
+<data name="lblVerildigiDers" xml:space="preserve">
+<value>Verildiği Ders</value>
+</data>
+<data name="lblOgrenciErisimKodlari" xml:space="preserve">
+<value>Dersi Öğrenci Erişim Kodları</value>
+</data>
+<data name="lblDerseKabulSekli" xml:space="preserve">
+<value>Derse Kabül Şekli</value>
+</data>
+<data name="lblDersinAdi" xml:space="preserve">
+<value>Dersin Adı</value>
+</data>
+<data name="lblDersinDurumu" xml:space="preserve">
+<value>Dersin Durumu</value>
+</data>
+<data name="lblDersler" xml:space="preserve">
+<value>Dersler</value>
+</data>
+<data name="lblVerildigiDersler" xml:space="preserve">
+<value>Verdiği Dersler</value>
+</data>
+<data name="lblPaylasildigiDersler" xml:space="preserve">
+<value>Paylaşıldığı Dersler</value>
+</data>
+<data name="lblYeniBirKanalOlustur" xml:space="preserve">
+<value>Yeni Bir Kanal Oluştur</value>
+</data>
+<data name="lblYeniBirDersOlustur" xml:space="preserve">
+<value>Yeni Bir Ders Oluştur</value>
+</data>
+<data name="lblHesabiOlustur" xml:space="preserve">
+<value>Hesabı Oluştur</value>
+</data>
+<data name="lblOlusturulmaTarihi" xml:space="preserve">
+<value>Oluşturulma Tarihi</value>
+</data>
+<data name="lblGecerliParola" xml:space="preserve">
+<value>Geçerli Parola</value>
+</data>
+<data name="lblGunKaldi" xml:space="preserve">
+<value>Gün Kaldı</value>
+</data>
+<data name="lblSonTeslimTarihi" xml:space="preserve">
+<value>Son Teslim Tarihi</value>
+</data>
+<data name="lblTeslimTarihi" xml:space="preserve">
+<value>Teslim Tarihi</value>
+</data>
+<data name="lblTumunuSil" xml:space="preserve">
+<value>Tümünü Sil</value>
+</data>
+<data name="lblOdeviSil" xml:space="preserve">
+<value>Ödevi Sil</value>
+</data>
+<data name="lblKoduSil" xml:space="preserve">
+<value>Kodu Sil</value>
+</data>
+<data name="lblDosyayiSil" xml:space="preserve">
+<value>Dosyayı Sil</value>
+</data>
+<data name="lblMesajiSil" xml:space="preserve">
+<value>Mesajı Sil</value>
+</data>
+<data name="lblHatirlaticiyiSil" xml:space="preserve">
+<value>Hatırlatıcıyı Sil</value>
+</data>
+<data name="lblTeslimDurumu" xml:space="preserve">
+<value>Teslim Durumu</value>
+</data>
+<data name="lblDetaylar" xml:space="preserve">
+<value>Detaylar</value>
+</data>
+<data name="lblKarşıdanYukle" xml:space="preserve">
+<value>Karşıdan Yükle</value>
+</data>
+<data name="lblOdevDosyaEkiniKarsidanYukle" xml:space="preserve">
+<value>Ödevin Dosya Ekini Karşıdan Yükle</value>
+</data>
+<data name="lblEposta" xml:space="preserve">
+<value>E-Posta</value>
+</data>
+<data name="msgGirilenEpostaDahaOnceKayitEdilmis" xml:space="preserve">
+<value>Girilen e-posta adresi daha önce kayıt edilmiş</value>
+</data>
+<data name="msgDersSorumlusuveyaDersAdiGir" xml:space="preserve">
+<value>Ders sorumlusunun veya dersin adını bu alana giriniz...</value>
+</data>
+<data name="msgOdevDegerlendirmePuaniniBuAlanaYaz" xml:space="preserve">
+<value>Ödevin değerlendirme puanını bu alana yazınız...</value>
+</data>
+<data name="msgDersSorumlusuTarafindanVerilenKoduGir" xml:space="preserve">
+<value>Dersin sorumlusu tarafından verilen erişim kodunuzu bu alan girin...</value>
+</data>
+<data name="lblHerkes" xml:space="preserve">
+<value>Herkes</value>
+</data>
+<data name="lblSureDolmus" xml:space="preserve">
+<value>Süre Dolmuş</value>
+</data>
+<data name="lblDosyaEki" xml:space="preserve">
+<value>Dosya Eki</value>
+</data>
+<data name="lblDosyaIndirmeKotasi" xml:space="preserve">
+<value>Dosya İndirme Kotası</value>
+</data>
+<data name="lblDosyaAdi" xml:space="preserve">
+<value>Dosya Adı</value>
+</data>
+<data name="lblDosyaAyarlari" xml:space="preserve">
+<value>Dosya Ayarları</value>
+</data>
+<data name="lblDosyalar" xml:space="preserve">
+<value>Dosyalar</value>
+</data>
+<data name="lblOdevlerleGonderilenler" xml:space="preserve">
+<value>Ödevlerle Gönderilenler</value>
+</data>
+<data name="lblPaylasiminizaAcikDokumanlar" xml:space="preserve">
+<value>Paylaşımınıza açık Dökümanlar</value>
+</data>
+<data name="msgPaylasilacakDersiBul" xml:space="preserve">
+<value>Paylaşılacak dersi bul...</value>
+</data>
+<data name="msgPaylasilacakKisiyiBul" xml:space="preserve">
+<value>Paylaşılacak kişiyi bul...</value>
+</data>
+<data name="lblSolBariSabitle" xml:space="preserve">
+<value>Sol Barı Sabitle</value>
+</data>
+<data name="lblUstBariSabitle" xml:space="preserve">
+<value>Üst Barı Sabitle</value>
+</data>
+<data name="lblDersiTakipEt" xml:space="preserve">
+<value>Dersi Takip Et</value>
+</data>
+<data name="lblTakipEdilenDersler" xml:space="preserve">
+<value>Takip Edilen Dersler</value>
+</data>
+<data name="lblParolamiUnuttum" xml:space="preserve">
+<value>Parolamı Unuttum</value>
+</data>
+<data name="lblDosyalarimdan" xml:space="preserve">
+<value>Dosyalarımdan</value>
+</data>
+<data name="lblYeniBirOdevVer" xml:space="preserve">
+<value>Yeni Bir Ödev Ver</value>
+</data>
+<data name="lblSayfayaGit" xml:space="preserve">
+<value>Sayfaya git</value>
+</data>
+<data name="lblMerhaba" xml:space="preserve">
+<value>Merhaba</value>
+</data>
+<data name="lblYardim" xml:space="preserve">
+<value>Yardım</value>
+</data>
+<data name="lblHaftalikSaat" xml:space="preserve">
+<value>Haftalık Saat</value>
+</data>
+<data name="lblTakipEtmekIcinDersAramakIstiyorum" xml:space="preserve">
+<value>Takip Etmek İstediğim Dersi Aramak istiyorum</value>
+</data>
+<data name="lblInceleveDegerlendir" xml:space="preserve">
+<value>İncele ve Değerlendir</value>
+</data>
+<data name="lblIncelendi" xml:space="preserve">
+<value>İncelendi</value>
+</data>
+<data name="lblEgitmenTarafindanIncelendi" xml:space="preserve">
+<value>Eğitmen Tarafından İncelendi</value>
+</data>
+<data name="lblInceleniyor" xml:space="preserve">
+<value>İnceleniyor...</value>
+</data>
+<data name="lblDersinSorumlusu" xml:space="preserve">
+<value>Dersin Sorumlusu</value>
+</data>
+<data name="lblOdeviVeren" xml:space="preserve">
+<value>Ödevi Veren</value>
+</data>
+<data name="lblEgitmenMesaji" xml:space="preserve">
+<value>Eğitmen Mesajı</value>
+</data>
+<data name="lblEgitmenDogrulamaKodu" xml:space="preserve">
+<value>Eğitmen Doğrulama Kodu</value>
+</data>
+<data name="msgGirilenEgitmenKayitKoduSuresiDolmus" xml:space="preserve">
+<value>Girilen eğitmen kayıt kodunun süresi dolmuş</value>
+</data>
+<data name="msgGirilenEgitmenKayitKoduGecersiz" xml:space="preserve">
+<value>Girilen eğitmen kayıt kodu geçersiz</value>
+</data>
+<data name="lblTamamlandimi" xml:space="preserve">
+<value>Tamamlandı mı ?</value>
+</data>
+<data name="lblTeslimEdildimi" xml:space="preserve">
+<value>Teslim Edildi Mi ?</value>
+</data>
+<data name="lblKatildi" xml:space="preserve">
+<value>katıldı</value>
+</data>
+<data name="lblGiris" xml:space="preserve">
+<value>Giriş</value>
+</data>
+<data name="msgGirisBasarisiz" xml:space="preserve">
+<value>Giriş başarısız. Lütfen kullanıcı adınızı ve parolanızı kontrol edin</value>
+</data>
+<data name="lblTamamlandiOlarakIsaretle" xml:space="preserve">
+<value>Tamamlandı olarak işaret koy</value>
+</data>
+<data name="lblTamamlanmadiOlarakIsaretle" xml:space="preserve">
+<value>Tamamlanmadı olarak işaret koy</value>
+</data>
+<data name="lblMesajlar" xml:space="preserve">
+<value>Mesajlar</value>
+</data>
+<data name="lblMesajlasma" xml:space="preserve">
+<value>Mesajlaşma</value>
+</data>
+<data name="lblMesajKanali" xml:space="preserve">
+<value>Mesaj Kanalı</value>
+</data>
+<data name="lblYeniHesap" xml:space="preserve">
+<value>Yeni Hesap</value>
+</data>
+<data name="lblYeniEgitmenHesabi" xml:space="preserve">
+<value>Yeni Eğitmen Hesabı</value>
+</data>
+<data name="lblYeniParola" xml:space="preserve">
+<value>Yeni Parola</value>
+</data>
+<data name="lblYeniParolaTekrar" xml:space="preserve">
+<value>Yeni Parola (Tekrar)</value>
+</data>
+<data name="lblYeniOgrenciHesabi" xml:space="preserve">
+<value>Yeni Öğrenci Hesabı</value>
+</data>
+<data name="lblHayir" xml:space="preserve">
+<value>Hayır</value>
+</data>
+<data name="lblGonderilmemis" xml:space="preserve">
+<value>Gönderilmemiş</value>
+</data>
+<data name="lblYuklemeAdedi" xml:space="preserve">
+<value>Yükleme Adedi</value>
+</data>
+<data name="lblOgrenciSayisi" xml:space="preserve">
+<value>Öğrenci Sayısı</value>
+</data>
+<data name="lblTamam" xml:space="preserve">
+<value>Tamam</value>
+</data>
+<data name="lblSadeceDersSorumlusuTarafindan" xml:space="preserve">
+<value>Sadece Ders Sorumlusu Tarafından</value>
+</data>
+<data name="lblSahibi" xml:space="preserve">
+<value>Sahibi</value>
+</data>
+<data name="lblPasifArsivde" xml:space="preserve">
+<value>Pasif (Arşivde)</value>
+</data>
+<data name="lblParola" xml:space="preserve">
+<value>Parola</value>
+</data>
+<data name="lblParolaTekrar" xml:space="preserve">
+<value>Parola(Tekrar)</value>
+</data>
+<data name="msgLutfenAsagidakiAlanlariDoldur" xml:space="preserve">
+<value>Lütfen aşağıdaki alanları doldurun</value>
+</data>
+<data name="lblListeyiYazdir" xml:space="preserve">
+<value>Listeyi Yazdır</value>
+</data>
+<data name="lblOzel" xml:space="preserve">
+<value>Özel</value>
+</data>
+<data name="lblOzelSadeceIzinVerilenler" xml:space="preserve">
+<value>Özel (Sadece İzin Verilenler)</value>
+</data>
+<data name="lblProfil" xml:space="preserve">
+<value>Profil</value>
+</data>
+<data name="lblProfilBilgileri" xml:space="preserve">
+<value>Profil Bilgileri</value>
+</data>
+<data name="lblProfilFotografi" xml:space="preserve">
+<value>Profil Fotoğrafı</value>
+</data>
+<data name="lblHerkeseAcik" xml:space="preserve">
+<value>Herkese Açık</value>
+</data>
+<data name="lblKota" xml:space="preserve">
+<value>Kota</value>
+</data>
+<data name="lblEgitmenKayit" xml:space="preserve">
+<value>Eğitmen Kayıt</value>
+</data>
+<data name="lblOgrenciKayit" xml:space="preserve">
+<value>Öğrenci Kayıt</value>
+</data>
+<data name="lblKalanSure" xml:space="preserve">
+<value>Kalan Süre</value>
+</data>
+<data name="lblHatirlaticilar" xml:space="preserve">
+<value>Hatırlatıcılar</value>
+</data>
+<data name="lblKaldir" xml:space="preserve">
+<value>Kaldır</value>
+</data>
+<data name="lblDosyayiDerstenKaldir" xml:space="preserve">
+<value>Dosyayı Dersten Kaldır</value>
+</data>
+<data name="lblSeciliKisiIcinErisimIzniniKaldir" xml:space="preserve">
+<value>Seçili Kişi için Erişim İznini Kaldır</value>
+</data>
+<data name="lblTakipIcinDersAra" xml:space="preserve">
+<value>Takip Etmek için Ders Ara</value>
+</data>
+<data name="lblDosyaBul" xml:space="preserve">
+<value>Dosya bul...</value>
+</data>
+<data name="lblOgrenciAra" xml:space="preserve">
+<value>Öğrenci ara...</value>
+</data>
+<data name="msgKisiyadaDersAra" xml:space="preserve">
+<value>Kişi yada ders ara...</value>
+</data>
+<data name="msgErisimizniIcinKisiBul" xml:space="preserve">
+<value>Erişim izni verilecek olan kişiyi bul...</value>
+</data>
+<data name="lblTumBildirimleriGor" xml:space="preserve">
+<value>Tüm Bildirimleri Gör...</value>
+</data>
+<data name="lblTumHatirlaticilariGor" xml:space="preserve">
+<value>Tüm Hatırlatıcıları Gör...</value>
+</data>
+<data name="lblOdeveGozat" xml:space="preserve">
+<value>Ödeve Gözat</value>
+</data>
+<data name="lblGoruntuleyenKisiSayisi" xml:space="preserve">
+<value>Görüntüleyen Kişi Sayısı</value>
+</data>
+<data name="lblDosyaSec" xml:space="preserve">
+<value>Dosya Seç...</value>
+</data>
+<data name="lblDosyalardanSec" xml:space="preserve">
+<value>Dosyalardan Seç</value>
+</data>
+<data name="lblUniversiteSec" xml:space="preserve">
+<value>Üniversite Seç...</value>
+</data>
+<data name="lblGonder" xml:space="preserve">
+<value>Gönder</value>
+</data>
+<data name="lblTakipIstegiGonder" xml:space="preserve">
+<value>Takip İsteği Gönder</value>
+</data>
+<data name="lblOdeviGonderen" xml:space="preserve">
+<value>Ödevi Gönderen</value>
+</data>
+<data name="lblOturumuKapat" xml:space="preserve">
+<value>Oturumu Kapat</value>
+</data>
+<data name="lblMesajlasmayaBasla" xml:space="preserve">
+<value>Mesajlaşmaya Başla</value>
+</data>
+<data name="lblDurum" xml:space="preserve">
+<value>Durum</value>
+</data>
+<data name="lblSeciliDersicinPaylasimiDurdur" xml:space="preserve">
+<value>Seçili Ders için Paylaşımı Durdur</value>
+</data>
+<data name="lblSeciliKisiicinPaylasimiDurdur" xml:space="preserve">
+<value>Seçili Kişi için Paylaşımı Durdur</value>
+</data>
+<data name="lblOdevleriçinDepolamaAlani" xml:space="preserve">
+<value>Ödevler için Depolama Alanı</value>
+</data>
+<data name="lblGonderenOgrencininMesaji" xml:space="preserve">
+<value>Gönderen Öğrencinin Mesajı</value>
+</data>
+<data name="lblOgrenciler" xml:space="preserve">
+<value>Öğrenciler</value>
+</data>
+<data name="lblOnayBekleyenOgrenciler" xml:space="preserve">
+<value>Onay Bekleyen Öğrenciler</value>
+</data>
+<data name="lblOdeviGondermeTarihi" xml:space="preserve">
+<value>Ödevi Gönderme Tarihi</value>
+</data>
+<data name="lblOdeviGonder" xml:space="preserve">
+<value>Ödevi Gönder</value>
+</data>
+<data name="lblOdeviGonderdi" xml:space="preserve">
+<value>Ödevi Gönderdi</value>
+</data>
+<data name="lblSoyad" xml:space="preserve">
+<value>Soyad</value>
+</data>
+<data name="msgSistemdeSizeAitDersBulunamadi" xml:space="preserve">
+<value>Sistemde size ait bir ders bulunamadı. Yeni bir ders oluşturmak için Sol Menü'den</value>
+</data>
+<data name="msgErisimKodugirDugmeyeTikla" xml:space="preserve">
+<value>Öğrencilerin bu dersi takipleri, dersin sorumlusu tarafından verilen erişim kodları yardımıyla yapılmaktadır. Lütfen size verilen erişimi kodunu aşağıdaki alan girip Dersi Takip et düğmesine tıklayın.</value>
+</data>
+<data name="msgEklenecekDokumanileIlgiliKisaAciklamaGir" xml:space="preserve">
+<value>Eklenecek döküman ile ilgili kısa açıklamanızı bu alana girin...</value>
+</data>
+<data name="msgOdevIleilgiliKisaAciklamaGir" xml:space="preserve">
+<value>Ödev ile ilgili kısa açıklamanızı bu alana girin...</value>
+</data>
+<data name="msgDerseEklenecekDokumanileilgiliKisaAciklamaGir" xml:space="preserve">
+<value>Derse eklenecek dosya ile ilgili kısa açıklamanızı bu alana girin...</value>
+</data>
+<data name="msgOgrenciyeOdevileIlgiliMesajYaz" xml:space="preserve">
+<value>Öğrenciye ödevle ilgili mesajınızı bu alana yazınız...</value>
+</data>
+<data name="msgPanoyaEklemekIstediginMesajiYaz" xml:space="preserve">
+<value>Panoya eklemek istediğiniz mesajı bu alana yazın...</value>
+</data>
+<data name="lblTakibiBirak" xml:space="preserve">
+<value>Takibi Bırak</value>
+</data>
+<data name="lblDersiTakibiBirak" xml:space="preserve">
+<value>Dersi Takibi Bırak</value>
+</data>
+<data name="lblUniversite" xml:space="preserve">
+<value>Üniversite</value>
+</data>
+<data name="lblGuncelle" xml:space="preserve">
+<value>Güncelle</value>
+</data>
+<data name="lblDosyayiYukle" xml:space="preserve">
+<value>Dosyayı Yükle</value>
+</data>
+<data name="lblKullanilan" xml:space="preserve">
+<value>Kullanılan</value>
+</data>
+<data name="lblKullanici" xml:space="preserve">
+<value>Kullanıcı</value>
+</data>
+<data name="lblDosyayiYukleyenKullanicilar" xml:space="preserve">
+<value>Dosyayı Bilgisayarına Yükleyen Kullanıcılar</value>
+</data>
+<data name="lblPaylasildigiKisiler" xml:space="preserve">
+<value>Paylaşıldığı Kişiler</value>
+</data>
+<data name="lblErisimKodlariKullanilarak" xml:space="preserve">
+<value>Erişim Kodları Kullanılarak</value>
+</data>
+<data name="msgMesajiniziBurayaYazin" xml:space="preserve">
+<value>Mesajınızı buraya yazın</value>
+</data>
+<data name="lblEvet" xml:space="preserve">
+<value>Evet</value>
+</data>
+<data name="msgSuandaBirDersiTakipEtmiyorsunuz" xml:space="preserve">
+<value>Şu anda herhangi bir dersi takip etmiyorsunuz.</value>
+</data>
+<data name="msgDerseKatilmakIcinOgrenciOlmakGerekiyor" xml:space="preserve">
+<value>Derse katılabilmeniz için öğrenci olmanız gerekmektedir.</value>
+</data>
+<data name="lblDersinde" xml:space="preserve">
+<value>dersinde</value>
+</data>
+<data name="lblOdeviniGonderenler" xml:space="preserve">
+<value>Ödevini Gönderenler</value>
+</data>
+<data name="lblOdevlerleGonderilenDokumanlar" xml:space="preserve">
+<value>Ödevlerle Gönderilen Dökümanlar</value>
+</data>
+<data name="lblOgrencilerinDerseKabulSekli" xml:space="preserve">
+<value>Öğrencilerin Derse Kabül Şekli</value>
+</data>
+
+<data name="msgKritereUygunKisiYok" xml:space="preserve">
+  <value>Aradığınız kritere uygun kişi bulunamadı</value>
+ </data>
+ 
+  <data name="msgKritereUygunDersYok" xml:space="preserve">
+         <value>Aradığınız kritere uygun ders bulunamadı</value>
+  </data>
+
+       <data name="lblKisiSayfasinaGozat" xml:space="preserve">
+    <value>Kişinin Sayfasına Git</value>
+  </data>
+
+    <data name="lblDersSayfasinaGozat" xml:space="preserve">
+    <value>Ders Sayfasına Git</value>
+  </data>
+
+    <data name="lblArama" xml:space="preserve">
+   <value>Arama</value>
+  </data>
+    
+   <data name="lblAramaSonuclari" xml:space="preserve">
+    <value>Arama Sonuçları</value>
+  </data>
+
+    <data name="lblBulunanKisiler" xml:space="preserve">
+    <value>Bulunan Kişiler</value>
+  </data>
+    
+   <data name="lblBulunanDersler" xml:space="preserve">
+    <value>Bulunan Dersler</value>
+</data>
+
+ 
+<data name="lblIstekTarihi" xml:space="preserve">
+    <value>İstek Tarihi</value>
+</data>
+
+<data name="lblOnayTarihi" xml:space="preserve">
+    <value>Onay Tarihi</value>
+</data>
+
+<data name="lblOnayla" xml:space="preserve">
+    <value>Onayla</value>
+</data>
+
+<data name="lblReddet" xml:space="preserve">
+    <value>Reddet</value>
+</data>
+
+<data name="lblDerseErisimiDurdur" xml:space="preserve">
+    <value>Derse Erişimini Durdur</value>
+</data>
+
+<data name="lblKimligiDogrulanmisKullanici" xml:space="preserve">
+    <value>Kimliği Doğrulanmış Kullanıcı</value>
+</data>
+
+<data name="lblHata" xml:space="preserve">
+    <value>Hata</value>
+</data>
+
+<data name="lblOlasiCozumler" xml:space="preserve">
+    <value>Olası Çözümler</value>
+</data>
+
+<data name="lblGeriDon" xml:space="preserve">
+    <value>Geri Dön</value>
+</data>
+
+<data name="lblAnasayfayaGit" xml:space="preserve">
+    <value>Anasayfaya Git</value>
+</data>
+
+<data name="msgIslemSirasindaHata" xml:space="preserve">
+    <value>İşlem sırasında bir hata meydana geldi</value>
+</data>
+
+<data name="msgBuDosyayaErismekIcinIzinYok" xml:space="preserve">
+    <value>Bu Dosya için Erişim Hakkına Sahip Değilsiniz.</value>
+</data>
+
+<data name="msgBuSayfayaErismekIcinEgitmenOlunmali" xml:space="preserve">
+    <value>Bu sayfaya erişebilmeniz için eğitmen olmanız gereklidir.</value>
+</data>
+
+<data name="msgDersBulunamadi" xml:space="preserve">
+    <value>Ders bulunamadı</value>
+</data>
+
+<data name="msgDerseErisimEngellendi" xml:space="preserve">
+    <value>Derse olan erişim engellendi</value>
+</data>
+
+<data name="msgBuSayfayaErismekIcinOgrenciOlunmali" xml:space="preserve">
+    <value>Bu sayfaya erişebilmeniz için öğrenci olmanız gereklidir.</value>
+</data>
+
+<data name="msgDersErisimKoduBulunamadi" xml:space="preserve">
+    <value>Ders erişim kodu bulunamadı</value>
+</data>
+
+<data name="msgKanalBulunamadi" xml:space="preserve">
+    <value>Kanal Bulunamadı</value>
+</data>
+
+<data name="msgOzelKanallaraErisimIcinKanalinSahibiIzinVermeli" xml:space="preserve">
+    <value>Özel kanallara erişebilmeniz için kanalın sahibi tarafından size erişim izni verilmesi gereklidir.</value>
+</data>
+
+<data name="msgBuDosyaninSahibininKotasiDolmus" xml:space="preserve">
+    <value>Bu dosyanın sahibi olan eğitmenin dosya indirilme kotası dolmuş durumda</value>
+</data>
+<data name="msgKanalaErisimEngellendi" xml:space="preserve">
+    <value>Kanala erişim engellendi</value>
+</data>
+<data name="lblOgrenci" xml:space="preserve">
+    <value>Öğrenci</value>
+</data>
+
+<data name="lblLutfenBekle" xml:space="preserve">
+    <value>Lütfen Bekleyin...</value>
+</data>
+
+<data name="lblCanliDers" xml:space="preserve">
+    <value>Canlı Ders</value>
+</data>
+
+    <data name="lblErisimKoduKullanarakDerseKatil" xml:space="preserve">
+    <value>Erişim Kodu Kullanarak Bir Derse Katıl</value>
+</data>
+</root>

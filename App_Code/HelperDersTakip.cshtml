@@ -1,0 +1,77 @@
+﻿@helper DerseGoreKullanicilar(int DersID,int Durum) {
+
+  var db=Database.Open("fb1ae");
+  var queryKullanici=db.QuerySingle("SELECT * FROM Profiles WHERE userID=@0",WebSecurity.CurrentUserId);
+   
+ var dil=queryKullanici.Dil;
+  var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0",DersID);
+  var queryTakipciler=db.Query("SELECT * FROM DersTakip WHERE DersID=@0 AND Durum=@1",DersID,Durum);
+  
+     <table id="lstDersTakip" class="table table-hover">
+        <thead>
+            <tr>
+                <th>@Resources.Resource.lblOgrenci</th>
+                @if (Durum==1)
+                {
+                    <th>@Resources.Resource.lblIstekTarihi</th>
+                }
+                else if (Durum==2)
+                {
+                    <th>@Resources.Resource.lblOnayTarihi</th>
+                }
+                
+                @if (queryDers.UserID==WebSecurity.CurrentUserId)
+                {
+                    <th></th>
+                }
+            </tr>
+        </thead>
+         <tbody>
+            @foreach (var takipci in queryTakipciler)
+            {
+                
+                <tr>
+                    <td>
+                       
+                           @HelperProfil.KucukKunye(takipci.UserID)
+
+                    
+                    </td>
+                    @if (Durum==1)
+                    {
+                        <td>
+                            @Genel.DateLabel(takipci.IstekTarihi,dil)
+                        </td>
+                    }
+                    else {
+                        <td>
+                        
+                           
+                                @Genel.DateLabel(takipci.OnayTarihi,dil)
+                            
+                       
+                        </td>
+                        }
+                     @if (queryDers.UserID==WebSecurity.CurrentUserId)
+                        { 
+                            <td>
+                                @if (takipci.Durum==1)
+                                {
+                                    <button class="btn btn-success btnDersTakipOnayVer btn-sm" data-DersID="@takipci.DersID" data-UserID="@takipci.UserID" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.lblOnayla"><i class="fa fa-check"></i></button>
+                                    <button class="btn btn-danger btnDersTakipReddet btn-sm" data-DersID="@takipci.DersID" data-UserID="@takipci.UserID" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.lblReddet"><i class="fa fa-remove"></i></button>
+                                }
+                                else if (takipci.Durum==2)
+                                {
+                                    <a href="@Href("~/Ders/OgrenciIstatistikleri")?DersID=@queryDers.DersID&OgrenciID=@takipci.UserID" class="btn btn-sm btn-info">İstatistikler</a>
+                                    <button class="btn btn-danger btnDersTakipEngelle btn-sm" data-DersID="@takipci.DersID" data-UserID="@takipci.UserID" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.lblDerseErisimiDurdur"><i class="fa fa-remove"></i></button>
+                                    
+                                }
+                            </td>
+                        }
+                    
+                </tr>
+            }
+         </tbody>
+    </table>
+db.Close();
+}

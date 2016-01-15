@@ -1,0 +1,102 @@
+﻿@using Microsoft.WindowsAzure.Storage;
+@using Microsoft.WindowsAzure.Storage.Auth;
+@using Microsoft.WindowsAzure.Storage.Blob;
+@{
+ if (!WebSecurity.IsAuthenticated)
+    {
+        Response.Redirect("~/Hesap/Giris?returnUrl=Dosya/DosyaID=" + Request.QueryString["DosyaID"]);
+                  
+    }
+
+ bool erisimAcik=false;
+ 
+ var dosyaID=Request.QueryString["DosyaID"];
+
+     if (string.IsNullOrEmpty(dosyaID))
+     {
+        Response.Redirect("~/Shared/Hata");
+        Response.End();
+     }
+  var db=Database.Open("fb1ae");
+ 
+  var queryDosya= db.QuerySingle("SELECT * FROM Dosya WHERE DosyaID=@0 AND Silindi=0",dosyaID);
+
+  if (queryDosya==null)
+  {
+       Response.Redirect("~/Shared/Hata");
+        Response.End();
+  }
+
+  if (queryDosya.UserID==WebSecurity.CurrentUserId)
+  {
+      erisimAcik=true;
+  }
+  
+  if (queryDosya.Erisim==1)
+  {
+      erisimAcik=true;
+  }
+  
+  else if (queryDosya.Erisim==2)
+  {
+      if (queryDosya.UserID!=WebSecurity.CurrentUserId)
+      {
+          var kisiIzni=db.QueryValue("SELECT COUNT(*) FROM DosyaIzinKisi WHERE DosyaID=@0 AND UserID=@1",dosyaID,WebSecurity.CurrentUserId)>0;
+          if (kisiIzni)
+          {
+              erisimAcik=true;
+          }
+          else
+          {
+              erisimAcik=db.QueryValue("SELECT COUNT(*) FROM DosyaIzinDers WHERE DosyaID=@0 AND DersID IN (SELECT DersID FROM DersTakip WHERE UserID=@1 AND Durum=2) AND DersID NOT IN (select DersID from Ders WHERE Arsivlendi=1)",dosyaID,WebSecurity.CurrentUserId)>0;
+          }
+      }
+  }
+  
+  db.Close();
+ 
+ if (erisimAcik)
+ {
+   var bantGenisligiKota=db.QueryValue("SELECT UyelikTurleri.BantGenisligi FROM Profiles INNER JOIN UyelikTurleri ON Profiles.UyelikTuru=UyelikTurleri.UyelikID WHERE Profiles.userID=@0",queryDosya.UserID);
+   var kullanilanKota=db.QueryValue("SELECT ISNULL(SUM(Dosya.Boyut),0) FROM Dosya INNER JOIN DosyaIndirilen ON Dosya.DosyaID=DosyaIndirilen.DosyaID WHERE Dosya.UserID=@0 AND month(DosyaIndirilen.Tarih)=@1",queryDosya.UserID,DateTime.Now.Month);
+   
+   if (kullanilanKota+queryDosya.Boyut>bantGenisligiKota)
+   {
+       db.Close();
+       Response.Redirect("~/Shared/Hata?Kod=bantgenisligiyetersiz");
+       Response.End();
+   }
+    db.Execute("INSERT INTO DosyaIndirilen(DosyaID,UserID) VALUES (@0,@1)",dosyaID,WebSecurity.CurrentUserId);
+ 
+    var azureStorageHesapAdi=System.Configuration.ConfigurationManager.AppSettings["AzureStorageHesapAdi"];	
+    var azureStorageHesapAnahtari=System.Configuration.ConfigurationManager.AppSettings["AzureStorageHesapAnahtari"];		
+    var connString=string.Format("DefaultEndpointsProtocol=http;AccountName={0};AccountKey={1};",azureStorageHesapAdi,azureStorageHesapAnahtari);
+    CloudStorageAccount storageHesap = CloudStorageAccount.Parse(connString);		
+    var blobClient = storageHesap.CreateCloudBlobClient();
+    var container = blobClient.GetContainerReference("dosyalar");
+   
+
+    CloudBlockBlob blob = container.GetBlockBlobReference(queryDosya.KayitAdi);
+    blob.Properties.ContentDisposition = "attachment; filename=\"" + Genel.IngilizceKarakterlereCevir(queryDosya.DosyaAdi) + "\"";
+    blob.SetProperties();
+    var SaS = blob.GetSharedAccessSignature(
+               new SharedAccessBlobPolicy()
+               {
+                   Permissions = SharedAccessBlobPermissions.Read,
+                   SharedAccessExpiryTime = DateTime.UtcNow.AddDays(1)
+               });
+
+    var token= string.Format("{0}{1}", blob.Uri, SaS);
+    
+    Response.Redirect(token,true);
+    
+
+ }
+ else
+ {
+     Response.Redirect("~/Shared/Hata?Kod=dosyayaerisimengellendi");
+     Response.End();
+     
+ }
+}
+

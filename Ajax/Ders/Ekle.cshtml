@@ -1,0 +1,65 @@
+﻿@{
+  
+  // Bu prosedür sisteme yeni bir ders ekler.
+  // Bu prosedürü sadece oturumu açmış ve Öğretici rolünde olan bir kullanıcı çalıştırabilir.
+ 
+ if (WebSecurity.IsAuthenticated==false || Roles.IsUserInRole("Ogretici")==false)
+     {    
+        Response.StatusCode=401;
+        Response.End(); 
+     }
+     
+     // Formla birlikte dönderilen ders bilgilerini oku
+     var dersAdi=Request["DersAdi"];      
+     var aciklama=Request["Aciklama"];
+     var kabulSekli=Request["KabulSekli"];
+     var aramalardaGoster=Request["AramalardaGoster"];
+
+     // Dersin adı mutlaka olmalı eğer ders adı gönderilmemiş ise hata kodu döndür.
+     if (string.IsNullOrEmpty(dersAdi))
+     {
+       
+       Response.StatusCode=501;
+       Response.End();
+     }
+
+     var db=Database.Open("fb1ae");
+  
+     var queryKullanici=db.QuerySingle("SELECT * FROM Profiles INNER JOIN UyelikTurleri ON Profiles.UyelikTuru=UyelikTurleri.UyelikID WHERE Profiles.userID=@0",WebSecurity.CurrentUserId);
+
+     Random r=new Random();
+     
+     // Ders için rastgele bir ID oluştur.        
+     var yeniDersID=r.Next(1000,1000000);
+     
+     // ID daha önce kullanılmamış olmalı. Kontrol et. Kullanılmışsa, kullanılmamış bir kod bulana kadar dene
+     while (db.QueryValue("SELECT COUNT(*) FROM Ders WHERE DersID=@0",yeniDersID)>0)
+        {
+            yeniDersID=r.Next(1000,1000000);
+        }
+
+      // Yeni bir ders kabül kodu üret
+    var kabulKodu=KodUret.YeniKod(5);
+
+    // Bu kod daha önce kullanılmamış olmalı. Eğer kullanılmış ise kullanılmamış bulana kadar dene
+    while (db.QueryValue("SELECT COUNT(*) FROM Ders WHERE KabulKodu=@0",kabulKodu)>0)
+       {
+            kabulKodu=KodUret.YeniKod(5);
+       }
+
+
+      // Dersi veritabanına ekle
+      db.Execute("INSERT INTO Ders(DersID,DersAdi,Aciklama,UserID,KabulSekli,AramalardaGoster,KabulKodu) VALUES(@0,@1,@2,@3,@4,@5,@6)",yeniDersID,dersAdi,aciklama,WebSecurity.CurrentUserId,kabulSekli,aramalardaGoster,kabulKodu);
+      
+    
+      // Ders için bir yönlendirme adresi ekle ilk eklenen dersler için Yönlendirme adresleri, "http://sistemadres/dDersID" formatındadır Örnek olarak http://sistemadres/d34245
+      db.Execute("INSERT INTO Yonlendir(Kod,Url) VALUES (@0,@1)",kabulKodu,"~/Ders/?DersID=" + yeniDersID.ToString());
+      var queryEklenenDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0",yeniDersID);
+       //Eklenen ders bilgilerini JSON formatında arayüze geri döndür.
+      Json.Write(queryEklenenDers, Response.Output);
+      db.Close();   
+      Response.ContentType = "application/json";
+      Response.End();         
+}
+
+

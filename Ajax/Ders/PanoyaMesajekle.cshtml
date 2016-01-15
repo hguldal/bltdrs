@@ -1,0 +1,75 @@
+﻿@{
+    
+/*----------------------------------------------------------------------------------
+    Bu prosedür ders panosuna bir mesaj ekler.
+    Bu prosedürü sadece dersin sahibi ve dersin takipçisi çalıştırabilir.
+  ---------------------------------------------------------------------------------*/
+    if (!WebSecurity.IsAuthenticated)
+   
+        {
+            Response.StatusCode=401;
+            Response.End();
+                   
+        }  
+   // DersID ve mesaj metnini oku
+    var DersID=Request["DersID"];
+    var mesajMetni=Request["MesajMetni"];
+
+    // DersID boş olamaz. Eğer boşsa hata kodu döndür.
+    if (string.IsNullOrEmpty(DersID))
+     {
+    
+       Response.StatusCode=500;
+       Response.End();
+     }
+
+     // Mesaj metni de boş olamaz. Eğer boşsa hata kodu döndür.
+     if (string.IsNullOrEmpty(mesajMetni))
+     {
+    
+       Response.StatusCode=500;
+       Response.End();
+     }
+
+
+     var db=Database.Open("fb1ae");
+ 
+     // Ders bilgilerini veritabanından oku
+     var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0",DersID);
+     
+     // İşlemi yapan kullanıcı dersi takip ediyor mu kontrol et.
+     var takipci=(db.QueryValue("SELECT COUNT(*) FROM DersTakip WHERE UserID=@0 AND DersID=@1 AND Durum=2",WebSecurity.CurrentUserId,DersID)>0);
+
+     // İşlemi yapan kullanıcı ya takipçi ya da dersin sahibi olmalı bunu kontrol et. Eğer öyleyse mesajı panoya ekle
+    if (WebSecurity.CurrentUserId==queryDers.UserID || takipci==true)
+    {
+        db.Execute("INSERT INTO DersPano(DersID,PaylasanUserID,Metin) VALUES(@0,@1,@2)",DersID,WebSecurity.CurrentUserId,mesajMetni);
+        
+        // Eklenen mesaja ders için bir aktivite oluştur.
+        var panoOgesiID=db.GetLastInsertId();
+        db.Execute("INSERT INTO Aktivite(UserID,DersID,Renk,Ikon,URL,IlaveMetin,IliskiliOge,EylemID) VALUES(@0,@1,@2,@3,@4,@5,@6,@7)",WebSecurity.CurrentUserId,queryDers.DersID,"info","fa-clipboard",Href("~/Ders/?DersID=" + queryDers.DersID + "&Liste=pano"),mesajMetni,"drspno" + panoOgesiID.ToString(),2);
+        
+        // Aktivite için bir bildirim oluştur.
+        db.Execute("INSERT INTO Bildirim(Url,EylemiYapanUserID,IliskiliOge,EylemID,DersID) VALUES(@0,@1,@2,@3,@4)","~/Ders/?DersID=" + DersID + "&Liste=pano",WebSecurity.CurrentUserId,"drspno" + panoOgesiID.ToString(),4,queryDers.DersID);
+        var eklenenBildirimID=db.GetLastInsertId();
+   
+        var queryDersiTakipEdenler=db.Query("SELECT * FROM DersTakip WHERE DersID=@0 AND Durum=2",DersID);
+            
+        // Bu bildirim dersi takip eden tüm kullanıcılar ve dersin sahibi için okunması gereken bir bildirim        
+
+        db.Execute("INSERT INTO BildirimOkunmasiGereken(UserID,BildirimID) (SELECT UserID,@0 FROM DersTakip WHERE DersID=@1 AND Durum=2 UNION SELECT UserID,@0 FROM Ders WHERE DersID=@1)",eklenenBildirimID,DersID);
+        
+        db.Close();
+        Response.Write(panoOgesiID);
+        Response.End();
+    }
+    else // işlemi yapan kullanıcı ders sahibi veya dersin takipçisi değilse hata kodu döndür.
+    {
+        Response.StatusCode=400;
+        Response.End();
+    }
+    
+}
+
+
+

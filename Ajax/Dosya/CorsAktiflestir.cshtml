@@ -1,0 +1,44 @@
+﻿
+@using Microsoft.WindowsAzure.Storage;
+@using Microsoft.WindowsAzure.Storage.Auth;
+@using Microsoft.WindowsAzure.Storage.Blob;
+@using Microsoft.WindowsAzure.Storage.Shared.Protocol;
+
+@{
+     
+      if (WebSecurity.IsAuthenticated==false || Roles.IsUserInRole("Admin")==false)
+     {
+        Response.StatusCode=400;
+        Response.End();
+    }
+    var dosyaAdi=Request["DosyaAdi"];
+    
+    var azureStorageHesapAdi=System.Configuration.ConfigurationManager.AppSettings["AzureStorageHesapAdi"];	
+    var azureStorageHesapAnahtari=System.Configuration.ConfigurationManager.AppSettings["AzureStorageHesapAnahtari"];		
+    var connString=string.Format("DefaultEndpointsProtocol=http;AccountName={0};AccountKey={1};",azureStorageHesapAdi,azureStorageHesapAnahtari);
+    CloudStorageAccount storageHesap = CloudStorageAccount.Parse(connString);		
+ 
+    var blobClient = storageHesap.CreateCloudBlobClient();
+           
+    
+    ServiceProperties blobServiceProperties = blobClient.GetServiceProperties();
+
+    
+    blobServiceProperties.Cors = new CorsProperties();
+
+    blobServiceProperties.Cors.CorsRules.Add(new CorsRule()
+            {
+                AllowedHeaders = new List<string>() { "*" },
+                AllowedMethods = CorsHttpMethods.Put | CorsHttpMethods.Get | CorsHttpMethods.Head | CorsHttpMethods.Post,
+                AllowedOrigins = new List<string>() { "http://www.bulutders.com","http://bulutders.com" },
+                ExposedHeaders = new List<string>() { "*" },
+                MaxAgeInSeconds = 1800 
+            });
+
+            blobClient.SetServiceProperties(blobServiceProperties);
+            
+    
+    Response.Write("");
+    Response.End();
+}
+

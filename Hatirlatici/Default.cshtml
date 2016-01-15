@@ -1,0 +1,122 @@
+﻿@{
+    if (!WebSecurity.IsAuthenticated)
+    {
+        Response.Redirect("~/Hesap/Giris?returnUrl=Gorev");
+    }
+    Layout = "~/Shared/_LayoutYeni.cshtml";  
+
+    var liste=Request.QueryString["liste"];
+
+    var db=Database.Open("fb1ae");
+    var queryKullanici=db.QuerySingle("SELECT * FROM Profiles WHERE userID=@0",WebSecurity.CurrentUserId);
+   
+    var dil=queryKullanici.Dil;
+    if (dil=="tr")
+       {
+           Culture=UICulture="tr-TR";
+       }
+    
+    DateTime bitis=new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,0,0,0);
+    db.Close();
+    IEnumerable<dynamic> queryGorevler=null;
+    if (liste=="aktif")
+    {
+      queryGorevler=db.Query("SELECT * FROM Gorev WHERE UserID=@0 AND BitisTarihi>=@1 AND Silindi=0 ORDER BY GorevID DESC",WebSecurity.CurrentUserId,bitis);
+    }
+    else if (liste=="suresigecmis")
+    {
+      queryGorevler=db.Query("SELECT * FROM Gorev WHERE UserID=@0 AND BitisTarihi<=@1 AND Silindi=0 ORDER BY GorevID DESC",WebSecurity.CurrentUserId,bitis);
+    }
+
+}
+
+@section Gezinti {
+    <li class="active">@Resources.Resource.lblHatirlaticilar</li>
+}
+
+
+@section SayfaBasligi
+{
+   <h1>@Resources.Resource.lblHatirlaticilar</h1>
+}
+
+<div class="row">
+    
+
+   <div class="col-lg-12">
+      
+                <table id="lstGorevler" class="table table-hover">
+        <thead>
+            <tr>
+                <th>Hatırlatıcı</th>
+               
+                <th>@Resources.Resource.lblKalanSure</th>
+                <th>@Resources.Resource.lblTamamlandimi</th>
+                <th></th>
+                
+            </tr>
+        </thead>
+         <tbody>
+            @foreach (var item in queryGorevler)
+            {
+                var gecenGun=(DateTime.Now- item.BaslangicTarihi).Days;
+               
+                var toplamGun=(item.BitisTarihi-item.BaslangicTarihi).Days;
+                var kalanGun=toplamGun-gecenGun;
+                if (kalanGun<0)
+                    {
+                       kalanGun=0;
+                    }
+                var yuzde=100-(100*gecenGun)/toplamGun;
+                var uyari="progress-bar-success";
+                if (yuzde>=30 && yuzde<60)
+                  {
+                      uyari="progress-bar-warning";
+                  }
+                  if (yuzde<30)
+                  {
+                      uyari="progress-bar-danger";
+                  }
+
+               
+                <tr>
+                    
+                    <td><i class="fa fa-tasks fa-2x"></i><a href="#"  data-toggle="tooltip" data-placement="top" title="@item.Aciklama"> @item.Baslik </a> </td>
+                   
+                     <td style="width: 100px;">
+                        <div class="progress progress-striped" data-toggle="tooltip" data-placement="top" title="@if(kalanGun>0) {<text>@Resources.Resource.lblKalanSure:@kalanGun</text>}">
+                                        <div class="progress-bar @uyari" role="progressbar" aria-valuenow="6" aria-valuemin="1" aria-valuemax="@toplamGun" style="width: @yuzde%">
+                                           
+                                        </div>
+                                    </div>
+                    </td>
+                    <td>@if (item.Tamamlandi==1){<text>Evet</text>} else {<text>Hayır</text>}</td>
+                    <td>
+                        @if (item.Tamamlandi==0) {
+                            <button class="btn btn-primary btnGorevTamamlandi btn-sm" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.lblTamamlandiOlarakIsaretle" data-GorevID="@item.GorevID"><i class="fa fa-check"> </i></button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-danger btnGorevTamamlanmadi btn-sm" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.lblTamamlanmadiOlarakIsaretle" data-GorevID="@item.GorevID"><i class="fa fa-undo"> </i></button>
+                            }
+                        
+                        <a href="@item.Url" class="btn btn-info btn-sm" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.lblSayfayaGit"><i class="fa fa-arrow-right"></i> </a>
+                        <button class="btn btn-danger btnGorevSil btn-sm" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.lblHatirlaticiyiSil" data-GorevID="@item.GorevID"><i class="fa fa-remove"> </i></button>
+                    </td>
+                </tr>
+            }
+         </tbody>
+    </table>
+
+     </div>
+
+  
+</div>
+
+@section js
+{
+    <script src="@Href("~/Shared/Plugins/datatables/jquery.dataTables.min.js")"></script>
+    <script src="@Href("~/Shared/Plugins/datatables/dataTables.bootstrap.js")"></script>   
+    <script src="@Href(string.Format("~/Shared/Javascript/Dil/{0}/Hatirlatici/Default.js",dil))"></script> 
+    <script src="@Href("~/Shared/Javascript/Hatirlatici/Default.min.js")"></script> 
+}

@@ -1,0 +1,138 @@
+﻿@{
+   if (!WebSecurity.IsAuthenticated)
+    {
+        Response.Redirect("~/Hesap/Giris?returnUrl=Odev/OdevGonderileri?OdevID=" + Request.QueryString["OdevID"]);
+    }
+   
+    Layout = "~/Shared/_LayoutYeni.cshtml";
+
+    var OdevID=Request.QueryString["OdevID"];
+    var db=Database.Open("fb1ae");
+    var queryKullanici=db.QuerySingle("SELECT * FROM Profiles WHERE userID=@0",WebSecurity.CurrentUserId);
+   
+    var dil=queryKullanici.Dil;   
+    if (dil=="tr")
+       {
+           Culture=UICulture="tr-TR";
+       }
+        
+    if (string.IsNullOrEmpty(OdevID))
+    {
+        Response.Redirect("~/Shared/Hata");
+        Response.End();
+    }  
+    var queryOdev=db.QuerySingle("SELECT * FROM Odev WHERE OdevID=@0 AND Silindi=0",OdevID);
+
+    if (queryOdev==null)
+    {
+        Response.Redirect("~/Shared/Hata");
+        Response.End();
+    }
+ 
+   var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0",queryOdev.DersID);
+
+   if (queryDers.UserID!=WebSecurity.CurrentUserId)
+   {
+      Response.Redirect("~/Shared/Hata");
+      Response.End();
+   }
+
+   var queryDersiAlanOgrenciler=db.Query("SELECT * FROM Profiles LEFT JOIN OdevGonderisi ON Profiles.UserID=OdevGonderisi.UserID WHERE Profiles.UserID IN (SELECT UserID FROM DersTakip WHERE DersID=@0 AND Durum=2) AND OdevGonderisi.OdevID=@1",queryDers.DersID,OdevID); 
+ 
+   
+
+}
+
+@section Gezinti {
+    <li class="active">@Resources.Resource.lblOdeviniGonderenler</li>
+}
+
+
+@section SayfaBasligi
+{
+   <h1>@Resources.Resource.lblOdeviniGonderenler</h1>
+}
+
+<div class="row">
+     <div class="col-md-12 column">
+           
+   
+        
+        <table class="table table-hover" id="lstOdeviniGonderenler">
+            <thead>
+            <tr>
+                <th><strong>@Resources.Resource.lblOgrenciler</strong></th> 
+                <th><strong>@Resources.Resource.lblOdeviGonderdi</strong></th>
+                <th><strong>@Resources.Resource.lblIslemler</strong></th>
+                <th><strong>@Resources.Resource.lblIncelendi</strong></th>
+            </tr>
+
+                </thead>
+            <tbody>
+           
+                    
+                    @foreach (var ogrenci in queryDersiAlanOgrenciler)
+                       {
+                        <tr>
+                           <td>
+                                @HelperProfil.KucukKunye(ogrenci.userID)
+                           </td>   
+                        
+                            <td>
+                                @{
+                                    
+                                    var odevGonderisi=db.QuerySingle("SELECT * FROM OdevGonderisi WHERE Silindi=0 AND UserID=@0 AND OdevID=@1",ogrenci.userID,OdevID);
+                                 }
+                                @if (odevGonderisi!=null) {<text> @Resources.Resource.lblEvet</text>} else {<text> @Resources.Resource.lblHayir</text>}
+                            </td> 
+                            
+                            <td>
+                              @if (odevGonderisi!=null)
+                              {
+                                  <a href="@Href("~/Odev/OdevGonderisi?OdevGonderiID=")@odevGonderisi.odevGonderiID" class="btn btn-info" title="@Resources.Resource.lblInceleveDegerlendir"><i class="fa fa-newspaper-o"></i></a>
+                              }
+                              
+                            </td>
+                            <td>
+                              @if (odevGonderisi!=null)
+                              {
+                                  if (odevGonderisi.Durum==1)
+                                     {
+                                         <text><i class="fa fa-exclamation-circle"></i> @Resources.Resource.lblHayir</text>
+                                     }
+                                     else if (odevGonderisi.Durum==2)
+                                       {
+                                           <text><i class="fa fa-check-circle"></i> @Resources.Resource.lblEvet</text>
+                                       }
+
+                              }
+                              else
+                              {
+                                  <text>@Resources.Resource.lblOdevGonderilmedi</text>
+                              }
+                            </td>
+                        </tr>
+                     }
+            
+            
+            </tbody>
+        </table>
+
+    
+</div>
+</div>
+
+
+@section js
+{
+   
+<script src="@Href("~/Shared/Plugins/datatables/jquery.dataTables.min.js")"></script>
+<script src="@Href("~/Shared/Plugins/datatables/dataTables.bootstrap.js")"></script>
+<script src="@Href(string.Format("~/Shared/Javascript/Dil/{0}/Odev/OdevGonderileri.js",dil))"></script>
+<script src="@Href("~/Shared/Javascript/Odev/OdevGonderileri.min.js")"></script>
+}
+
+@{
+    db.Close();
+}
+

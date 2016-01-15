@@ -1,0 +1,38 @@
+﻿@{
+  
+  //Bu prosedürü sadece oturum açmış ve admin kullanıcıları çalıştırabilir. Bunu kontrol et eğer değilse http hata kodu döndür.
+  
+  if (WebSecurity.IsAuthenticated==false || Roles.IsUserInRole("Admin")==false)
+     {
+        Response.StatusCode=400;
+        Response.End();
+    }
+
+    // Gelen değerleri oku
+    var UserID=Request["UserID"];
+    var rol=Request["Rol"];
+
+     // Girilmesi gerekli alanları kontrol et. Eğer boş varsa hata kodu döndür.
+    if (string.IsNullOrEmpty(UserID))
+     {
+    
+       Response.StatusCode=500;
+       Response.End();
+     }
+
+    var db=Database.Open("fb1ae");
+    var queryKullanici=db.QuerySingle("SELECT * FROM Profiles WHERE UserID=@0",UserID);
+   
+    // Kullanıcının tüm rollerini kaldır
+    foreach (var r in Roles.GetRolesForUser(queryKullanici.ePosta))
+    {
+      Roles.RemoveUserFromRole(queryKullanici.ePosta,r);
+    }
+    
+    // Gelen rol değerini kullanıcıya ekle
+    Roles.AddUserToRole(queryKullanici.ePosta,rol);
+
+     db.Close();
+     Response.Write("OK");
+     Response.End();
+     }

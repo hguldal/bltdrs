@@ -1,0 +1,53 @@
+﻿@{
+  
+ if (!WebSecurity.IsAuthenticated)
+     {
+        
+        Response.StatusCode=401;
+        Response.End(); 
+     }
+
+ if (IsPost)
+   {
+   
+    
+    var db=Database.Open("fb1ae");
+
+    var azureDosyaAdi=Request["AzureDosyaAdi"];
+    var aciklama=Request["Aciklama"];
+    var boyut=Request["DosyaBoyut"];
+    var dosyaAdi=Request["DosyaAdi"];
+    var dosyaTuru=Request["DosyaTuru"];
+    if (string.IsNullOrEmpty(aciklama))
+    {
+        aciklama=dosyaAdi;
+    }
+
+
+        Random r=new Random();
+     
+        var yeniDosyaID=r.Next(1000,1000000);
+
+        while (db.QueryValue("SELECT COUNT(*) FROM Dosya WHERE DosyaID=@0",yeniDosyaID)>0)
+          {
+             yeniDosyaID=r.Next(1000,1000000);
+          }
+    
+        db.Execute("INSERT INTO Dosya(DosyaID,UserID,Aciklama,Boyut,Uzanti,Tur,DosyaAdi,KayitAdi) VALUES(@0,@1,@2,@3,@4,@5,@6,@7)",yeniDosyaID,WebSecurity.CurrentUserId,aciklama,boyut,"",dosyaTuru,dosyaAdi,azureDosyaAdi);
+
+        var queryEklenenDosya=db.QuerySingle("SELECT * FROM Dosya WHERE DosyaID=@0",yeniDosyaID);
+        db.Close();   
+    
+        Json.Write(queryEklenenDosya, Response.Output);
+        Response.ContentType = "application/json";
+        Response.End();
+    }
+    else
+    {
+        Response.StatusCode=500;
+        Response.End();
+    }
+   
+}
+
+

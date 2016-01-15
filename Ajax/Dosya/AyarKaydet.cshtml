@@ -1,0 +1,39 @@
+﻿@{
+  if (!WebSecurity.IsAuthenticated)
+   
+        {
+            Response.StatusCode=401;
+            Response.End();
+                   
+        }  
+
+    var DosyaID=Request["pk"];
+    var alan=Request["name"];
+    var deger=Request["value"];
+
+    if (string.IsNullOrEmpty(DosyaID) || string.IsNullOrEmpty(alan) || string.IsNullOrEmpty(deger))
+     {
+    
+       Response.StatusCode=500;
+       Response.End();
+     }
+
+     var db=Database.Open("fb1ae");
+ 
+    
+     
+     var queryDosya=db.QuerySingle("SELECT * FROM Dosya WHERE DosyaID=@0 AND UserID=@1",DosyaID,WebSecurity.CurrentUserId);
+
+    if (WebSecurity.CurrentUserId!=queryDosya.UserID)
+    {
+        Response.StatusCode=400;
+        Response.End();
+    }
+
+     db.Execute("UPDATE Dosya SET " + alan  +"=@0 WHERE DosyaID=@1",deger,DosyaID);
+     
+     Response.Write("OK");
+     Response.End();
+     
+     db.Close();
+     }

@@ -1,0 +1,210 @@
+﻿@{
+  if (!WebSecurity.IsAuthenticated)
+    {
+        Response.Redirect("~/Hesap/Giris?returnUrl=Ders/VerdigimDersler");
+    }
+
+    Layout = "~/Shared/_LayoutYeni.cshtml";  
+    
+    var roller=Roles.GetRolesForUser(WebSecurity.CurrentUserName);
+    var db=Database.Open("fb1ae");
+    
+    var queryKullanici=db.QuerySingle("SELECT * FROM Profiles WHERE userID=@0",WebSecurity.CurrentUserId);
+   
+    var dil=queryKullanici.Dil;
+   
+       if (dil=="tr")
+       {
+           Culture=UICulture="tr-TR";
+       }
+   IEnumerable<dynamic> queryDersler=null;
+   if (roller.Contains("Ogretici"))
+   {
+        queryDersler=db.Query("SELECT top 100 * FROM Ders WHERE userID=@0 ORDER BY Arsivlendi",WebSecurity.CurrentUserId);
+   }
+   else if (roller.Contains("Ogrenci"))
+   {
+       queryDersler=db.Query("SELECT top 100 * FROM Ders WHERE Arsivlendi=0 AND DersID IN (SELECT DersID FROM DersTakip WHERE UserID=@0 AND Durum=2)",WebSecurity.CurrentUserId);
+   }
+
+}
+
+@section Gezinti {
+    <li class="active">@Resources.Resource.lblDersler</li>
+}
+
+
+@section SayfaBasligi
+{
+   <h1>@Resources.Resource.lblDersler</h1>
+}
+
+<div class="row">
+   
+   <div class="col-lg-12">
+       @if (roller.Contains("Ogretici")) {
+           <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalDersEkle">
+            <i class="fa fa-plus-circle"></i>  @Resources.Resource.lblYeniBirDersOlustur
+            </button> 
+       <br>
+        }
+      
+       @if (roller.Contains("Ogrenci")) {
+           <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalDerseKatil">
+            <i class="fa fa-plus-circle"></i>  @Resources.Resource.lblErisimKoduKullanarakDerseKatil
+            </button> 
+            
+           <button type="button" class="btn btn-primary btn-lg" id="btnDersAra">
+            <i class="fa fa-search"></i>  @Resources.Resource.lblDersAra
+            </button>
+        
+       <br>
+        }
+
+       <br>
+        
+      <table id="lstDersler" class="table table-hover">
+            <thead>
+                <tr>
+                    <th>@Resources.Resource.lblDersinAdi</th>
+                    <th>@Resources.Resource.lblIslemler</th>
+                    <th>@Resources.Resource.lblSahibi</th>
+                   @if (roller.Contains("Ogretici")) {
+                        <th>@Resources.Resource.lblErisimKodu</th>
+                   }
+                    <th>@Resources.Resource.lblOgrenciSayisi</th>
+                    <th>@Resources.Resource.lblDurum</th>
+                 </tr>
+            </thead>
+        
+           <tbody>
+            @foreach (var ders in queryDersler)
+            {
+                <tr>
+                    
+                    <td><h4><i class="fa fa-book"></i> <a href="@Href("~/Ders/?DersID=")@ders.DersID"> @ders.DersAdi </a></h4>  </td> 
+                     <td>
+
+                            <div class="dropdown">
+
+                        
+                                  <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-primary btn-xs">
+                                    <i class="fa fa-cog"></i>
+                                    <span class="caret"></span>
+                                  </button>
+                                  
+                                  <ul class="dropdown-menu" aria-labelledby="dLabel">
+                                        <li><a href="@Href("~/Ders/?DersID=")@ders.DersID"><i class="fa fa-search-plus"></i> @Resources.Resource.lblDerseGozat</a></li>
+                                      
+                                        @if (roller.Contains("Ogretici")){
+                                            <li><a href="@Href("~/Ders/Ayarlar/?DersID=")@ders.DersID"><i class="fa fa-gear"></i> @Resources.Resource.lblAyarlar</a></li>
+                                        }
+                                        else if (roller.Contains("Ogrenci")) {
+                                            <li><a href="#" class="btnDersTakibiBirak" data-DersID="@ders.DersID"><i class="fa fa-remove"></i>  @Resources.Resource.lblDersiTakibiBirak</a></li>
+                                        }
+                                  </ul>
+                            </div>
+
+
+                            
+                        </td>
+                    <td>@HelperProfil.KucukKunye(ders.UserID)</td>
+                     @if (roller.Contains("Ogretici")) {
+                    <td><h4><label class="label label-orange">@ders.KabulKodu</label></h4></td>
+                    }
+                    <td>@db.QueryValue("SELECT COUNT(*) FROM DersTakip WHERE DersID=@0 AND Durum=2",ders.DersID)</td>
+                      @if (ders.Arsivlendi==0) {
+                        <td><i class="fa fa-check-circle fa-2x text-success" title="@Resources.Resource.lblAktif"></i></td>
+                        }
+                        else
+                        {
+                            <td><i class="fa fa-times-circle fa-2x text-danger" title="@Resources.Resource.lblPasifArsivde"></i></td>
+                        }
+                    
+                   
+                   
+                   
+                       
+                  
+                </tr>
+            }
+         </tbody>
+    </table>
+
+        </div>
+
+  
+    </div>
+
+
+
+@if (roller.Contains("Ogretici")) {
+<div class="modal" id="modalDersEkle"  role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">@Resources.Resource.lblYeniBirDersOlustur</h4>
+      </div>
+      <div class="modal-body">
+                <label>@Resources.Resource.lblDersinAdi</label>
+          <input type="text" class="form-control" id="txtDersAdi" required  placeholder="Dersin Adını Girin...">
+          
+          <label>@Resources.Resource.lblAciklama</label>
+          <textarea class="form-control" id="txtDersAciklama"></textarea>
+
+          <label>@Resources.Resource.lblDerseKabulSekli</label>
+          <select id="cmbKabulSekli" class="form-control">
+                        <option value="1">@Resources.Resource.lblHerkeseAcik</option>
+                        <option value="2" selected>@Resources.Resource.lblDersSorumlusuOnayi</option>
+                       
+                    </select>
+
+          <label>@Resources.Resource.lblAramalardaGorunsun</label>
+          <select id="cmbAramalardaGoster" class="form-control">
+                       
+                        <option value="1" selected>@Resources.Resource.lblEvet</option>
+                        <option value="0">@Resources.Resource.lblHayir</option>
+                    </select>
+            <br>
+            
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="btnDersEkle">@Resources.Resource.lblTamam</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">@Resources.Resource.lblIptal</button>
+        
+      </div>
+    </div>
+  </div>
+</div>
+}
+@if (roller.Contains("Ogrenci")) {
+ <div class="modal" id="modalDerseKatil"  role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">@Resources.Resource.lblErisimKoduKullanarakDerseKatil</h4>
+      </div>
+      <div class="modal-body">
+                <label>@Resources.Resource.lblErisimKodu</label>
+          <input type="text" class="form-control" id="txtErisimKodu" required  placeholder="@Resources.Resource.lblErisimKodu" autofocus="true">
+         
+            <br>
+            
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="btnDerseKatil">@Resources.Resource.lblTamam</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">@Resources.Resource.lblIptal</button>
+        
+      </div>
+    </div>
+  </div>
+</div>   
+}
+@section js
+{
+<script src="@Href(string.Format("~/Shared/Javascript/Dil/{0}/Ders/Liste.js",dil))"></script>
+<script src="@Href("~/Shared/Javascript/Ders/Liste.min.js")"></script>
+}
+

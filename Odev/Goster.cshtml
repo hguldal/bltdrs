@@ -1,0 +1,327 @@
+﻿@{
+   if (!WebSecurity.IsAuthenticated)
+    {
+        Response.Redirect("~/Hesap/Giris?returnUrl=Odev/Goster?OdevID=" + Request.QueryString["OdevID"]);
+    }
+   
+    Layout = "~/Shared/_LayoutYeni.cshtml";
+
+    var OdevID=Request.QueryString["OdevID"];
+    var db=Database.Open("fb1ae");
+    var queryKullanici=db.QuerySingle("SELECT * FROM Profiles WHERE userID=@0",WebSecurity.CurrentUserId);
+   
+    var dil=queryKullanici.Dil;   
+    if (dil=="tr")
+       {
+           Culture=UICulture="tr-TR";
+       }
+        
+    if (string.IsNullOrEmpty(OdevID))
+    {
+        Response.Redirect("~/Shared/Hata");
+        Response.End();
+    }  
+
+     var queryOdev=db.QuerySingle("SELECT * FROM Odev WHERE OdevID=@0 AND Silindi=0",OdevID);
+
+    if (queryOdev==null)
+    {
+        Response.Redirect("~/Shared/Hata");
+        Response.End();
+    }  
+   var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0",queryOdev.DersID);
+
+   var takipci=(db.QueryValue("SELECT COUNT(*) FROM DersTakip WHERE DersID=@0 AND UserID=@1 AND Durum=2",queryOdev.DersID,WebSecurity.CurrentUserId)>0);
+   var dersSorumlusu=(queryDers.UserID==WebSecurity.CurrentUserId);
+
+   if (!(takipci==false || dersSorumlusu==false))
+   {
+       db.Close();
+       Response.Redirect("~/Shared/Hata");
+       Response.End();
+   }
+  
+   var queryOdevGonderisi=db.QuerySingle("SELECT * FROM OdevGonderisi WHERE Silindi=0 AND OdevID=@0 AND UserID=@1",queryOdev.OdevID,WebSecurity.CurrentUserId);
+   
+  var odevTeslimEdildi=(queryOdevGonderisi!=null);
+
+  TimeSpan aralik=DateTime.Now-queryOdev.SonTeslimTarihi;
+  var odevGonderimSuresiDoldu= (aralik.TotalMinutes>0);
+  var gonderimAcik=false;
+  
+  if (queryOdev.OdevGonderimi==1)
+  {
+      gonderimAcik=true;
+  }
+
+  else if (queryOdev.OdevGonderimi==2)
+  {
+      gonderimAcik=false;
+  }
+  else if (queryOdev.OdevGonderimi==3)
+  {
+      if (!odevGonderimSuresiDoldu)
+      {
+          gonderimAcik=true;
+      }
+  }
+  
+
+
+  var sonTeslimFormat=queryOdev.SonTeslimTarihi.Year + "/" + queryOdev.SonTeslimTarihi.Month + "/" + queryOdev.SonTeslimTarihi.Day + " " + queryOdev.SonTeslimTarihi.Hour + ":" + queryOdev.SonTeslimTarihi.Minute + ":" + queryOdev.SonTeslimTarihi.Second;
+   db.Close();
+     
+}
+
+
+ 
+@section css
+{
+    <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+}
+
+@section Gezinti {
+    <li class="active">@queryOdev.Baslik</li>
+}
+
+
+@section SayfaBasligi
+{
+   <h1>@queryOdev.Baslik</h1>
+}
+
+<i class="fa fa-clock-o hide" id="spnOdevID" data-OdevID="@OdevID"></i>
+<br>
+<div class="row">
+     <div class="col-md-12 column">
+           
+    <div class="col-md-6 column">
+        
+        <table class="table">
+            <tr>
+                <td><strong>@Resources.Resource.lblDers</strong></td>         
+            </tr>
+            <tr>
+                <td><a href="#" id="lnkDersAdi">@queryDers.DersAdi</a> </td>
+            </tr>
+            <tr>
+                <td><strong>@Resources.Resource.lblOdeviVeren</strong></td>
+            </tr>
+            
+            <tr>
+                <td>@HelperProfil.KucukKunye(queryDers.UserID)</td>
+            </tr>
+
+            <tr>
+                <td><strong>@Resources.Resource.lblOdevAciklamasi</strong></td>
+            </tr>
+            
+            <tr>
+                <td><a href="#" id="lnkAciklama">@queryOdev.Aciklama</a></td>
+            </tr>
+
+            @if (queryOdev.DosyaID!=0 && queryOdev.DosyaID!=-1)
+            {
+                <tr>
+                <td><strong>@Resources.Resource.lblDosyaEki</strong></td>
+            </tr>
+            
+            <tr>
+                <td><a href="@Href("~/Dosya/Indir?DosyaID=")@queryOdev.DosyaID" class="btn btn-info"><i class="fa fa-download"></i> @Resources.Resource.lblOdevDosyaEkiniKarsidanYukle</a></td>
+            </tr>
+
+            }
+
+             <tr>
+                <td><strong>@Resources.Resource.lblVerilmeTarihi</strong></td>         
+            </tr>
+            <tr>
+                <td>
+                   @queryOdev.EklenmeTarihi.ToLongDateString()
+                     
+                
+                </td>
+            </tr>
+            <tr>
+                <td><strong> @Resources.Resource.lblOdevTeslimi</strong></td>         
+            </tr>
+            <tr>
+            <td>
+                @if (gonderimAcik)
+                {
+                    <text>@Resources.Resource.lblAcik</text>
+
+                    if (queryOdev.OdevGonderimi==3)
+                    { 
+                        <text>@queryOdev.SonTeslimTarihi.ToLongDateString()</text>
+                        <p class="text-success">(@Resources.Resource.lblKalanSure :<strong><span id="kalansure" data-Tarih="@sonTeslimFormat"></span></strong>)</p>
+                    }
+                }
+                else
+                {
+                    <text>@Resources.Resource.lblKapali</text>
+                }
+               
+            </td>
+            </tr>
+           
+
+        </table>
+    
+    </div>
+
+     @if (takipci)
+     {
+    <div class="col-md-6 column">
+        <table class="table">
+        
+           
+            <tr>
+                <td><strong>@Resources.Resource.lblTeslimDurumu</strong></td>
+            </tr>
+            <tr>
+                <td id="tdOdevTeslimDurumu">
+                @if (!odevTeslimEdildi)
+                {
+                    <p class="text-danger"><i class="fa fa-remove fa-3x"></i>@Resources.Resource.lblGonderilmemis</p>
+                      if (gonderimAcik) 
+                      { 
+
+                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modalOdevGonder"><i class="fa fa-plus"></i>@Resources.Resource.lblOdeviGonder</button>
+                      }
+                        
+                }
+                else
+                {
+                    <p class="text-success"><i class="fa fa-check fa-3x"></i>@Resources.Resource.lblOdevGonderildi</p>
+                   
+                }
+                </td>
+            </tr>
+            
+             @if (odevTeslimEdildi)
+                {
+
+            if (queryOdevGonderisi.DosyaID!=null && queryOdevGonderisi.DosyaID!=-1)
+            {
+                <tr>
+                <td><strong>@Resources.Resource.lblOdevDosyasi</strong></td>
+            </tr>
+                <tr>
+                <td><a href="@Href("~/Dosya/Indir?DosyaID=")@queryOdevGonderisi.DosyaID" class="btn btn-info"><i class="fa fa-download"></i>@Resources.Resource.lblKarşıdanYukle</a></td>
+            </tr>
+            }
+
+            <tr>
+                <td><strong>@Resources.Resource.lblEgitmenTarafindanIncelendi</strong></td>
+            </tr>
+            if (queryOdevGonderisi.Durum==1)
+            {
+                
+                <tr><td>@Resources.Resource.lblHayir</td></tr>
+            }
+            else
+            {
+                <tr><td>@Resources.Resource.lblEvet</td></tr>
+            }
+
+            if (queryOdevGonderisi.DegerlendirmePuani!=-1)
+            {
+                <tr>
+                <td><strong>@Resources.Resource.lblDegerlendirmePuani</strong></td>
+            </tr>
+                <tr>
+                <td><h2>@queryOdevGonderisi.DegerlendirmePuani</h2></td>
+            </tr>
+            }
+
+             if (queryOdevGonderisi.DersSorumlusuMesaji!=null)
+            {
+                <tr>
+                <td><strong>@Resources.Resource.lblEgitmenMesaji</strong></td>
+            </tr>
+                <tr>
+                <td>@queryOdevGonderisi.DersSorumlusuMesaji</td>
+            </tr>
+            }
+            }
+        </table>
+    
+    </div>
+      }   
+      @if (dersSorumlusu)       
+      {
+          <div class="col-md-6 column">
+              <table class="table">
+        <tr>
+            <td><strong>@Resources.Resource.lblOdevIslemleri</strong></td>
+        </tr>
+           
+            <tr>
+                <td>  
+                    
+                    <a href="@Href("~/Odev/OdevGonderileri?OdevID=")@OdevID" class="btn btn-primary" title="@Resources.Resource.lblOdeviniGonderenler"><i class="fa fa-user"></i>@Resources.Resource.lblOdeviniGonderenler</a>
+                    <a href="@Href("~/Odev/Ayarlar?OdevID=")@OdevID" class="btn btn-info"><i class="fa fa-cog"></i>@Resources.Resource.lblAyarlar</a>
+                </td>
+            </tr>
+
+                  
+                  </table>
+            </div>
+      }
+           
+     </div>
+    </div>
+</div>
+@if (gonderimAcik)
+{
+ <div class="modal fade" id="modalOdevGonder" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">@Resources.Resource.lblOdeviGonder</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+   
+            <div class="col-lg-12">
+               
+                  <input type="hidden" value="@queryOdev.OdevID" name="OdevID" id="txtOdevID">
+  
+                  <label>@Resources.Resource.lblBilgisayardaDosyaSec</label>
+                  <input type="file" class="form-control" id="txtDosya" name="file" placeholder="@Resources.Resource.lblDosyaSec">
+               
+                  <label>@Resources.Resource.lblAciklama</label>
+                  <textarea class="form-control" name="txtAciklama" id="txtAciklama" placeholder="@Resources.Resource.msgOdevIleilgiliKisaAciklamaGir"></textarea>
+           
+           </div>
+
+             
+         </div>
+      </div>
+   <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">@Resources.Resource.lblIptal</button>
+        <button type="button" class="btn btn-primary" id="btnOdeviGonder">@Resources.Resource.lblGonder</button>
+      </div>
+    </div>
+  </div>
+</div>
+}
+@section js
+{
+   <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+   
+    @if (gonderimAcik)
+    {
+        <script src="@Href("~/Shared/Plugins/jquerycountdown/jquery.countdown.min.js")"></script>
+        <script src="http://malsup.github.com/jquery.form.js"></script> 
+    }
+    <script src="@Href("~/Shared/Plugins/datatables/jquery.dataTables.min.js")"></script>
+    <script src="@Href("~/Shared/Plugins/datatables/dataTables.bootstrap.js")"></script>
+    <script src="@Href(string.Format("~/Shared/Javascript/Dil/{0}/Odev/Goster.js",dil))"></script>
+    <script src="@Href("~/Shared/Javascript/Odev/Goster.min.js")"></script>
+
+}
+
+

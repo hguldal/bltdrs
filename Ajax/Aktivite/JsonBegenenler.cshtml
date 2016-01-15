@@ -1,0 +1,24 @@
+﻿@{
+if (!WebSecurity.IsAuthenticated)
+    {
+        Response.StatusCode = 401;
+        Response.End();
+        
+    }
+
+    var aktiviteID=Request["AktiviteID"];
+    if (string.IsNullOrEmpty(aktiviteID))
+    {
+        Response.StatusCode=501;
+        Response.End();
+    }
+    var db=Database.Open("fb1ae");
+   
+    var sonuclar=db.Query("SELECT * FROM AktiviteBegeni INNER JOIN Profiles ON AktiviteBegeni.UserID=Profiles.userID WHERE AktiviteBegeni.AktiviteID=@0",aktiviteID);
+    
+    Json.Write(sonuclar, Response.Output);
+    db.Close();   
+    Response.ContentType = "application/json";
+    Response.End();
+   
+}

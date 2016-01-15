@@ -1,0 +1,37 @@
+﻿@{
+    // Oturum açmamış kullanıcı için hata kodu döndür. (Oturum açmamış bir kullanıcının beğeni yapmasını engellemek için)
+    // Bu prosedür tüm kullanıcı türleri için çalıştırılabilir.
+    if (!WebSecurity.IsAuthenticated)  
+        {
+            Response.StatusCode=401;
+            Response.End();
+                   
+        }  
+    // Beğenilecek Aktivitenin AktiviteID sini istek bilgilerinden oku.
+    var aktiviteID=Request["AktiviteID"];
+   
+   // Eğer aktiviteID boşsa hata döndür.
+    if (string.IsNullOrEmpty(aktiviteID))
+     {
+    
+       Response.StatusCode=500;
+       Response.End();
+     }
+
+     var db=Database.Open("fb1ae");
+     var queryAktivite=db.QuerySingle("SELECT * FROM Aktivite WHERE AktiviteID=@0",aktiviteID);
+ 
+     if (db.QueryValue("SELECT COUNT(*) FROM AktiviteBegeni WHERE UserID=@0 AND AktiviteID=@1",WebSecurity.CurrentUserId,aktiviteID)>0)
+        {
+            // Beğeniyi sil
+            db.Execute("DELETE FROM AktiviteBegeni WHERE AktiviteID=@0 AND UserID=@1",aktiviteID,WebSecurity.CurrentUserId);
+            db.Execute("update Bildirim set silindi=1 WHERE IliskiliOge=@0","aktbgn" + aktiviteID.ToString());
+        }
+     db.Close();
+     Response.Write("OK");
+     Response.End();
+   
+}
+
+
+

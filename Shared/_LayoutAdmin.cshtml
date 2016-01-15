@@ -1,0 +1,154 @@
+﻿@{
+    
+ if (!WebSecurity.IsAuthenticated)
+    {
+        Response.Redirect("~/Hesap/Giris");
+    }
+   
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Bulutders Ana Yönetim Paneli</title>
+    <!-- Bootstrap Core CSS -->
+    <link href="@Href("~/Shared/Plugins/bootstrap/dist/css/bootstrap.min.css")" rel="stylesheet">
+    <!-- MetisMenu CSS -->
+    <link href="@Href("~/Shared/Plugins/metisMenu/dist/metisMenu.min.css")" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="@Href("~/Shared/Tema/css/sb-admin-2.css")" rel="stylesheet">
+    <!-- Custom Fonts -->
+    <link href="//cdn.datatables.net/1.10.5/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css">
+    <link href="@Href("~/Shared/Plugins/font-awesome/css/font-awesome.min.css")" rel="stylesheet" type="text/css">
+    <link href="@Href("~/Shared/Plugins/jquery.growl/jquery.growl.css")" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="@Href("~/Shared/Plugins/selectize/dist/css/selectize.bootstrap3.css")">
+    
+    @RenderSection("css", required: false)
+
+    <style>
+        
+        .ustBar
+        {
+            background-color:#336799;
+        }
+        .ustBarLink
+        {
+            color: white;
+        }
+        .ustBarLink:hover {
+            color: gray;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="divAktifKullaniciKucukKunye" class="hide">
+      @HelperProfil.KucukKunye(WebSecurity.CurrentUserId)
+     </div>
+    <div id="wrapper">
+       
+        <!-- Navigation -->
+        <nav class="navbar navbar-default navbar-static-top ustBar" role="navigation" style="margin-bottom: 0;">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Menü</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                
+                <a class="navbar-brand" href="@Href("~/Panel")">
+                            <img src="@Href("~/web/img/freeze/logo.png")" alt="" style="height: 30px;" class="logo">
+                        </a> 
+            </div>
+           
+            <ul class="nav navbar-top-links navbar-right">
+                
+                <li class="dropdown">
+                    <a class="dropdown-toggle ustBarLink" data-toggle="dropdown" href="#">
+                        <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i> 
+                    </a>
+                    <ul class="dropdown-menu dropdown-user">
+                        <li><a href="@Href("~/Hesap/ProfilGuncelle")"><i class="fa fa-user fa-fw"></i> Profili Güncelle</a>
+                        </li>
+                        <li><a href="@Href("~/Hesap/Ayarlar")"><i class="fa fa-gear fa-fw"></i> Ayarlar</a>
+                        </li>
+                        <li class="divider"></li>
+                        <li><a href="@Href("~/Hesap/OturumuKapat")"><i class="fa fa-sign-out fa-fw"></i> Oturumu Kapat</a>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-user -->
+                </li>
+             
+            </ul>
+          
+            <div class="navbar-default sidebar" role="navigation">
+                <div class="sidebar-nav navbar-collapse">
+                    <ul class="nav" id="side-menu">
+                       <li class="text-center">
+                            <a href="#">@HelperProfil.KucukKunye(WebSecurity.CurrentUserId)</a>
+                           
+                        </li>
+                        <li>
+                            <a href="@Href("~/Admin")"><i class="fa fa-home fa-fw"></i> Anasayfa</a>
+                        </li>
+
+                         <li>
+                            <a href="@Href("~/Admin/Kullanicilar")"><i class="fa fa-user fa-fw"></i> Kullanıcı Hesapları</a>
+                        </li>
+
+                        <li>
+                            <a href="@Href("~/Admin/EgitmenDogrulamaKodlari")"><i class="fa fa-key fa-fw"></i> Eğitmen Doğrulama Kodları</a>
+                        </li>
+
+                    </ul>
+                </div>
+                
+            </div>
+            
+        </nav>
+       
+        <!-- Page Content -->
+        <div id="page-wrapper">
+            <div class="container-fluid">
+                
+                @RenderBody()
+            </div>
+            <!-- /.container-fluid -->
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="@Href("~/Shared/Plugins/bootstrap/dist/js/bootstrap.min.js")"></script>
+
+     <script src="@Href("~/Shared/Plugins/BlockUI/jquery.blockUI.js")"></script>
+    <script src="@Href("~/Shared/Plugins/jquery.growl/jquery.growl.js")"></script>
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="@Href("~/Shared/Plugins/metisMenu/dist/metisMenu.min.js")"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="@Href("~/Shared/Tema/js/sb-admin-2.js")"></script>
+   <script src="@Href("~/Shared/Plugins/selectize/dist/js/standalone/selectize.js")"></script>
+    <script src="@Href("~/Shared/Javascript/Dil/tr/Global.js")"></script>
+    <script src="@Href("~/Shared/Javascript/Global.min.js")"></script>
+
+     @RenderSection("js", required: false)
+   
+
+</body>
+
+</html>

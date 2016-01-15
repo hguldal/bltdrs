@@ -1,0 +1,3 @@
+var ayarlar = {
+    datatablelangurl:''
+};

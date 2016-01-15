@@ -1,0 +1,117 @@
+﻿@{
+    if (!WebSecurity.IsAuthenticated)
+    {
+        Response.Redirect("~/Hesap/Giris?returnUrl=Panel/Bildirimler");
+    }
+    Layout = "~/Shared/_LayoutYeni.cshtml";  
+   
+    var db=Database.Open("fb1ae");
+    var queryKullanici=db.QuerySingle("SELECT * FROM Profiles WHERE userID=@0",WebSecurity.CurrentUserId);
+   
+    var dil=queryKullanici.Dil;
+        if (dil=="tr")
+       {
+           Culture=UICulture="tr-TR";
+       }
+
+    var queryBildirimler=db.Query("SELECT * FROM BildirimOkunmasiGereken INNER JOIN Bildirim ON Bildirim.BildirimID=BildirimOkunmasiGereken.BildirimID INNER JOIN Profiles ON Bildirim.EylemiYapanUserID=Profiles.userID WHERE BildirimOkunmasiGereken.UserID=@0 AND Bildirim.Silindi=0 ORDER BY BildirimOkunmasiGereken.BildirimID DESC",WebSecurity.CurrentUserId);
+    
+    List<Bildirim> listeBildirimler=new List<Bildirim>();
+    foreach(var bildirim in queryBildirimler)
+    {
+        Bildirim b=new Bildirim();
+        b.BildirimID=bildirim.BildirimID;
+        b.DersID=bildirim.DersID;
+        b.EylemID=bildirim.EylemID;
+        b.EylemiYapanUserID=bildirim.EylemiYapanUserID;
+        b.DersAdi= db.QueryValue("SELECT DersAdi FROM Ders WHERE DersID=@0",bildirim.DersID);
+        b.Url=bildirim.Url;
+        b.Tarih=bildirim.Tarih;
+        listeBildirimler.Add(b);
+    }
+    db.Close();
+
+
+}
+
+@section Gezinti {
+    <li class="active">@Resources.Resource.lblTumBildirimler</li>
+}
+
+
+@section SayfaBasligi
+{
+   <h1>@Resources.Resource.lblTumBildirimler</h1>
+}
+
+@section css
+{
+    <link rel="stylesheet" href="@Href("~/Shared/Plugins/daterangepicker/daterangepicker-bs3.css")">   
+}
+ 
+<div class="row">
+    
+
+   <div class="col-lg-12">
+      <button class="btn btn-danger" id="btnTumuOkundu" ><i class="fa fa-remove"></i> @Resources.Resource.lblTumunuSil</button><br><br>
+       <table id="lstBildirimler" class="table table-hover">
+        <thead>
+            <tr>
+                <th></th>
+                <th></th>
+               
+                <th></th>
+            </tr>
+        </thead>
+         <tbody>
+            @foreach (var item in listeBildirimler)
+            {
+                
+                <tr>
+                   
+                    <td>@HelperProfil.YaziliKunye(item.EylemiYapanUserID) 
+                        @if (dil=="tr")
+                        {
+                            <a href="@Href("~/Bildirim/Git?BildirimID=" + item.BildirimID)">
+                                @if (item.DersID!=-1)
+                                { 
+                                   <text>@item.DersAdi @Resources.Resource.lblDersinde </text>  
+                                   }
+                              @Genel.BildirimEylemindenMetne(item.EylemID,dil)
+                        
+                            </a> 
+                        }
+                        else if (dil=="en")
+                        {
+                            <a href="@Href("~/Bildirim/Git?BildirimID=" + item.BildirimID)"> 
+                              @Genel.BildirimEylemindenMetne(item.EylemID,dil)
+                               @if (item.DersID!=-1)
+                                { 
+                                   <text>@Resources.Resource.lblDersinde @item.DersAdi</text>  
+                                   }
+                            
+                        
+                            </a> 
+                        }
+                    
+                    </td>
+                   <td>@Genel.DateLabel(item.Tarih,dil)</td> 
+                    
+                    <td><button class="btn btn-danger bildirimOgesiniOkunduIsaretle btn-xs" data-BildirimID="@item.BildirimID"><i class="fa fa-remove"></i></button></td>
+                    
+                </tr>
+            }
+         </tbody>
+    </table>
+     </div>
+
+  
+</div>
+
+@section js
+{
+    <script src="@Href("~/Shared/Plugins/datatables/jquery.dataTables.min.js")"></script>
+    <script src="@Href("~/Shared/Plugins/datatables/dataTables.bootstrap.js")"></script>   
+    <script src="@Href(string.Format("~/Shared/Javascript/Dil/{0}/Bildirim/Default.js",dil))"></script>
+    <script src="@Href("~/Shared/Javascript/Bildirim/Default.min.js")"></script> 
+}

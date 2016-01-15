@@ -1,0 +1,41 @@
+﻿@{
+  
+     if (!WebSecurity.IsAuthenticated)
+     {
+        
+        Response.StatusCode=401;
+        Response.End(); 
+     }
+
+     var baslik=Request["Baslik"];   
+     var aciklama=Request["Aciklama"];
+     var bitisTarihi=DateTime.Now.AddDays(7);
+     var url= Href("/Hatirlatici/?liste=aktif");
+
+     if (string.IsNullOrEmpty(baslik))
+     {
+       
+       Response.StatusCode=500;
+       Response.End();
+     }
+
+      var bitisTarihiStr =Request["BitisTarihi"];
+      var tarihParca=bitisTarihiStr.Split('-');
+      int gun= tarihParca[0].AsInt();
+      int ay= tarihParca[1].AsInt();
+      int yil= tarihParca[2].AsInt();
+      bitisTarihi=new DateTime(yil,ay,gun,23,59,59);
+
+      var db=Database.Open("fb1ae");
+     
+      db.Execute("INSERT INTO Gorev(UserID,BitisTarihi,Url,Baslik,Aciklama) VALUES(@0,@1,@2,@3,@4)",WebSecurity.CurrentUserId,bitisTarihi,url,baslik,aciklama);
+               
+      var queryEklenenGorev=db.QuerySingle("SELECT GorevID,UserID,Baslik,Aciklama,Tamamlandi,Url,(CAST(datepart(dd,BitisTarihi) as nvarchar(2)) + '.' + CAST(datepart(mm,BitisTarihi) as nvarchar(2)) + '.' + CAST(datepart(yy,BitisTarihi) as nvarchar(4))) as Bitis FROM Gorev WHERE GorevID=@0",db.GetLastInsertId());
+      Json.Write(queryEklenenGorev, Response.Output);
+      db.Close();   
+      Response.ContentType = "application/json";
+      Response.End();
+            
+}
+
+

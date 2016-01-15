@@ -1,0 +1,81 @@
+﻿@{
+ if (!WebSecurity.IsAuthenticated)
+    {
+        Response.Redirect("~/Hesap/Giris");
+    }
+
+    var roller=Roles.GetRolesForUser(WebSecurity.CurrentUserName);
+  
+    if (roller.Contains("Admin")==false)
+    {
+      Response.Write("Erişim Engellendi");
+      Response.End();
+    }
+   var db=Database.Open("fb1ae");
+    Layout = "~/Shared/_LayoutAdmin.cshtml";    
+    
+    var queryEgitmenKayitKodlari=db.Query("SELECT * FROM EgitmenKayitKodlari INNER JOIN UyelikTurleri ON EgitmenKayitKodlari.UyelikTuru=UyelikTurleri.UyelikID WHERE EgitmenKayitKodlari.Silindi=0 ");
+    var queryUyelikTurleri=db.Query("SELECT * FROM UyelikTurleri");
+    
+    db.Close();
+   
+}
+
+<div class="row">
+         <div class="col-lg-12">
+                                <h1 class="page-header"><i class="fa fa-key"></i> Eğitmen Doğrulama Kodları</h1>
+             <label>Üyelik Türleri:</label>
+             <select class="form-control" id="cmbUyelikID">
+              @foreach(var itemUyelik in queryUyelikTurleri)
+               {
+                 <option value="@itemUyelik.UyelikID">@itemUyelik.UyelikAdi</option>
+               }
+             </select><br>
+            <button type="button" class="btn btn-lg btn-primary" id="btnKodEkle"> Yeni Bir Kod Ekle</button>
+        
+             </div>
+ </div>
+
+<div class="row">
+         <div class="col-lg-12">
+            
+             <hr>
+             <table id="lstEgitmenDogrulamaKodlari" class="table table-hover">
+        <thead>
+            <tr>
+                <th>Kod</th>
+                <th>Son Kullanım Tarihi</th>
+                <th>Üyelik Türü</th>
+                <th></th>
+               
+            </tr>
+        </thead>
+         <tbody>
+            @foreach (var itemKod in queryEgitmenKayitKodlari)
+            {
+                <tr>
+                   
+                    <td>@itemKod.Kod</td>
+                    <td>@itemKod.SonKullanimTarihi</td>
+                    <td>@itemKod.UyelikAdi</td>
+                   <td>
+                      <button class="btn btn-danger btn-sm btnKodSil" data-KodID="@itemKod.KodID"> Kod Sil</button>
+                      
+                   </td>
+                   
+                </tr>
+            }
+         </tbody>
+    </table>
+
+  </div>
+</div>
+
+
+@section js
+{
+    <script src="@Href("~/Shared/Plugins/datatables/jquery.dataTables.min.js")"></script>
+    <script src="@Href("~/Shared/Plugins/datatables/dataTables.bootstrap.js")"></script>   
+    <script src="http://malsup.github.com/jquery.form.js"></script> 
+    <script src="@Href("~/Shared/Javascript/Admin/EgitmenDogrulamaKodlari.js")"></script> 
+}

@@ -1,0 +1,150 @@
+﻿@{
+   if (!WebSecurity.IsAuthenticated)
+    {
+        Response.Redirect("~/Hesap/Giris?returnUrl=Odev/Ayarlar?OdevID=" + Request.QueryString["OdevID"]);
+    }
+   
+    Layout = "~/Shared/_LayoutYeni.cshtml";
+
+    var OdevID=Request.QueryString["OdevID"];
+    var db=Database.Open("fb1ae");
+    var queryKullanici=db.QuerySingle("SELECT * FROM Profiles WHERE userID=@0",WebSecurity.CurrentUserId);
+   
+    var dil=queryKullanici.Dil;   
+    
+    if (dil=="tr")
+       {
+           Culture=UICulture="tr-TR";
+       }
+        
+    if (string.IsNullOrEmpty(OdevID))
+    {
+        Response.Redirect("~/Shared/Hata");
+        Response.End();
+    }  
+    var queryOdev=db.QuerySingle("SELECT * FROM Odev WHERE OdevID=@0 AND Silindi=0",OdevID);
+
+    if (queryOdev==null)
+    {
+        Response.Redirect("~/Shared/Hata");
+        Response.End();
+    }
+ 
+   var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0",queryOdev.DersID);
+
+   if (queryDers.UserID!=WebSecurity.CurrentUserId)
+   {
+      Response.Redirect("~/Shared/Hata");
+      Response.End();
+   }
+
+   db.Close();
+
+   
+}
+
+@section css
+{
+    <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="@Href("~/Shared/Plugins/daterangepicker/daterangepicker-bs3.css")">
+}
+
+@section Gezinti {
+    <li class="active">@Resources.Resource.lblOdevAyarlari</li>
+}
+
+
+@section SayfaBasligi
+{
+   <h1>@Resources.Resource.lblOdevAyarlari</h1>
+}
+
+
+<span class="glyphicon glyphicon-cog hide" id="spnOdevID" data-OdevID="@OdevID"></span>
+<br>
+
+<div class="row">
+    
+    <div class="col-md-6 column">
+        
+        <table class="table">
+            <tr>
+                <td><strong>@Resources.Resource.lblVerildigiDers</strong></td>         
+            </tr>
+            <tr>
+                <td>@queryDers.DersAdi</td>
+            </tr>
+            
+            <tr>
+                <td><strong>@Resources.Resource.lblOdevBasligi</strong></td>
+            </tr>
+            
+            <tr>
+                <td><a href="#" id="lnkOdevBaslik">@queryOdev.Baslik</a></td>
+            </tr>
+            <tr>
+                <td><strong>@Resources.Resource.lblOdevMetni</strong></td>
+            </tr>
+            
+            <tr>
+                <td><a href="#" id="lnkOdevMetni">@queryOdev.Aciklama</a></td>
+            </tr>
+            
+
+        </table>
+    
+   
+     </div>
+
+    <div class="col-md-6 column">
+    
+         <table class="table">
+         
+              <tr>
+                <td><strong>@Resources.Resource.lblOdevGonderimi</strong></td>
+            </tr>
+            
+            <tr>
+                <td>
+                <select id="cmbOdevGonderimi" class="form-control">
+                    <option value="1" @if (queryOdev.OdevGonderimi==1){<text>selected</text>}> @Resources.Resource.lblAcik</option>
+                    <option value="2" @if (queryOdev.OdevGonderimi==2){<text>selected</text>}> @Resources.Resource.lblKapali</option>
+                    <option value="3" @if (queryOdev.OdevGonderimi==3){<text>selected</text>}> @Resources.Resource.lblSonTeslimTarihineGoreOtomatik</option>
+                </select>
+                </td>
+            </tr>
+
+            <tr>
+                <td><strong>@Resources.Resource.lblSonTeslimTarihi</strong></td>
+            </tr>
+            
+            <tr>
+                <td><input type="text" class="form-control" id="txtSonTeslimTarihi" value="@queryOdev.SonTeslimTarihi.Day-@queryOdev.SonTeslimTarihi.Month-@queryOdev.SonTeslimTarihi.Year"></td>
+                </tr>
+         
+         </table>
+
+        <br>
+
+       
+    
+    </div>
+
+     
+    </div>
+
+</div>
+@section js
+{
+   <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+    
+<script src="@Href("~/Shared/Plugins/datatables/jquery.dataTables.min.js")"></script>
+<script src="@Href("~/Shared/Plugins/datatables/dataTables.bootstrap.js")"></script>
+<script src="@Href("~/Shared/Plugins/moment/moment.min.js")"></script>
+<script src="@Href("~/Shared/Plugins/daterangepicker/daterangepicker.js")"></script>
+<script src="@Href(string.Format("~/Shared/Javascript/Dil/{0}/Odev/Ayarlar.js",dil))"></script>
+<script src="@Href("~/Shared/Javascript/Odev/Ayarlar.min.js")"></script>
+}
+
+
+

@@ -1,0 +1,60 @@
+﻿@{
+  if (WebSecurity.IsAuthenticated==false || Roles.IsUserInRole("Ogretici")==false)
+   
+        {
+            Response.StatusCode=401;
+            Response.End();
+                   
+        }  
+
+    var OdevID=Request["pk"];
+    var alan=Request["name"];
+    var deger=Request["value"];
+    DateTime SonTeslimTarihi;
+
+    if (string.IsNullOrEmpty(OdevID) || string.IsNullOrEmpty(alan) || string.IsNullOrEmpty(deger))
+     {
+    
+       Response.StatusCode=500;
+       Response.End();
+     }
+
+     var db=Database.Open("fb1ae");
+ 
+     
+     var queryOdev=db.QuerySingle("SELECT * FROM Odev WHERE OdevID=@0 AND Silindi=0",OdevID);
+
+     if (queryOdev==null)
+     {
+        Response.StatusCode=400;
+        Response.End();
+     }
+
+     var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0 AND UserID=@1",queryOdev.DersID,WebSecurity.CurrentUserId);
+
+    if (WebSecurity.CurrentUserId!=queryDers.UserID)
+    {
+        Response.StatusCode=400;
+        Response.End();
+    }
+
+    if (alan=="SonTeslimTarihi")
+    {
+      
+        var tarihParca=deger.Split('-');
+        int gun= tarihParca[0].AsInt();
+        int ay= tarihParca[1].AsInt();
+        int yil= tarihParca[2].AsInt();
+        SonTeslimTarihi=new DateTime(yil,ay,gun,23,59,59); 
+        System.Globalization.CultureInfo culture = new System.Globalization.CultureInfo("en-US");      
+        deger=SonTeslimTarihi.ToString("g", culture);
+       
+    }
+
+     db.Execute("UPDATE Odev SET " + alan  +"=@0 WHERE OdevID=@1",deger,OdevID);
+     
+     Response.Write("OK");
+     Response.End();
+     
+     db.Close();
+     }

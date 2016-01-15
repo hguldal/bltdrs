@@ -1,0 +1,80 @@
+﻿@{
+    
+      //Bu prosedürü sadece oturum açmış ve admin kullanıcıları çalıştırabilir. Bunu kontrol et eğer değilse http hata kodu döndür.
+      
+      if (WebSecurity.IsAuthenticated==false || Roles.IsUserInRole("Admin")==false)
+            {
+                Response.StatusCode=400;
+                Response.End();
+            }
+
+        var ad="";
+        var soyad="";
+        var ePosta="";     
+        var rol="";
+        var onayli=0;
+        var unvan=0;
+       
+        //Kullanıcı bilgilerini oku
+        ad=Request.Form["Ad"];
+        soyad=Request.Form["Soyad"];
+        ePosta=Request.Form["EPosta"];
+        unvan=Request.Form["UnvanID"].AsInt();
+        onayli=Request.Form["Onayli"].AsInt();
+        rol=Request.Form["Rol"];
+      
+        // Girilmesi gerekli alanları kontrol et. Eğer boş varsa hata kodu döndür.
+        if (string.IsNullOrEmpty(ad))
+        {
+            
+            Response.StatusCode=500;
+            Response.End();
+        }
+
+        if (string.IsNullOrEmpty(soyad))
+        {
+           
+            Response.StatusCode=500;
+            Response.End();
+        }
+
+        //kullanıcı adı olacak olan eposta boş ise hata döndür
+        if (string.IsNullOrEmpty(ePosta))
+        {
+            Response.StatusCode=500;
+            Response.End();
+        }
+        
+        var db=Database.Open("fb1ae");
+       
+        //E-posta adresi daha önce kayıt edilmiş mi ? Kontrol et eğer böyleyse hata döndür
+        if (db.QueryValue("SELECT COUNT(*) FROM Profiles WHERE ePosta=@0",ePosta)!=0)
+        {
+           db.Close();
+           Response.StatusCode=501;
+           Response.End();
+        }
+        
+        var parola="";
+        //Parola için rastgele bir kod üret
+        parola=KodUret.YeniKod(6);
+
+        //Profili oluştur
+        db.Execute("INSERT INTO Profiles(ePosta,Ad,Soyad,Onayli,UnvanID) VALUES (@0,@1,@2,@3,@4)",ePosta,ad,soyad,onayli,unvan);
+       
+        //Kullanıcı hesabını oluştur.
+        var token= WebSecurity.CreateAccount(ePosta,parola,false);
+      
+        //Oluşturulan hesaba rol ekle
+        Roles.AddUserToRole(ePosta,rol);
+         
+        db.Close();
+        
+        //Parolayı geri döndür. (Döndürülen parola mesaj olarak ekranda görünecek)
+        Response.Write(parola);
+                       
+        Response.End();
+
+}
+
+

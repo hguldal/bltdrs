@@ -1,0 +1,27 @@
+﻿@{
+    
+  //Oturum yoksa veya rol admin değilse hata döndür.
+
+  if (WebSecurity.IsAuthenticated==false || Roles.IsUserInRole("Admin")==false)
+     {
+        Response.StatusCode=400;
+        Response.End();
+    }
+
+
+   var db=Database.Open("fb1ae");
+   
+   var uyelikTuru=Request["UyelikID"];
+   var kod= KodUret.YeniKod(6);
+   
+   while (db.QueryValue("SELECT COUNT(*) FROM EgitmenKayitKodlari WHERE Kod=@0",kod)>0)
+        {
+            kod= KodUret.YeniKod(6);
+        }
+
+   db.Execute("INSERT INTO EgitmenKayitKodlari(Kod,SonKullanimTarihi,UyelikTuru) VALUES(@0,@1,@2)",kod,DateTime.Now.AddDays(360),uyelikTuru);
+   db.Close();
+   Response.Write(kod);
+   Response.End();
+
+}

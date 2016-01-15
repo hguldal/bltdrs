@@ -1,0 +1,158 @@
+﻿@{
+  
+    var ad="";
+    var soyad="";
+    var ePosta="";     
+    var parola="";   
+    bool hataVar=false;   
+    var mesajEPostaKayitli="";
+    var returnUrl=Request.QueryString["returnUrl"];
+    
+   var dil="tr";
+   
+   if (Request.Url.GetLeftPart(UriPartial.Authority).Contains("azureboard.com"))
+     {
+         dil="en";
+     }
+     else
+     {
+         dil="tr";
+         Culture=UICulture="tr-TR";
+     }
+
+    var db=Database.Open("fb1ae");
+    
+    
+    if (IsPost)
+    {
+       
+        ad=Request.Form["txtAd"];
+        soyad=Request.Form["txtSoyad"];
+        ePosta=Request.Form["txtEPosta"];
+        parola=Request.Form["txtParola"];
+        
+        if (db.QueryValue("SELECT COUNT(*) FROM Profiles WHERE ePosta=@0",ePosta)!=0)
+        {
+          mesajEPostaKayitli= Resources.Resource.msgGirilenEpostaDahaOnceKayitEdilmis;
+          hataVar=true;
+        }
+
+        if (hataVar==false)
+        {
+
+            db.Execute("INSERT INTO Profiles(ePosta,Ad,Soyad,Dil) VALUES (@0,@1,@2,@3)",ePosta,ad,soyad,dil);
+       
+            var token= WebSecurity.CreateAccount(ePosta,parola,false);
+      
+            Roles.AddUserToRole(ePosta,"Ogrenci");
+         
+            db.Close();
+            WebSecurity.Login(ePosta,parola);
+           
+            if (string.IsNullOrEmpty(returnUrl))
+            {
+            Response.Redirect("~/Panel");
+            }
+            else
+            {
+                Response.Redirect("~/" + returnUrl);
+            }
+        }
+
+
+       }
+       
+    db.Close();
+}
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!--Head-->
+<head>
+    <meta charset="utf-8" />
+    <title>@Resources.Resource.lblYeniHesap</title>
+
+    <meta name="description" content="register page" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="shortcut icon" href="assets/img/favicon.png" type="image/x-icon">
+
+    <!--Basic Styles-->
+    <link href="@Href("~/Shared/TemaBeyond/assets/css/bootstrap.min.css")" rel="stylesheet" />
+    <link id="bootstrap-rtl-link" href="" rel="stylesheet" />
+    <link href="@Href("~/Shared/TemaBeyond/assets/css/font-awesome.min.css")" rel="stylesheet" />
+    <link href="@Href("~/Shared/TemaBeyond/assets/css/weather-icons.min.css")" rel="stylesheet" />
+
+    <!--Fonts-->
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300"
+          rel="stylesheet" type="text/css">
+
+    <!--Beyond styles-->
+    <link id="beyond-link" href="@Href("~/Shared/TemaBeyond/assets/css/beyond.min.css")" rel="stylesheet" />
+    <link href="@Href("~/Shared/TemaBeyond/assets/css/demo.min.css")" rel="stylesheet" />
+    <link href="@Href("~/Shared/TemaBeyond/assets/css/typicons.min.css")" rel="stylesheet" />
+    <link href="@Href("~/Shared/TemaBeyond/assets/css/animate.min.css")" rel="stylesheet" />
+    <link id="skin-link" href="" rel="stylesheet" type="text/css" />
+    <link href="@Href("~/Shared/Plugins/jquery.growl/jquery.growl.css")" rel="stylesheet" type="text/css">
+    <script src="@Href("~/Shared/TemaBeyond/assets/js/skins.min.js")"></script>
+</head>
+<!--Head Ends-->
+<!--Body-->
+<body>
+    <div class="register-container animated fadeInDown">
+        @if (!string.IsNullOrEmpty(mesajEPostaKayitli))
+            {
+                <p class="alert alert-danger">@mesajEPostaKayitli</p>
+            }
+
+        <div class="registerbox bg-white">
+            <div class="registerbox-title">@Resources.Resource.lblYeniOgrenciHesabi</div>
+
+            <div class="registerbox-caption ">@Resources.Resource.msgLutfenAsagidakiAlanlariDoldur</div>
+            <form method="post" action="#" id="frmYeniKayit">
+            <div class="registerbox-textbox">
+                <input class="form-control"  id="txtEposta" name="txtEposta" type="email" autofocus="true" value="@ePosta" placeholder="@Resources.Resource.lblEposta" />
+            </div>
+            
+            <div class="registerbox-textbox">
+                <input class="form-control" id="txtParola" name="txtParola" type="password" placeholder="@Resources.Resource.lblParola" />
+            </div>
+
+            <div class="registerbox-textbox">
+                <input class="form-control" id="txtReParola" name="txtReParola" type="password" placeholder="@Resources.Resource.lblParolaTekrar" />
+            </div>
+
+            <hr class="wide" />
+            <div class="registerbox-textbox">
+                <input class="form-control" id="txtAd" name="txtAd" type="text" value="@ad" placeholder="@Resources.Resource.lblAd" />
+                
+            </div>
+            <div class="registerbox-textbox">
+                <input class="form-control" id="txtSoyad" name="txtSoyad" type="text" value="@soyad" placeholder="@Resources.Resource.lblSoyad"/>
+            </div>
+            </form>
+            <div class="registerbox-submit">
+                <button type="button" class="btn btn-primary pull-right" id="btnHesapOlustur" > @Resources.Resource.lblHesabiOlustur</button>
+            </div>
+        </div>
+        
+    </div>
+
+     <!--Basic Scripts-->
+    <script src="@Href("~/Shared/TemaBeyond/assets/js/jquery.min.js")"></script>
+    <script src="@Href("~/Shared/TemaBeyond/assets/js/bootstrap.min.js")"></script>
+    <script src="@Href("~/Shared/TemaBeyond/assets/js/slimscroll/jquery.slimscroll.min.js")"></script>
+
+    <!--Beyond Scripts-->
+    <script src="@Href("~/Shared/TemaBeyond/assets/js/beyond.min.js")"></script>
+    <script src="@Href("~/Shared/Plugins/BlockUI/jquery.blockUI.js")"></script>
+    <script src="@Href("~/Shared/Plugins/jquery.growl/jquery.growl.js")"></script>
+    <script src="@Href(string.Format("~/Shared/Javascript/Dil/{0}/Global.js",dil))"></script>
+    <script src="@Href("~/Shared/Javascript/Global.min.js")"></script>
+    <script src="@Href(string.Format("~/Shared/Javascript/Dil/{0}/Hesap/Yeni.js",dil))"></script>
+    <script src="@Href("~/Shared/Javascript/Hesap/Yeni.min.js")"></script>
+
+</body>
+<!--Body Ends-->
+</html>

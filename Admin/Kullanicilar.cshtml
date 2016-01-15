@@ -1,0 +1,149 @@
+﻿@{
+ if (!WebSecurity.IsAuthenticated)
+    {
+        Response.Redirect("~/Hesap/Giris");
+    }
+
+    var roller=Roles.GetRolesForUser(WebSecurity.CurrentUserName);
+  
+    if (roller.Contains("Admin")==false)
+    {
+      Response.Write("Erişim Engellendi");
+      Response.End();
+    }
+   var db=Database.Open("fb1ae");
+    Layout = "~/Shared/_LayoutAdmin.cshtml";    
+    
+    var queryKullanicilar=db.Query("SELECT * FROM Profiles INNER JOIN webpages_UsersInRoles ON Profiles.userID=webpages_UsersInRoles.userID");
+    
+    var queryUnvanlar=db.Query("SELECT * FROM Unvan");
+    db.Close();
+   
+}
+
+<div class="row">
+         <div class="col-lg-12">
+                                <h1 class="page-header"><i class="fa fa-users"></i> Kullanıcı Hesapları</h1>
+
+             </div>
+ </div>
+
+<div class="row">
+         <div class="col-lg-12">
+             <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalKullaniciEkle">
+                    <i class="fa fa-plus-circle"></i> Yeni Bir Kullanıcı Ekle
+                </button>
+             <hr>
+             <table id="lstKullanicilar" class="table table-hover">
+        <thead>
+            <tr>
+                <th>Adı Soyadı</th>
+                <th>Kullanıcı Adı</th>
+                <th>Rol</th>
+                <th>Onaylı</th>
+                <th>Aktif</th>
+                <th></th>
+               
+            </tr>
+        </thead>
+         <tbody>
+            @foreach (var kullanici in queryKullanicilar)
+            {
+                <tr>
+                   <td>@HelperProfil.KucukKunye(kullanici.userID)</td>
+                    <td>@kullanici.ePosta</td>
+                   
+                   <td>
+                     <select class="form-control cmbRol" data-UserID="@kullanici.userID">
+                          <option value="Ogrenci" @if(Roles.IsUserInRole(kullanici.ePosta,"Ogrenci")) {<text> selected </text>} > Öğrenci</option>
+                          <option value="Ogretici" @if(Roles.IsUserInRole(kullanici.ePosta,"Ogretici")) {<text> selected </text>}> Ders Sorumlusu</option>
+                          <option value="Admin" @if(Roles.IsUserInRole(kullanici.ePosta,"Admin")) {<text> selected </text>}> Admin</option>
+                     </select>
+                   </td>
+                    <td>
+                        <select class="form-control cmbOnayli" data-UserID="@kullanici.userID">
+                          <option value="1" @if(kullanici.Onayli==1){<text> selected</text>}> Evet</option>
+                          <option value="0" @if(kullanici.Onayli==0){<text> selected</text>}> Hayır</option>
+                       </select>
+                    </td>
+
+                     <td>
+                        <select class="form-control cmbAktif" data-UserID="@kullanici.userID">
+                          <option value="1" @if(kullanici.Aktif==1){<text> selected</text>}> Evet</option>
+                          <option value="0" @if(kullanici.Aktif==0){<text> selected</text>}> Hayır</option>
+                       </select>
+                    </td>
+                   <td>
+                      <button class="btn btn-info btn-sm btnGeciciParolaOlustur" data-UserID="@kullanici.userID"> Parolasını Sıfırla</button>
+                      
+                   </td>
+                   
+                </tr>
+            }
+         </tbody>
+    </table>
+
+  </div>
+</div>
+
+
+<div class="modal" id="modalKullaniciEkle" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Yeni Bir Kullanıcı Ekle</h4>
+      </div>
+      <div class="modal-body">
+        <form method="post" id="frmKullaniciEkle">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <label>Ünvan:</label>
+                            <select class="form-control" id="cmbUnvan" name="UnvanID">
+                               @foreach (var unvan in queryUnvanlar)
+                                    {
+                                        <option value="@unvan.UnvanID">@unvan.Unvan</option>
+                                    }
+                            </select>
+                            <label>Ad:</label>
+                            <input type="text" id="txtAd" class="form-control" name="Ad">
+                            <label>Soyad:</label>
+                            <input type="text" id="txtSoyad" class="form-control" name="Soyad">
+                            <label>Kullanıcı Adı:</label>
+                            <input type="text" id="txtEPosta" class="form-control" name="EPosta">
+                            
+                            <label>Kullanıcı Türü:</label>
+                            <select name="Rol" class="form-control" id="txtRol" name="Rol">
+                               <option value="Ogretici"> Ders Sorumlusu</option>
+                               <option value="Ogrenci" selected> Öğrenci</option>
+                               <option value="Admin"> Admin</option>
+                            </select>
+                            <label>Kimliği Doğrulandı:</label>
+                            <select name="Onayli" class="form-control" id="txtOnayli" name="Onayli">
+                               <option value="1"> Evet</option>
+                               <option value="0" selected> Hayır</option>
+                               
+                            </select>
+                        </div>
+
+                 </div>
+                </form>
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="btnKullaniciEkle">Tamam</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">İptal</button>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+@section js
+{
+    <script src="@Href("~/Shared/Plugins/datatables/jquery.dataTables.min.js")"></script>
+    
+    <script src="@Href("~/Shared/Plugins/datatables/dataTables.bootstrap.js")"></script>   
+<script src="@Href("~/Shared/Plugins/datatables/dataTables.tableTools.js")"></script>    
+<script src="http://malsup.github.com/jquery.form.js"></script> 
+    <script src="@Href("~/Shared/Javascript/Admin/Kullanicilar.js")"></script> 
+}

@@ -1,0 +1,32 @@
+﻿@{
+    
+  //Oturum yoksa veya rol admin değilse hata döndür.
+
+  if (WebSecurity.IsAuthenticated==false || Roles.IsUserInRole("Admin")==false)
+     {
+        Response.StatusCode=400;
+        Response.End();
+    }
+
+  //Gelen değerleri oku
+  var UserID=Request["pk"];
+  var alan=Request["name"];
+  var deger=Request["value"];
+
+  //Gelen değerler boş mu ? eğer boşsa hata döndür
+  if (string.IsNullOrEmpty(UserID) || string.IsNullOrEmpty(alan) || string.IsNullOrEmpty(deger))
+     {
+    
+       Response.StatusCode=500;
+       Response.End();
+     }
+   
+   //Gelen değerleri veritabanına yaz.
+   var db=Database.Open("fb1ae");
+ 
+   db.Execute("UPDATE Profiles SET " + alan  +"=@0 WHERE UserID=@1",deger,UserID);
+   db.Close();
+   Response.Write("OK");
+   Response.End();
+
+}

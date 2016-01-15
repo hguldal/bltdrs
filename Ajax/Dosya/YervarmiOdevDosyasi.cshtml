@@ -1,0 +1,29 @@
+﻿@{
+   if (!WebSecurity.IsAuthenticated)
+     {
+        
+        Response.StatusCode=401;
+        Response.End(); 
+     }
+   var db=Database.Open("fb1ae");
+   var dosyaBoyut=Request["DosyaBoyut"];
+   var odevID=Request["OdevID"];
+   var queryOdev=db.QuerySingle("SELECT * FROM Odev INNER JOIN Ders ON Odev.DersID=Ders.DersID WHERE Odev.OdevID=@0 AND Odev.Silindi=0",odevID);
+   var queryKullanici=db.QuerySingle("SELECT * FROM Profiles INNER JOIN UyelikTurleri ON Profiles.UyelikTuru=UyelikTurleri.UyelikID WHERE Profiles.userID=@0",queryOdev.UserID);
+   var toplamDosyaAlani= Convert.ToDouble(db.QueryValue("SELECT ISNULL(SUM(Boyut),0) as Toplam FROM Dosya WHERE UserID=@0 AND Silindi=0 AND YuklenmeTuru=2",queryOdev.UserID)) + Convert.ToDouble(dosyaBoyut);
+   db.Close();
+    
+    if (toplamDosyaAlani>Convert.ToDouble(queryKullanici.EgitmenOdevDepolamaAlani))
+     {
+         Response.StatusCode=502;
+         Response.End(); 
+     }  
+     else
+     {
+         Response.Write(queryKullanici.EgitmenOdevDepolamaAlani);
+         Response.End();
+     }
+     
+       
+}
+

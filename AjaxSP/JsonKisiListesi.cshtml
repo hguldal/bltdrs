@@ -1,0 +1,33 @@
+﻿@{
+if (!WebSecurity.IsAuthenticated)
+    {
+        Response.StatusCode = 401;
+        Response.End();
+        
+    }
+
+    var q=Request["sorgu"];
+    var db=Database.Open("fb1ae");
+    var sorguIfadesi="";
+    using (db)
+    {
+        var queryKullanici=db.QuerySingle("SELECT * FROM Profiles WHERE userID=@0 AND Aktif=1",WebSecurity.CurrentUserId);
+        
+             if (string.IsNullOrEmpty(q))
+             {
+                 sorguIfadesi="SELECT Profiles.UserID as userID,(Unvan.Unvan + ' ' + Profiles.ad + ' ' + Profiles.soyad) as adsoyad,Avatar FROM Profiles LEFT JOIN Unvan ON Profiles.UnvanID=Unvan.UnvanID WHERE Profiles.Aktif=1";
+             }
+             else
+             {
+                  sorguIfadesi="SELECT Profiles.UserID as userID,(Unvan.Unvan + ' ' + Profiles.ad + ' ' + Profiles.soyad) as adsoyad,Avatar FROM Profiles LEFT JOIN Unvan ON Profiles.UnvanID=Unvan.UnvanID WHERE Profiles.Aktif=1 AND (Profiles.ad LIKE '" + q + "%'  OR Profiles.soyad LIKE '" + q + "%')";
+             }
+         
+        var sonuclar=db.Query(sorguIfadesi);
+       
+        db.Close();   
+        Response.ContentType = "application/json"; 
+        Json.Write(sonuclar, Response.Output);
+        Response.End();
+    
+   }
+}

@@ -1,0 +1,55 @@
+﻿@{
+ 
+ // Bu prosedürü sadece oturumu açmış ve Öğretici rolündeki kullanıcılar için çalıştırabilir.
+  
+  if (WebSecurity.IsAuthenticated==false || Roles.IsUserInRole("Ogretici")==false)
+        {
+            Response.StatusCode=401;
+            Response.End();
+        }  
+
+    // Gelen değerleri oku.
+    var DersID=Request["pk"];
+    var kod=Request["value"];
+
+    // Eğer boşsa hata kodu döndür.
+    if (string.IsNullOrEmpty(DersID) || string.IsNullOrEmpty(kod))
+     {
+       Response.StatusCode=500;
+       Response.End();
+     }
+
+     // DersID sine göre URL oluştur.
+     var url="~/Ders/?DersID=" + DersID.ToString();
+     kod=HttpUtility.UrlEncode(kod);
+
+     var db=Database.Open("fb1ae");
+ 
+     // Ders bilgilerini veritabanından oku
+     var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0 AND UserID=@1",DersID,WebSecurity.CurrentUserId);
+   
+    // Bu işlemi yapan kullanıcı dersin sahibi mi ? 
+    // İşlemi yapan kullanıcı dersin sahibi değilse hata kodu döndür
+    if (WebSecurity.CurrentUserId!=queryDers.UserID)
+    {
+        db.Close();
+        Response.StatusCode=400;
+        Response.End();
+    }
+
+    // Yönlendirme kodları benzersiz olmalı, eğer gelen kod daha önce kayıt edilmişse hata kodu döndür.
+    if (db.QueryValue("SELECT count(*) FROM Yonlendir WHERE Kod=@0",kod)>0)
+    {
+        db.Close();
+        Response.StatusCode=400;
+        Response.End();
+    }
+    
+    // Yönlendirme tablosundaki değeri güncelle. (Insert Into kullanmıyoruz çünkü ders ilk defa oluşturulurken Yönlendirme tablosunda kayıt zaten oluşturuluyor)
+     db.Execute("UPDATE Yonlendir SET Kod=@0 WHERE Url=@1",kod, url);
+     db.Close();
+     Response.Write(kod);
+     Response.End();
+     
+    
+     }

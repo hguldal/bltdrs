@@ -1,0 +1,50 @@
+﻿@{
+    // Oturum açmamış kullanıcı için hata kodu döndür. (Oturum açmamış bir kullanıcının beğeni yapmasını engellemek için)
+    // Bu prosedür tüm kullanıcı türleri için çalıştırılabilir.
+    if (!WebSecurity.IsAuthenticated)
+       {
+            Response.StatusCode=401;
+            Response.End();             
+        }  
+
+    //Beğenilecek Aktivitenin AktiviteID sini istek bilgilerinden oku.
+    var aktiviteID=Request["AktiviteID"];
+   
+    //Eğer aktiviteID boşsa hata döndür.
+    if (string.IsNullOrEmpty(aktiviteID))
+     {
+    
+       Response.StatusCode=500;
+       Response.End();
+     }
+
+     //Veritabanını aç
+     var db=Database.Open("fb1ae");
+     
+
+
+     //Aktivite bilgilerini veritabanından oku
+     var queryAktivite=db.QuerySingle("SELECT * FROM Aktivite WHERE AktiviteID=@0",aktiviteID);
+   
+        // Kullanıcı daha önce bu aktiviteyi beğenmiş mi kontrol et
+        if (db.QueryValue("SELECT COUNT(*) FROM AktiviteBegeni WHERE UserID=@0 AND AktiviteID=@1",WebSecurity.CurrentUserId,aktiviteID)<1)
+        {
+            // Beğeniyi ekle
+            db.Execute("INSERT INTO AktiviteBegeni(AktiviteID,UserID) VALUES(@0,@1)",aktiviteID,WebSecurity.CurrentUserId);
+
+           // Beğeni için bir bildirim oluştur.
+            db.Execute("INSERT INTO Bildirim(Url,EylemiYapanUserID,IliskiliOge,EylemID,DersID) VALUES(@0,@1,@2,@3,@4)","~/Ders/?DersID=" + queryAktivite.DersID,WebSecurity.CurrentUserId,"aktbgn" + aktiviteID.ToString(),1,queryAktivite.DersID);
+            var eklenenBildirimID=db.GetLastInsertId();
+            // Bu bildirimi dersin sahibi ve takipçileri görebilecek.
+            db.Execute("INSERT INTO BildirimOkunmasiGereken(UserID,BildirimID) (SELECT UserID,@0 FROM DersTakip WHERE DersID=@1 AND Durum=2 UNION SELECT UserID,@0 FROM Ders WHERE DersID=@1)",eklenenBildirimID,queryAktivite.DersID);
+           
+         }
+        
+        //Herşey tamam. OK mesajı döndür
+        db.Close();
+        Response.Write("OK");
+        Response.End(); 
+}
+
+
+

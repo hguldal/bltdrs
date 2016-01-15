@@ -1,0 +1,69 @@
+﻿@using Microsoft.WindowsAzure.Storage;
+@using Microsoft.WindowsAzure.Storage.Auth;
+@using Microsoft.WindowsAzure.Storage.Blob;
+@{
+    
+   if (!WebSecurity.IsAuthenticated)
+   
+        {
+            Response.StatusCode=401;
+            Response.End();
+                   
+        }  
+
+     var db=Database.Open("fb1ae");
+     var ad=Request["txtAd"];
+     var soyad=Request["txtSoyad"];
+     var kurum=Request["cmbKurum"];
+     var dil=Request["cmbDil"];
+     var unvan=Request["cmbUnvan"];
+     if (string.IsNullOrEmpty(unvan))
+     {
+         unvan="10";
+     }
+     
+     if (Request.Files.Count>0)
+            {              
+               var Dosya = Request.Files[0]; 
+                WebImage imageDosya=null;
+                imageDosya=WebImage.GetImageFromRequest();
+                var KayitAdi=Guid.NewGuid().ToString();     
+                var dosyaUzantisi = Dosya.FileName.Substring(Dosya.FileName.LastIndexOf('.')+1); 
+                if (imageDosya.Width>128)
+                {
+                    imageDosya.Resize(128,128,true,true);
+                }
+               
+                var azureStorageHesapAdi=System.Configuration.ConfigurationManager.AppSettings["AzureStorageHesapAdi"];	
+                var azureStorageHesapAnahtari=System.Configuration.ConfigurationManager.AppSettings["AzureStorageHesapAnahtari"];		
+                var connString=string.Format("DefaultEndpointsProtocol=http;AccountName={0};AccountKey={1};",azureStorageHesapAdi,azureStorageHesapAnahtari);
+                CloudStorageAccount storageHesap = CloudStorageAccount.Parse(connString);		
+                var blobIstemci = storageHesap.CreateCloudBlobClient();		
+                var container = blobIstemci.GetContainerReference("profilresimleri");		
+                CloudBlockBlob blockBlob = container.GetBlockBlobReference(KayitAdi + "." + dosyaUzantisi);	
+                
+                blockBlob.UploadFromByteArray(imageDosya.GetBytes(),0,imageDosya.GetBytes().Length);
+                
+                db.Execute("UPDATE Profiles SET Ad=@0,Soyad=@1,Avatar=@2,KurumID=@4,Dil=@5,UnvanID=@6 WHERE userID=@3",ad,soyad,KayitAdi + "." + dosyaUzantisi,WebSecurity.CurrentUserId,kurum,dil,unvan);
+
+            }
+            else
+            {
+                var fotoKaldir=Request["fotoKaldir"];
+              
+                if (fotoKaldir=="true")
+                {
+                     db.Execute("UPDATE Profiles SET Ad=@0,Soyad=@1,Avatar=@3,KurumID=@4,Dil=@5,UnvanID=@6 WHERE UserID=@2",ad,soyad,WebSecurity.CurrentUserId,"noimage.jpg",kurum,dil,unvan);
+                }
+                else
+                {
+                    db.Execute("UPDATE Profiles SET Ad=@0,Soyad=@1,KurumID=@3,Dil=@4,UnvanID=@5 WHERE UserID=@2",ad,soyad,WebSecurity.CurrentUserId,kurum,dil,unvan);
+                }
+            }
+
+               db.Close();  
+               
+               Response.Write("OK");
+               Response.End();
+        }
+        

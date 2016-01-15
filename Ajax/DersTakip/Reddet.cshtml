@@ -1,0 +1,51 @@
+﻿@{
+  
+     
+     var DersID=Request["DersID"];   
+     var UserID=Request["UserID"];   
+    
+     if (WebSecurity.IsAuthenticated==false || Roles.IsUserInRole("Ogretici")==false)
+     {
+        
+        Response.StatusCode=401;
+        Response.End(); 
+     }
+
+     if (string.IsNullOrEmpty(DersID))
+     {
+      
+       Response.StatusCode=500;
+       Response.End();
+     }
+
+     if (string.IsNullOrEmpty(UserID))
+     {
+      
+       Response.StatusCode=500;
+       Response.End();
+     }
+
+     
+       var db=Database.Open("fb1ae");
+       using (db)
+       {
+
+           //aktif kullanici dersin sahibi mi ?
+           if (db.QueryValue("SELECT COUNT(*) FROM Ders WHERE DersID=@0 AND UserID=@1",DersID,WebSecurity.CurrentUserId)<1)
+           {
+               db.Close();
+               Response.StatusCode=500;
+               Response.End();
+           }
+
+           db.Execute("DELETE FROM DersTakip WHERE DersID=@0 AND UserID=@1",DersID,UserID);
+           db.Execute("UPDATE Bildirim SET Silindi=1 WHERE IliskiliOge=@0","drsistg" + UserID.ToString() + DersID.ToString());
+          
+           db.Close();   
+           Response.Write("OK");
+           Response.End();
+
+
+       }
+}
+

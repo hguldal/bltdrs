@@ -1,0 +1,23 @@
+﻿@{
+    if (!WebSecurity.IsAuthenticated)
+    {
+       Response.Redirect("~/Hesap/Giris"); 
+    }
+    
+    var db=Database.Open("fb1ae");
+
+    var queryKullanici=db.QuerySingle("SELECT * FROM Profiles WHERE userID=@0",WebSecurity.CurrentUserId);
+   
+    var dil=queryKullanici.Dil;
+    db.Close();
+    WebSecurity.Logout();
+    if (dil=="tr")
+    {
+    Response.Redirect("~/Web/");
+
+    }
+    else 
+    {
+       Response.Redirect("~/Web/en/"); 
+    }
+}

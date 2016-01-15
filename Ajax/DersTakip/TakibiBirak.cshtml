@@ -1,0 +1,51 @@
+﻿@{
+  
+     
+     var DersID=Request["DersID"];   
+    
+     if (WebSecurity.IsAuthenticated==false || Roles.IsUserInRole("Ogrenci")==false)
+     {
+        
+        Response.StatusCode=401;
+        Response.End(); 
+     }
+
+     if (string.IsNullOrEmpty(DersID))
+     {
+      
+       Response.StatusCode=500;
+       Response.End();
+     }
+
+      if (!Roles.IsUserInRole("Ogrenci"))
+       {
+          
+           Response.StatusCode=401;
+           Response.End();
+       }
+
+       var db=Database.Open("fb1ae");
+       using (db)
+       {
+
+
+           if (db.QueryValue("SELECT COUNT(*) FROM DersTakip WHERE DersID=@0 AND UserID=@1 AND Durum=2",DersID,WebSecurity.CurrentUserId)<1)
+           {
+               db.Close();
+               Response.StatusCode=500;
+               Response.End();
+           }
+
+           db.Execute("DELETE FROM DersTakip WHERE DersID=@0 AND UserID=@1",DersID,WebSecurity.CurrentUserId);
+          
+           var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0",DersID);
+           db.Execute("INSERT INTO Bildirim(Url,EylemiYapanUserID,EylemID,DersID) VALUES(@0,@1,@2,@3)","~/",WebSecurity.CurrentUserId,6,DersID);
+           var eklenenBildirimID=db.GetLastInsertId();
+           db.Execute("INSERT INTO BildirimOkunmasiGereken(UserID,BildirimID) VALUES(@0,@1)",queryDers.UserID,eklenenBildirimID); 
+             
+           db.Close();   
+           Response.Write("OK");
+           Response.End();
+       }
+}
+

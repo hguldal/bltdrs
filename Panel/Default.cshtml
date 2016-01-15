@@ -1,0 +1,366 @@
+﻿@{
+  
+   if (!WebSecurity.IsAuthenticated)
+    {
+        Response.Redirect("~/Hesap/Giris?returnUrl=Panel");
+    }
+
+   
+    if (Roles.IsUserInRole("Admin"))
+    {
+        Response.Redirect("~/Admin");
+    }
+
+    Layout = "~/Shared/_LayoutYeni.cshtml";
+
+    var db=Database.Open("fb1ae");
+    var queryKullanici=db.QuerySingle("SELECT * FROM Profiles WHERE userID=@0",WebSecurity.CurrentUserId);
+    var dil=queryKullanici.Dil;
+    if (dil=="tr")
+       {
+           Culture=UICulture="tr-TR";
+       }
+    
+    var roller=Roles.GetRolesForUser(WebSecurity.CurrentUserName);
+    var sonAktiviteID="";
+    List<Aktivite> listeAktiviteler=new List<Aktivite>();
+    IEnumerable<dynamic> queryAktiviteler=null;
+    IEnumerable<dynamic> queryDersler=null;
+    IEnumerable<dynamic> queryOdevler=null;
+    IEnumerable<dynamic> queryOdevGonderileri=null;
+ 
+    if (roller.Contains("Ogretici"))
+     {
+        queryAktiviteler=db.Query("SELECT top 25 * FROM Aktivite WHERE Silindi=0 AND UserID=@0 ORDER BY AktiviteID DESC",WebSecurity.CurrentUserId);
+        queryDersler=db.Query("SELECT * FROM Ders WHERE userID=@0 AND Arsivlendi=0",WebSecurity.CurrentUserId); 
+        queryOdevler=db.Query("SELECT * FROM Odev INNER JOIN Ders ON Odev.DersID=Ders.DersID WHERE Odev.Silindi=0 AND Ders.UserID=@0 AND (Odev.OdevGonderimi<>2 OR Odev.SonTeslimTarihi>=@1) AND Odev.OdevGonderimi<>2 ORDER BY Odev.EklenmeTarihi DESC",WebSecurity.CurrentUserId,DateTime.Now);
+        queryOdevGonderileri=db.Query("SELECT * FROM OdevGonderisi INNER JOIN Odev ON OdevGonderisi.OdevID=Odev.OdevID WHERE OdevGonderisi.Durum=1 AND Odev.DersID IN (SELECT DersID FROM Ders WHERE UserID=@0 AND Arsivlendi=0) ORDER BY OdevGonderisi.OdevGonderiID DESC",WebSecurity.CurrentUserId);
+        
+     }
+    else if (roller.Contains("Ogrenci"))
+    {
+        
+      queryAktiviteler=db.Query("SELECT top 25 * FROM Aktivite WHERE Silindi=0 AND Aktivite.DersID IN (SELECT DersID FROM DersTakip WHERE UserID=@0 AND Durum=2) ORDER BY AktiviteID DESC",WebSecurity.CurrentUserId);  
+      queryDersler=db.Query("SELECT * FROM Ders WHERE Arsivlendi=0 AND DersID IN (SELECT DersID FROM DersTakip WHERE UserID=@0 AND Durum=2)",WebSecurity.CurrentUserId);  
+      queryOdevler=db.Query("SELECT * FROM Odev WHERE Odev.Silindi=0 AND (Odev.DersID IN (SELECT DersID FROM DersTakip WHERE UserID=@0 AND Durum=2)) AND (Odev.OdevID NOT IN (SELECT OdevID FROM OdevGonderisi WHERE UserID=@0)) AND (Odev.OdevGonderimi<>2 OR Odev.SonTeslimTarihi>=@1) AND Odev.OdevGonderimi<>2 ORDER BY Odev.EklenmeTarihi DESC",WebSecurity.CurrentUserId,DateTime.Now);
+    }
+
+    foreach(var aktivite in queryAktiviteler)
+    {
+       Aktivite a=new Aktivite();
+       a.AktiviteID=aktivite.AktiviteID;
+       sonAktiviteID=a.AktiviteID.ToString();
+       a.UserID=aktivite.UserID;
+       a.DersID=aktivite.DersID;
+       a.Ikon=aktivite.Ikon;
+       a.IlaveFoto=aktivite.IlaveFoto;
+       a.IlaveMetin=aktivite.IlaveMetin;
+       a.IlaveURL=aktivite.IlaveURL;
+       a.Metin=aktivite.Metin;
+       a.Renk=aktivite.Renk;
+       a.EylemID=aktivite.EylemID;
+       a.Silindi=aktivite.Silindi;
+       a.Tarih=aktivite.Tarih;
+      
+       a.URL=aktivite.URL;
+       a.UI_BegeniSayisi=db.QueryValue("SELECT count(*) FROM AktiviteBegeni WHERE Silindi=0 AND AktiviteID=@0",aktivite.AktiviteID);
+       a.UI_AktiviteOkundu=db.QueryValue("SELECT count(*) FROM AktiviteOkunan WHERE AktiviteID=@0",aktivite.AktiviteID);
+       a.UI_GorunenTarih=Genel.DateLabel(aktivite.Tarih,dil);
+       
+       var queryAktiviteUser=db.QuerySingle("SELECT * FROM Profiles INNER JOIN Unvan ON Profiles.UnvanID=Unvan.UnvanID  WHERE userID=@0",aktivite.UserID);
+      
+      
+       if (aktivite.UserID==WebSecurity.CurrentUserId)
+       {
+           a.UI_SilmeDugmesi=1;
+       }
+       else
+       {
+           a.UI_SilmeDugmesi=0;
+       }
+
+       if (aktivite.DersID!=-1) {
+         a.UI_DersAdi=db.QueryValue("SELECT DersAdi FROM Ders WHERE DersID=@0",aktivite.DersID);
+       }
+
+       if (db.QueryValue("SELECT COUNT(*) FROM AktiviteBegeni WHERE Silindi=0 AND AktiviteID=@0 AND UserID=@1",aktivite.AktiviteID,WebSecurity.CurrentUserId)==0)
+       {
+           a.UI_AktiviteBegendi=0;
+       }
+       else
+       {
+           a.UI_AktiviteBegendi=1;
+       }
+      
+       if (db.QueryValue("SELECT COUNT(*) FROM AktiviteOkunan WHERE AktiviteID=@0 AND UserID=@1",aktivite.AktiviteID,WebSecurity.CurrentUserId)==0)
+       {
+           db.Execute("INSERT INTO AktiviteOkunan(AktiviteID,UserID) VALUES(@0,@1)",aktivite.AktiviteID,WebSecurity.CurrentUserId);
+       }
+       listeAktiviteler.Add(a);
+    }
+    db.Close();
+   
+ }
+
+@section SayfaBasligi
+{
+   <h1>@Resources.Resource.lblAnasayfa</h1>
+}
+
+<div class="row"> 
+    <div class="col-lg-8">
+    <div class="widget">
+               <div class="widget-header bordered-top bordered-blueberry">
+                                            
+                     <span class="widget-caption"><strong>@Resources.Resource.lblAktiviteler</strong></span>
+                      <div class="widget-buttons">
+
+                                              <a href="#" data-toggle="collapse">
+                                                    <i class="fa fa-minus"></i>
+                                                </a>
+                                              
+                                                <a href="#" data-toggle="maximize">
+                                                    <i class="fa fa-expand"></i>
+                                                </a>
+                                               
+                                            </div><!--Widget Buttons-->                     
+                </div><!--Widget Header-->
+               <div class="widget-body">
+                 <table class="table table-hover" id="tabloAktiviteler" >		
+       <thead>		
+            <tr>		
+                <th></th>		
+                <th></th>		
+               <th></th>		
+              <th></th>		
+                   		
+                		
+            </tr>		
+        </thead>		
+         <tbody>		
+            @foreach (var item in listeAktiviteler)		
+            {		
+                		
+                <tr>		
+                    <td class="text-center text-@item.Renk"><span>		
+                            <i class="fa @item.Ikon fa-fw fa-2x"></i>  </span>		
+                            <br>		
+                            <h4><i class="fa fa-thumbs-o-up" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.lblBegeniSayisi"></i> <button class="btn btn-link btnBegenenleriGoster" data-AktiviteID="@item.AktiviteID"> @item.UI_BegeniSayisi </button> </h4>		
+                            <br>		
+                            <h4><i class="fa fa-eye" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.lblGoruntuleyenKisiSayisi"></i><button class="btn btn-link btnGoruntuleyenleriGoster" data-AktiviteID="@item.AktiviteID"> @item.UI_AktiviteOkundu </button></h4>		
+                    </td>		
+                    		
+                    <td>		
+                       		
+                        @HelperProfil.KucukKunye(Convert.ToInt32(item.UserID))		
+                      @if (dil=="tr")		
+                      {		
+                        <a href="@item.URL"> @item.UI_DersAdi @Resources.Resource.lblDersinde </a>		
+                        		
+                        <a href="@item.URL">@Genel.AktiviteEylemindenMetne(item.EylemID,dil) </a>		
+                       }		
+                       else if (dil=="en") 		
+                       {		
+                        		
+                        <a href="@item.URL">@Genel.AktiviteEylemindenMetne(item.EylemID,dil) </a>  		
+                        <a href="@item.URL">in @item.UI_DersAdi </a>		
+                       }		
+                        <br>		
+                        @if (item.IlaveMetin!=null) {		
+                            <em><br>@Html.Raw(item.IlaveMetin.ParseURL().ParseHashtag().ParseUsername())</em>		
+                        }		
+                        		
+                        <br><br>		
+                    @if (item.UI_AktiviteBegendi==0)		
+                      {		
+                        <button type="button" class="btn btn-link btn-xs AktiviteBegen" data-AktiviteID="@item.AktiviteID">		
+                          <i class="fa fa-thumbs-o-up"></i> @Resources.Resource.lblBegen		
+                        </button>		
+                        }		
+                        else		
+                       {		
+                            <button type="button" class="btn btn-link btn-xs AktiviteBegenmektenVazgec" data-AktiviteID="@item.AktiviteID">		
+                          <i class="fa fa-thumbs-o-down"></i> @Resources.Resource.lblBegenmektenVazgec		
+                            </button>		
+                        }		
+		
+                    </td>		
+                    <td class="text-right">@item.UI_GorunenTarih</td><td>		
+                    @if (item.UI_SilmeDugmesi==1)		
+                    {		
+                     <button class="btn btn-danger btnAktiviteSil btn-xs" data-AktiviteID="@item.AktiviteID"><i class="fa fa-remove"></i></button>		
+                    }		
+                    </td>		
+                </tr>		
+            }		
+         </tbody>		
+    </table>
+                   <br>
+              <button class="btn btn-info"  id="btnOncekiaktiviteler" data-SonAktiviteID="@sonAktiviteID"> @Resources.Resource.lblDahaOncekiAktiviteleriGor</button><br><br>                              
+                                        </div><!--Widget Body-->
+                                    </div><!--Widget-->
+     
+        <br>
+    </div>
+    <div class="col-lg-4">
+        <div class="widget">
+               <div class="widget-header bordered-top bordered-pink">
+                                            
+                                            <span class="widget-caption"><strong>@Resources.Resource.lblDersler</strong></span>
+                                            <div class="widget-buttons">
+
+                                              <a href="#" data-toggle="collapse">
+                                                    <i class="fa fa-minus"></i>
+                                                </a>
+                                              
+                                                <a href="#" data-toggle="maximize">
+                                                    <i class="fa fa-expand"></i>
+                                                </a>
+                                               
+                                            </div><!--Widget Buttons-->
+                                        </div><!--Widget Header-->
+                                        <div class="widget-body">
+                                            <table class="table">
+                                            @foreach (var ders in queryDersler)
+                                            {
+                                                <tr><td><a href="@Href("~/Ders/?DersID=")@ders.DersID">@ders.DersAdi</a></td></tr>
+                                            }
+                                                </table><hr>
+ 
+                                        </div><!--Widget Body-->
+                                    </div><!--Widget-->
+        @if (roller.Contains("Ogrenci"))
+        {
+            <div class="widget">
+               <div class="widget-header bordered-top bordered-palegreen">
+                                            
+                                            <span class="widget-caption"><strong>@Resources.Resource.lblOdevler</strong></span>
+                                            <div class="widget-buttons">
+
+                                              <a href="#" data-toggle="collapse">
+                                                    <i class="fa fa-minus"></i>
+                                                </a>
+                                              
+                                                <a href="#" data-toggle="maximize">
+                                                    <i class="fa fa-expand"></i>
+                                                </a>
+                                               
+                                            </div><!--Widget Buttons-->
+                                        </div><!--Widget Header-->
+                                        <div class="widget-body">
+                                            <table class="table">
+                                            @foreach (var odev in queryOdevler)
+                                            {
+                                                <tr><td><a href="@Href("~/Odev/Goster?OdevID=" + odev.OdevID)">@odev.Baslik</a></td></tr>
+                                            }
+                                                </table><hr>
+                                           
+                                        </div><!--Widget Body-->
+                                    </div><!--Widget-->
+        }
+
+          @if (roller.Contains("Ogretici"))
+        {
+            <div class="widget">
+               <div class="widget-header bordered-top bordered-blue ">
+                                            
+                                            <span class="widget-caption"><strong>@Resources.Resource.lblOdeviniGonderenler</strong></span>
+                                            <div class="widget-buttons">
+
+                                              <a href="#" data-toggle="collapse">
+                                                    <i class="fa fa-minus"></i>
+                                                </a>
+                                              
+                                                <a href="#" data-toggle="maximize">
+                                                    <i class="fa fa-expand"></i>
+                                                </a>
+                                               
+                                            </div><!--Widget Buttons-->
+                                        </div><!--Widget Header-->
+                                        <div class="widget-body" style="height: 300px;overflow: auto;">
+                                            <table class="table table-hover">
+                                            @foreach (var odevgonderisi in queryOdevGonderileri)
+                                            {
+                                                <tr>
+                                                    <td>@HelperProfil.KucukKunye(odevgonderisi.UserID)</td>
+                                                    <td>  
+                                                       <a href="@Href("~/Odev/OdevGonderisi?OdevGonderiID=" + odevgonderisi.OdevGonderiID)" class="btn btn-xs btn-info" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.lblDetaylar"><i class="fa fa-search-plus"></i></a>
+                                                       <button class="btn btn-xs btn-primary btnOdevGonderisiIncelendi" data-OdevGonderiID="@odevgonderisi.OdevGonderiID" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.lblIncelendi"><i class="fa fa-check-square-o"></i></button>
+                                                    </td>
+                                                </tr>
+                                            }
+                                                </table><hr>
+                                            
+                                           
+                                        </div><!--Widget Body-->
+                                    </div><!--Widget-->
+            <div class="widget">
+               <div class="widget-header bordered-top bordered-palegreen ">
+                                            
+                                            <span class="widget-caption"><strong>@Resources.Resource.lblOdevler</strong></span>
+                                            <div class="widget-buttons">
+
+                                              <a href="#" data-toggle="collapse">
+                                                    <i class="fa fa-minus"></i>
+                                                </a>
+                                              
+                                                <a href="#" data-toggle="maximize">
+                                                    <i class="fa fa-expand"></i>
+                                                </a>
+                                               
+                                            </div><!--Widget Buttons-->
+                                        </div><!--Widget Header-->
+                                        <div class="widget-body">
+                                            <table class="table">
+                                            @foreach (var odev in queryOdevler)
+                                            {
+                                                <tr>
+                                                    <td><a href="@Href("~/Odev/Goster?OdevID=" + odev.OdevID)">@odev.Baslik</a></td>
+                                                    <td>  
+                                                        <label>
+                                                            <input class="checkbox-slider checkBoxOdevGonderimiAcKapa" type="checkbox" title="@Resources.Resource.lblOdevGonderimi" data-OdevID="@odev.OdevID" checked>
+                                                            <span class="text"></span>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                            }
+                                                </table><hr>
+                                            <a href="@Href("~/Odev/VerdigimOdevler")"><i class="fa fa-plus-circle"></i> @Resources.Resource.lblYeniBirOdevVer</a>
+                                           
+                                        </div><!--Widget Body-->
+                                    </div><!--Widget-->
+
+            
+        }
+
+        </div>
+   
+
+    
+</div>
+
+<div class="modal" id="modalKisiDetaylari" data-tip="-1" data-AktiviteID="-1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">@Resources.Resource.lblDetaylar</h4>
+      </div>
+      <div class="modal-body" style="overflow:auto;height: 300px">
+        <table id="tableKisiListesi" class="table table-hover">
+        
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">@Resources.Resource.lblKapat</button>
+        
+      </div>
+    </div>
+  </div>
+</div>
+ 
+@section js
+{
+   <script src="@Href(string.Format("~/Shared/Javascript/Dil/{0}/Aktiviteler.js",dil))"></script>
+   <script src="@Href("~/Shared/Javascript/Aktiviteler.min.js")"></script>
+}

@@ -1,0 +1,26 @@
+﻿@{
+if (string.IsNullOrEmpty(Context.GetRouteValue("kod")))
+     {
+        Response.Redirect("~/Shared/Hata");
+        Response.End();
+     }
+   
+    var kod= Context.GetRouteValue("kod"); 
+   
+    var db=Database.Open("fb1ae");
+    
+    var queryUrl=db.QuerySingle("SELECT * FROM Yonlendir WHERE Kod=@0",HttpUtility.UrlEncode(kod));
+    if (queryUrl!=null)
+    {
+        db.Close();
+        Response.Redirect(queryUrl.Url);
+        Response.End();
+    }
+    else
+    {
+       Response.Redirect("~/Shared/Hata");
+        Response.End(); 
+    }
+    
+}
+

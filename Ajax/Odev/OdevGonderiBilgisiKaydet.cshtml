@@ -1,0 +1,77 @@
+﻿@{
+    if (!WebSecurity.IsAuthenticated)
+   
+        {
+            Response.StatusCode=401;
+            Response.End();
+                   
+        }  
+
+    var OdevGonderiID=Request["OdevGonderiID"];
+    var Durum=Request["Durum"];
+    var DersSorumlusuMesaji=Request["DersSorumlusuMesaji"];
+    var DegerlendirmePuani=0;
+    
+
+    if (string.IsNullOrEmpty(OdevGonderiID))
+     {
+    
+       Response.StatusCode=500;
+       Response.End();
+     }
+
+    if (string.IsNullOrEmpty(Durum))
+     {
+            Durum="1";
+       
+     }
+
+     if (string.IsNullOrEmpty(DersSorumlusuMesaji))
+     {
+            DersSorumlusuMesaji="";
+       
+     }
+
+     if (!string.IsNullOrEmpty(Request["DegerlendirmePuani"]))
+     {
+            DegerlendirmePuani=Request["DegerlendirmePuani"].AsInt();
+       
+     }
+
+     if (DegerlendirmePuani==0)
+     {
+         DegerlendirmePuani=-1;
+     }
+
+     var db=Database.Open("fb1ae");
+ 
+     var queryOdevGonderisi=db.QuerySingle("SELECT * FROM OdevGonderisi INNER JOIN Odev ON OdevGonderisi.OdevID=Odev.OdevID WHERE OdevGonderiID=@0",OdevGonderiID);
+     
+     var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0",queryOdevGonderisi.DersID);
+   
+
+    if (WebSecurity.CurrentUserId==queryDers.UserID)
+    {
+        db.Execute("UPDATE OdevGonderisi SET Durum=@0,DersSorumlusuMesaji=@1,DegerlendirmePuani=@2 WHERE OdevGonderiID=@3",Durum,DersSorumlusuMesaji,DegerlendirmePuani,OdevGonderiID);
+        
+        // Gönderi için bir bildirim oluştur.
+        db.Execute("INSERT INTO Bildirim(Url,EylemiYapanUserID,EylemID,DersID) VALUES(@0,@1,@2,@3)","~/Odev/Goster?OdevID=" + queryOdevGonderisi.OdevID,WebSecurity.CurrentUserId,9,queryDers.DersID);
+        var eklenenBildirimID=db.GetLastInsertId();
+        
+        db.Execute("INSERT INTO BildirimOkunmasiGereken(UserID,BildirimID) VALUES (@0,@1)",queryOdevGonderisi.UserID,eklenenBildirimID);
+        
+        db.Close();
+        Response.Write("OK");
+        Response.End();
+    }
+    else
+    {
+        db.Close();
+        Response.StatusCode=400;
+        Response.End();
+    }
+    
+}
+
+
+

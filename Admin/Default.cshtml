@@ -1,0 +1,220 @@
+﻿@{
+    if (!WebSecurity.IsAuthenticated)
+    {
+        Response.Redirect("~/Hesap/Giris");
+    }
+
+    var roller=Roles.GetRolesForUser(WebSecurity.CurrentUserName);
+    var db=Database.Open("fb1ae");
+    
+
+    if (roller.Contains("Admin")==false)
+    {
+      Response.Write("Erişim Engellendi");
+      Response.End();
+    }
+   
+    Layout = "~/Shared/_LayoutAdmin.cshtml"; 
+    
+    var dersSayisi=db.QueryValue("SELECT COUNT(*) FROM Ders");
+    var kullaniciSayisi=db.QueryValue("SELECT COUNT(*) FROM Profiles WHERE Aktif=1");
+   
+    var dosyaSayisi=db.QueryValue("SELECT COUNT(*) FROM Dosya");
+    var bildirimSayisi=db.QueryValue("SELECT COUNT(*) FROM Bildirim");
+    var aktiviteSayisi=db.QueryValue("SELECT COUNT(*) FROM Aktivite");
+    var odevSayisi=db.QueryValue("SELECT COUNT(*) FROM Odev");
+    var odevGonderiSayisi=db.QueryValue("SELECT COUNT(*) FROM OdevGonderisi");
+    double depolamaAlani=0;
+    if (dosyaSayisi>0)
+    {
+     depolamaAlani=(double) (db.QueryValue("SELECT SUM(Boyut) FROM Dosya"));
+     }
+     
+
+    double depolamaAlaniMB=Math.Round(depolamaAlani/(1024*1024*1024),3);
+    
+    db.Close();
+}
+
+<h1>Anasayfam</h1>
+<hr> 
+<h3></h3>
+<br>
+
+<div class="row">
+     <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-book fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">@dersSayisi</div>
+                                    <div>Ders</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#">
+                            <div class="panel-footer">
+                                <span class="pull-left">Detaylar</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+      </div>
+
+    <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-user fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">@kullaniciSayisi</div>
+                                    <div>Kullanıcı Hesabı</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="@Href("~/Admin/Kullanicilar")">
+                            <div class="panel-footer">
+                                <span class="pull-left">Detaylar</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+      </div>
+
+    
+
+    <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-file fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">@dosyaSayisi</div>
+                                    <div>Dosya</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#">
+                            <div class="panel-footer">
+                                <span class="pull-left">Detaylar</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+      </div>
+
+</div>
+<div class="row">
+     <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <div class="row">
+                                
+                                <div class="col-xs-12 text-right">
+                                    <div class="huge">@depolamaAlaniMB GB</div>
+                                    <div>Kullanılan Toplam Alan</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#">
+                            <div class="panel-footer">
+                                <span class="pull-left">Detaylar</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+      </div>
+    <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <div class="row">
+                                
+                                <div class="col-xs-12 text-right">
+                                    <div class="huge">@aktiviteSayisi</div>
+                                    <div>Aktivite</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#">
+                            <div class="panel-footer">
+                                <span class="pull-left">Detaylar</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+      </div>
+    <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <div class="row">
+                                
+                                <div class="col-xs-12 text-right">
+                                    <div class="huge">@bildirimSayisi</div>
+                                    <div>Bildirim</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#">
+                            <div class="panel-footer">
+                                <span class="pull-left">Detaylar</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+      </div>
+    <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <div class="row">
+                                
+                                <div class="col-xs-12 text-right">
+                                    <div class="huge">@odevSayisi</div>
+                                    <div>Ödev</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#">
+                            <div class="panel-footer">
+                                <span class="pull-left">Detaylar</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+      </div>
+</div>
+<div class="row">
+    <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <div class="row">
+                                
+                                <div class="col-xs-12 text-right">
+                                    <div class="huge">@odevGonderiSayisi</div>
+                                    <div>Ödev Gönderisi</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#">
+                            <div class="panel-footer">
+                                <span class="pull-left">Detaylar</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+      </div>
+</div>

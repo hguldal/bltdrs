@@ -1,0 +1,15 @@
+﻿@{
+ if (!WebSecurity.IsAuthenticated)
+    {
+        Response.StatusCode = 401;
+        Response.End();
+        
+    }
+ var db=Database.Open("fb1ae");
+ var bildirimID=Request["BildirimID"];
+ db.Execute("DELETE FROM BildirimOkunmasiGereken WHERE UserID=@0 AND BildirimID=@1",WebSecurity.CurrentUserId,bildirimID);
+ db.Close();
+ Response.Write("OK");
+ Response.End();
+}
+

@@ -1,0 +1,39 @@
+﻿@{
+  if (!WebSecurity.IsAuthenticated)
+   
+        {
+            Response.StatusCode=401;
+            Response.End();
+                   
+        }  
+
+    var DosyaID=Request["DosyaID"];
+    var DersID=Request["DersID"];
+    
+
+    if (string.IsNullOrEmpty(DosyaID) || string.IsNullOrEmpty(DersID))
+     {
+    
+       Response.StatusCode=500;
+       Response.End();
+     }
+
+     var db=Database.Open("fb1ae");
+ 
+     var queryDosya=db.QuerySingle("SELECT * FROM Dosya WHERE DosyaID=@0 AND UserID=@1",DosyaID,WebSecurity.CurrentUserId);
+
+    if (WebSecurity.CurrentUserId!=queryDosya.UserID)
+    {
+        Response.StatusCode=400;
+        Response.End();
+    }
+     db.Execute("DELETE FROM DersDosyalari WHERE DosyaID=@0 AND DersID=@1",DosyaID,DersID);
+     db.Execute("DELETE FROM DosyaIzinDers WHERE DosyaID=@0 AND DersID=@1",DosyaID,DersID);
+     db.Execute("UPDATE Bildirim SET Silindi=1 WHERE IliskiliOge=@0","drsdsy" + DosyaID.ToString());
+     db.Execute("UPDATE Aktivite SET Silindi=1 WHERE IliskiliOge=@0","drsdsy" + DosyaID.ToString());
+     db.Close();
+     Response.Write("OK");
+     Response.End();
+     
+    
+     }

@@ -1,0 +1,233 @@
+﻿@{
+    if (!WebSecurity.IsAuthenticated)
+    {
+        Response.Redirect("~/Hesap/Giris");
+    }
+    if (!Roles.IsUserInRole("Ogretici"))
+    {
+        Response.Redirect("~/Shared/Hata?Kod=kullaniciegitmendegil");
+        Response.End();
+    }
+
+    var DersID=Request.QueryString["DersID"];
+    var OgrenciID=Request.QueryString["OgrenciID"];
+
+    if (string.IsNullOrEmpty(DersID))
+    {
+        Response.Redirect("~/Shared/Hata?Kod=dersbulunamadi");
+        Response.End();
+    }
+    var roller=Roles.GetRolesForUser(WebSecurity.CurrentUserName);
+    var db=Database.Open("fb1ae");
+    
+    var queryOgrenci=db.QuerySingle("SELECT * FROM Profiles WHERE userID=@0",OgrenciID);
+    
+    if (queryOgrenci==null)
+    {
+        Response.Redirect("~/Shared/Hata");
+        Response.End();
+    }
+    
+    var queryKullanici=db.QuerySingle("SELECT * FROM Profiles WHERE userID=@0",WebSecurity.CurrentUserId);
+   
+    var dil=queryKullanici.Dil;
+   
+   
+       if (dil=="tr")
+       {
+           Culture=UICulture="tr-TR";
+       }
+  
+    var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE UserID=@0 AND Arsivlendi=0 AND DersID=@1",WebSecurity.CurrentUserId,DersID);
+    
+    if (queryDers==null)
+    {
+        Response.Redirect("~/Shared/Hata?Kod=dersbulunamadi");
+        Response.End();
+    }
+
+    var queryDosyalar=db.Query("SELECT * FROM DersDosyalari INNER JOIN Dosya ON DersDosyalari.DosyaID=Dosya.DosyaID WHERE DersDosyalari.DersID=@0",DersID);
+    var queryOdevler=db.Query("SELECT * FROM Odev WHERE DersID=@0 AND Silindi=0",DersID);
+
+    
+}
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    
+    <title>@Resources.Resource.lblBulutDers</title>
+    
+         <!--Basic Styles-->
+    <link href="@Href("~/Shared/TemaBeyond/assets/css/bootstrap.min.css")" rel="stylesheet" />
+    <link id="bootstrap-rtl-link" href="" rel="stylesheet" />
+    <link href="@Href("~/Shared/TemaBeyond/assets/css/font-awesome.min.css")" rel="stylesheet" />
+    <link href="@Href("~/Shared/TemaBeyond/assets/css/weather-icons.min.css")" rel="stylesheet" />
+
+    <!--Fonts-->
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300"
+          rel="stylesheet" type="text/css">
+
+    <!--Beyond styles-->
+    <link id="beyond-link" href="@Href("~/Shared/TemaBeyond/assets/css/beyond.min.css")" rel="stylesheet" />
+    <link href="@Href("~/Shared/TemaBeyond/assets/css/demo.min.css")" rel="stylesheet" />
+    <link href="@Href("~/Shared/TemaBeyond/assets/css/typicons.min.css")" rel="stylesheet" />
+    <link href="@Href("~/Shared/TemaBeyond/assets/css/animate.min.css")" rel="stylesheet" />
+    <link id="skin-link" href="" rel="stylesheet" type="text/css" />
+    <script src="@Href("~/Shared/TemaBeyond/assets/js/skins.min.js")"></script>
+    <link href="@Href("~/Shared/TemaBeyond/assets/css/dataTables.bootstrap.css")" rel="stylesheet" />
+    <link href="@Href("~/Shared/Plugins/font-awesome/css/font-awesome.min.css")" rel="stylesheet" type="text/css">
+  
+    </head>
+    <body>
+
+    <div class="row">
+                        <div class="col-md-12">
+                            <div class="profile-container">
+                           
+                               
+                                <div class="profile-body">
+                                    
+                                    <div class="col-lg-12"> 
+                                        <h2>@queryOgrenci.Ad @queryOgrenci.Soyad</h2>
+                            <h3>@queryDers.DersAdi Dersi İstatistikleri</h3>
+                                        <div class="tabbable">
+                                            <ul class="nav nav-tabs tabs-flat  nav-justified" id="myTab11">
+                                                <li class="active">
+                                                   
+                                                </li>
+                                                
+                                            </ul>
+                                            <div class="tab-content tabs-flat">
+                                                <div id="overview" class="tab-pane active">
+                                                    <div class="row profile-overview">
+                                                        <div class="col-md-12">
+
+                                                                   <h3 class="row-title before-red">@Resources.Resource.lblDosyalar</h3>
+                                                                        
+                                                                                <table class="table table-hover">
+                                                                                    <tr><td><h5>Dosya</h5></td><td><h5>Derse Ne Zaman Eklendi</h5></td><td><h5>Öğrenci Dosyayı Yüklendi mi?</h5></td><td style="text-align: right"><h5>Eklendikten Sonra Ne Zaman Yükledi</h5></td></tr>
+                                                                                    @{
+                                                                                        var i=0;var yuklenen=0;
+                                                                                        
+                                                                                   foreach (var dosya in queryDosyalar)
+                                                                                    {
+                                                                                        i++;
+                                                                                        var yuklemeAdedi=db.QueryValue("SELECT COUNT(*) FROM DosyaIndirilen WHERE DosyaID=@0 AND UserID=@1",dosya.DosyaID,OgrenciID);
+                                                                                        var ogrencinezamanYukledi=db.QuerySingle("SELECT top 1 Tarih FROM DosyaIndirilen WHERE DosyaID=@0 AND UserID=@1",dosya.DosyaID,OgrenciID);
+                                                                                        TimeSpan aralik;
+                                                                                        if (ogrencinezamanYukledi!=null)
+                                                                                        {
+                                                                                            aralik=ogrencinezamanYukledi.Tarih-dosya.EklenmeTarihi;    
+                                                                                        }
+                                                                                        else 
+                                                                                        {
+                                                                                            aralik=DateTime.Now-dosya.EklenmeTarihi;
+                                                                                        }
+                                                                                        
+                                                                                       
+                                                                                        if (yuklemeAdedi>0)
+                                                                                        {
+                                                                                            yuklenen++;
+                                                                                        }
+                                                                                        <tr><td>@dosya.Aciklama <br>@dosya.DosyaAdi</td><td>@Genel.DateLabel(dosya.EklenmeTarihi,dil)</td><td>@if (yuklemeAdedi>0){<text>Evet</text>} else {<strong><p class="text text-danger">Hayır</p></strong>}</td><td style="text-align: right">@if (ogrencinezamanYukledi!=null) {<text>@aralik.Days Gün Sonra</text>}</td></tr>
+                                                                                    } 
+                                                                                    var indirmeYuzdedi=Math.Round((double)yuklenen*100/i);
+                                                                                    
+                                                                                    }
+                                                                                </table>
+                                                                                <hr>
+                                                                                <h4>Diğer Bilgiler</h4>
+                                                                                <table class="table table-hover">
+                                                                                    <tr><td><strong>Dersteki Toplam Dosya Sayısı</strong></td><td>@i</td></tr>
+                                                                                    <tr><td><strong>Öğrencinin Yüklediği Dosya Sayısı</strong></td><td>@yuklenen</td></tr>
+                                                                                    <tr><td><strong>Yükleme Yüzdesi</strong></td><td>% @indirmeYuzdedi</td></tr>
+                                                                                    
+                                                                                </table>
+                                                                            
+                                                        </div>
+
+                                                          <div class="col-md-12">
+
+                                                                   <h3 class="row-title before-red">@Resources.Resource.lblOdevler</h3>
+                                                                        <div class="row">
+                                                                            <div class="col-lg-12 col-sm-6 col-xs-12">
+                                                                                <table class="table table-hover">
+                                                                                    <tr><td><h5>Ödev</h5></td><td><h5>Ödev Derse Ne Zaman Eklendi</h5></td><td>Ödev Dosyasını Ne Zaman İndirdi?</td><td><h5>Öğrenci Ödevi Gönderdi mi?</h5></td><td><h5>Ödevi Ne Kadar Sürede Gönderdi</h5></td></tr>
+                                                                                    @{
+                                                                                        var j=0;var gonderilen=0;
+                                                                                        
+                                                                                   foreach (var odev in queryOdevler)
+                                                                                    {
+                                                                                        j++;
+                                                                                        var gondermeAdedi=db.QueryValue("SELECT COUNT(*) FROM OdevGonderisi WHERE OdevID=@0 AND UserID=@1",odev.OdevID,OgrenciID);
+                                                                                        var ogrencinezamanGonderdi=db.QuerySingle("SELECT GonderiTarihi FROM OdevGonderisi WHERE OdevID=@0 AND UserID=@1",odev.OdevID,OgrenciID);
+                                                                                        TimeSpan aralik;
+                                                                                        if (ogrencinezamanGonderdi!=null)
+                                                                                        {
+                                                                                            aralik=ogrencinezamanGonderdi.GonderiTarihi-odev.EklenmeTarihi;    
+                                                                                        }
+                                                                                        else 
+                                                                                        {
+                                                                                            aralik=DateTime.Now-odev.EklenmeTarihi;
+                                                                                        }
+                                                                                        
+                                                                                         TimeSpan aralik2;
+                                                                                        
+                                                                                        dynamic ogrenciOdevDosyasiniNeZamanIndirdi=null;
+                                                                                        if (odev.DosyaID!=0)
+                                                                                        {
+                                                                                         ogrenciOdevDosyasiniNeZamanIndirdi=db.QuerySingle("SELECT top 1 * FROM DosyaIndirilen WHERE DosyaID=@0 AND UserID=@1",odev.DosyaID,OgrenciID);    
+                                                                                        }
+
+                                                                                        if (ogrenciOdevDosyasiniNeZamanIndirdi!=null)
+                                                                                        {
+                                                                                            aralik2=ogrenciOdevDosyasiniNeZamanIndirdi.Tarih-odev.EklenmeTarihi;    
+                                                                                        }
+                                                                                        else 
+                                                                                        {
+                                                                                            aralik2=DateTime.Now-odev.EklenmeTarihi;
+                                                                                        }
+                                                                                       
+                                                                                        if (gondermeAdedi>0)
+                                                                                        {
+                                                                                            gonderilen++;
+                                                                                        }
+                                                                                        <tr><td>@j) @odev.Baslik</td><td>@Genel.DateLabel(odev.EklenmeTarihi,dil)</td><td>@if (ogrenciOdevDosyasiniNeZamanIndirdi!=null) {<text>@aralik2.Days Gün Sonra</text>}</td><td>@if (gondermeAdedi>0){<text>Evet</text>} else {<p class="text text-danger">Hayır</p>}</td><td>@if (ogrencinezamanGonderdi!=null) {<text>@aralik.Days Gün Sonra</text>}</td></tr>
+                                                                                    } 
+                                                                                    var gondermeYuzdesi=Math.Round((double)gonderilen*100/j);
+                                                                                    
+                                                                                    }
+                                                                                </table>
+                                                                                <hr>
+                                                                                <h4>Diğer Bilgiler</h4>
+                                                                                <table class="table table-hover">
+                                                                                    <tr><td><strong>Dersteki Toplam Ödev Sayısı</strong></td><td>@j</td></tr>
+                                                                                    <tr><td><strong>Öğrencinin Gönderdiği Ödev Sayısı</strong></td><td>@gonderilen</td></tr>
+                                                                                    <tr><td><strong>Ödev Gönderme Yüzdesi</strong></td><td>% @gondermeYuzdesi</td></tr>
+                                                                                    
+                                                                                </table>
+                                                                            </div>
+                                                                        </div>
+                                                                    
+                                                        </div>
+                                                       
+                                                    </div>
+                                                </div>
+                                               
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+      <script type="text/javascript"> 
+            window.onload=function(){self.print();} 
+</script>
+        </body>
+</html>
+
+@{
+  db.Close();
+}

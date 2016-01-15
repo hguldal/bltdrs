@@ -1,0 +1,41 @@
+﻿@{
+   //Bu prosedürü sadece oturum açmış ve admin kullanıcıları çalıştırabilir. Bunu kontrol et eğer değilse http hata kodu döndür.
+  if (WebSecurity.IsAuthenticated==false || Roles.IsUserInRole("Admin")==false)
+     {
+        Response.StatusCode=400;
+        Response.End();
+    }
+
+    var UserID=Request["UserID"];
+    
+
+    if (string.IsNullOrEmpty(UserID))
+     {  
+       Response.StatusCode=500;
+       Response.End();
+     }
+
+     var db=Database.Open("fb1ae");
+ 
+     // Yeni bir rastgele parola üret ve kullanıcıya ata.
+     var queryKullanici=db.QuerySingle("SELECT * FROM Profiles WHERE UserID=@0",UserID);
+
+     // Parola oluşturmak için Token yaratılması gerekiyor. WebSecurity kütüphanesinden dolayı.
+     var token=WebSecurity.GeneratePasswordResetToken(queryKullanici.ePosta);
+     var yeniParola=KodUret.YeniKod(6);
+     
+     // Eğer işlem başarılı ise bu yeni parolayı değer olarak geri döndür.
+         if (WebSecurity.ResetPassword(token,yeniParola))
+         {
+            db.Close();
+            Response.Write(yeniParola);
+            Response.End();
+         }
+         else // Aksi halde parola değiştirilemedi demektir ve hata kodu döndür.
+         {
+             db.Close();
+             Response.StatusCode=500;
+             Response.End();
+         }
+     
+     }

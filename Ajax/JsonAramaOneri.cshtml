@@ -1,0 +1,30 @@
+﻿@{
+if (!WebSecurity.IsAuthenticated)
+    {
+        Response.StatusCode = 401;
+        Response.End();
+        
+    }
+
+    
+    var db=Database.Open("fb1ae");
+    var sorguIfadesi="";
+
+    var sorgu=Request["sorgu"];
+    if (string.IsNullOrEmpty(sorgu))
+     {
+    
+        sorguIfadesi="SELECT (Ad + ' ' + Soyad) as AdSoyad FROM Profiles WHERE Profiles.Aktif=1";
+    }
+    else
+    {
+        sorguIfadesi="SELECT (Ad + ' ' + Soyad) as AdSoyad FROM Profiles WHERE Profiles.Aktif=1 AND Ad + ' ' + Soyad LIKE N'" + sorgu+ "%'";
+    }
+        
+    var sonuclar=db.Query(sorguIfadesi);
+    db.Close();   
+    Response.ContentType = "application/json"; 
+    Json.Write(sonuclar, Response.Output);
+    Response.End();
+    
+}

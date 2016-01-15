@@ -1,0 +1,86 @@
+﻿@{
+    if (!WebSecurity.IsAuthenticated)
+    {
+        Response.Redirect("~/Hesap/Giris");
+    }
+    
+    
+     Layout = "~/Shared/_LayoutYeni.cshtml";  
+     var db=Database.Open("fb1ae");
+     var queryKullanici=db.QuerySingle("SELECT * FROM Profiles WHERE userID=@0",WebSecurity.CurrentUserId);
+   
+     var dil=queryKullanici.Dil;
+     if (dil=="tr")
+       {
+           Culture=UICulture="tr-TR";
+       }
+    db.Close();
+     var hataKodu=Request["Kod"];
+     var hataMesaji=Resources.Resource.msgIslemSirasindaHata;
+     var olasiDurumlar="";
+     if (hataKodu=="dosyayaerisimengellendi")
+     {
+         hataMesaji=Resources.Resource.msgBuDosyayaErismekIcinIzinYok;
+         
+     }
+     else if (hataKodu=="kullaniciegitmendegil")
+     {
+         hataMesaji=Resources.Resource.msgBuSayfayaErismekIcinEgitmenOlunmali;
+     }
+     else if (hataKodu=="dersbulunamadi")
+     {
+         hataMesaji=Resources.Resource.msgDersBulunamadi;
+     }
+     else if (hataKodu=="derseerisimengellendi")
+     {
+         hataMesaji=Resources.Resource.msgDerseErisimEngellendi;
+         
+     }
+     else if (hataKodu=="kullaniciogrencidegil")
+     {
+         hataMesaji=Resources.Resource.msgBuSayfayaErismekIcinOgrenciOlunmali;
+     }
+     else if (hataKodu=="derserisimkodubulunamadi")
+     {
+         hataMesaji=Resources.Resource.msgDersErisimKoduBulunamadi;
+     }
+     else if (hataKodu=="kanalbulunamadi")
+     {
+         hataMesaji=Resources.Resource.msgKanalBulunamadi;
+     }
+     else if (hataKodu=="kanalaerisimengellendi")
+     {
+         hataMesaji=Resources.Resource.msgKanalaErisimEngellendi;
+         olasiDurumlar=Resources.Resource.msgOzelKanallaraErisimIcinKanalinSahibiIzinVermeli;
+     }
+     else if (hataKodu== "bantgenisligiyetersiz")
+     {
+         hataMesaji=Resources.Resource.msgBuDosyaninSahibininKotasiDolmus;
+     }
+
+}
+@section Gezinti {
+    <li class="active">@Resources.Resource.lblHata</li>
+}
+
+
+@section SayfaBasligi
+{
+   <h1>@Resources.Resource.lblHata</h1>
+}
+
+<div class="row">
+ <div class="col-lg-12 text-center">
+     <br>
+     <h3>@Resources.Resource.lblHata</h3><hr>
+     <p class="alert alert-danger"><i class="fa fa-exclamation-triangle"></i> @hataMesaji</p>
+     <br>
+     @if (!string.IsNullOrEmpty (olasiDurumlar))
+     {
+         <h3>@Resources.Resource.lblOlasiCozumler</h3><hr>
+          <p class="alert alert-info">@olasiDurumlar</p>
+     }
+     <button class="btn btn-success btn-lg" onclick="window.history.back();"> @Resources.Resource.lblGeriDon</button>
+     <a href="@Href("~/Panel")" class="btn btn-warning btn-lg"> @Resources.Resource.lblAnasayfayaGit</a>
+</div>
+</div>

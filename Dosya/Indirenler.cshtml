@@ -1,0 +1,63 @@
+﻿@{
+     if (!WebSecurity.IsAuthenticated)
+    {
+        Response.Redirect("~/Hesap/Giris?returnUrl=Takip/Takipciler");
+    }
+    Layout = "~/Shared/_LayoutYeni.cshtml";  
+
+    var dosyaID=Request["DosyaID"];
+    var db=Database.Open("fb1ae");
+    var queryKullanici=db.QuerySingle("SELECT * FROM Profiles WHERE userID=@0",WebSecurity.CurrentUserId);
+   
+    var dil=queryKullanici.Dil;
+
+    if (dil=="tr")
+       {
+           Culture=UICulture="tr-TR";
+       }
+
+    var queryDosya=db.QuerySingle("SELECT * FROM Dosya WHERE DosyaID=@0 AND UserID=@1",dosyaID,WebSecurity.CurrentUserId);
+    if (queryDosya==null)
+    {
+        Response.Redirect("~/Shared/Hata?Kod=dosyayaerisimengellendi");
+        Response.End();
+    }
+    var queryIndirenler=db.Query("SELECT UserID,Count(*) as InAdet FROM DosyaIndirilen WHERE DosyaID=@0 AND UserID<>@1 GROUP BY UserID ORDER BY count(*) desc",dosyaID,WebSecurity.CurrentUserId);
+   
+    db.Close();
+}
+
+@section Gezinti {
+    <li class="active">@Resources.Resource.lblDosyayiYukleyenKullanicilar</li>
+}
+
+
+@section SayfaBasligi
+{
+   <h1>@Resources.Resource.lblDosyayiYukleyenKullanicilar</h1>
+}
+
+<div class="row">
+
+   <div class="col-lg-12">
+     <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>@Resources.Resource.lblKullanici</th>
+                <th>@Resources.Resource.lblYuklemeAdedi</th>
+                
+            </tr>
+        </thead>
+              <tbody>
+                  @foreach (var kisi in queryIndirenler)
+                   {
+                      <tr>
+                          <td>@HelperProfil.KucukKunye(kisi.UserID)</td>
+                          <td>@kisi.InAdet</td>
+                      </tr>
+                   }
+              </tbody>
+              </table>
+   </div>
+
+</div>

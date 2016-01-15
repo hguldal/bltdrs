@@ -1,0 +1,240 @@
+﻿@{
+     var db=Database.Open("fb1ae");
+        var dersSayisi=db.QueryValue("SELECT COUNT(*) FROM Ders");
+    var kullaniciSayisi=db.QueryValue("SELECT COUNT(*) FROM Profiles WHERE Aktif=1");
+   
+    var dosyaSayisi=db.QueryValue("SELECT COUNT(*) FROM Dosya");
+    var bildirimSayisi=db.QueryValue("SELECT COUNT(*) FROM Bildirim");
+    var odevGonderiSayisi=db.QueryValue("SELECT COUNT(*) FROM OdevGonderisi");
+    db.Close();
+}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>BulutDers</title>
+    <link href="@Href("~/web/lib/bootstrap/css/bootstrap.css")" rel="stylesheet">
+	<link href="@Href("~/web/lib/bootstrap-datepicker/css/bootstrap-datepicker.min.css")" rel="stylesheet">
+	<link href="@Href("~/web/lib/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css")" rel="stylesheet">
+	<link href="@Href("~/web/lib/owl-carousel/owl.carousel.css")" rel="stylesheet">
+	<link href="@Href("~/web/lib/Swiper/css/swiper.min.css")" rel="stylesheet">
+	<link href="@Href("~/web/lib/vegas/vegas.min.css")" rel="stylesheet">
+	<link href="@Href("~/web/lib/jquery.mb.YTPlayer/css/jquery.mb.YTPlayer.min.css")" rel="stylesheet">
+	<link href="@Href("~/web/lib/Magnific-Popup/magnific-popup.css")" rel="stylesheet">
+	<link href="@Href("~/web/css/animate.css")" rel="stylesheet">
+	<link href="@Href("~/web/lib/font-awesome/css/font-awesome.min.css")" rel="stylesheet">
+	<link href="@Href("~/web/lib/Icon-font-7-stroke-PIXEDEN/css/pe-icon-7-stroke.css")" rel="stylesheet">
+	<link href="@Href("~/web/lib/et-line-font/style.css")" rel="stylesheet">
+	<link href="@Href("~/web/lib/themify-icons/themify-icons.css")" rel="stylesheet">
+	<link href="@Href("~/web/css/main.css")" rel="stylesheet">
+	<link href="@Href("~/web/css/rgen-grids.css")" rel="stylesheet">
+	<link href="@Href("~/web/css/helper.css")" rel="stylesheet">
+	<link href="@Href("~/web/css/responsive.css")" rel="stylesheet">
+	<link href="@Href("~/web/css/custom.css")" rel="stylesheet">
+
+</head>
+<body>
+<div id="page">
+	<nav class="nav-wrp nav-3 dark" data-sticky="y" data-glass="y">
+		<div class="container-fluid">
+			
+			<div class="nav-header">
+				<a class="navbar-brand" href="#"><img src="@Href("~/Images/logo_tr.png")" alt="AzureBoard"></a>
+				<a class="nav-handle" data-nav=".nav"><i class="fa fa-bars"></i></a>	
+			</div>
+			
+			<div class="nav vm-item">
+				<ul class="nav-links">
+					<li><a href="#aboutus">Hakkında</a></li>
+					<li><a href="#feature">Özellikler</a></li>
+					<li><a href="#contact">İletişim</a></li>
+				</ul>
+				<div class="nav-other">
+					<a href="#" class="btn btn-default btn-sm"><i class="fa fa-lock"></i> Giriş</a>
+					<a href="#" class="btn btn-primary btn-sm"><i class="fa fa-user"></i> Yeni Hesap</a>
+                </div>
+			</div>
+			
+		</div>
+	</nav>
+
+
+	<!-- Intro -->
+	<section class="intro-section intro-section-6">
+		<div class="container">
+
+			<div class="info-wrp cm-item">
+				<h2 class="main-text">Dersler Bulutta...</h2>
+				<p class="sub-text">Dersini buluta taşı, materyalleri paylaş, ödevleri yönet...</p>
+			    <a href="#" class="btn btn-default btn2">Yeni Öğrenci Hesabı</a>
+                <a href="#" class="btn btn-default btn2">Yeni Eğitmen Hesabı</a>
+				<a href="#feature" class="btn btn-default btn2">Daha Fazla Bilgi...</a>
+			</div>
+		
+		</div><!-- /.container -->
+		<div class="bg-section bg-cover bg-cc full-wh" data-bg="@Href("~/Images/back2.jpg")"><b class="full-wh"></b>
+		</div>
+	</section><!-- /.intro-section -->
+    
+	<!-- Other section -->
+	<section id="aboutus" class="other-section other-section-3">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-5 l">
+					
+					<h2 class="title medium">BulutDers Nedir ?</h2>
+				</div>
+				<div class="col-md-6 col-md-offset-1 r">
+					<p>BulutDers, bulut teknolojisinin esnekliğini ve gücünü ders süreçleri içerisinde kullanmayı olanaklı hale getiren çevrimiçi bir hizmettir.  Bulutders ile eğitmenler ders dökümanlarını bulutta depolayıp öğrencilerine paylaşıma açabilir, çevrimiçi ödevler vererek öğrenci gönderilerini değerlendirebilir, öğrencileriyle zamandan ve mekandan bağımsız olarak gerçek zamanlı olarak iletişim kurabilirler. </p>
+				</div>
+			</div><!-- / row -->
+		</div><!-- / container -->
+	</section><!-- / Other section -->
+
+	<!-- Features -->
+	<section id="feature" class="feature-section feature-section-3">
+		<div class="container">
+			<h2 class="title">Özellikler</h2>
+			
+			
+			<div class="row eqh gt50">
+
+				<div class="col-lg-4 col-sm-6">
+					<div class="info-box info-box4">
+						<div class="img"><i class="fa fa-share-alt"></i></div>
+						<div class="info">
+							<h2 class="hd">Ders Materyallerine 7/24 Erişim</h2>
+							<p class="sub-txt">Öğrenciler ve eğitmenler, ders materyallerine herhangi bir yerden ve herhangi bir zamanda erişebilirler</p>
+						</div>
+					</div><!-- /.info-box -->
+				</div>
+
+				<div class="col-lg-4 col-sm-6">
+					<div class="info-box info-box4">
+						<div class="img"><i class="fa fa-envelope"></i></div>
+						<div class="info">
+							<h2 class="hd">Gerçek Zamanlı Mesajlaşma</h2>
+							<p class="sub-txt">Eğitmenler ve öğrenciler herhangi bir ek yazılım kurmaya gerek duymaksızın birbirleriyle gerçek zamanlı olarak iletişim kurabilirler.</p>
+						</div>
+					</div><!-- /.info-box -->
+				</div>
+
+				<div class="col-lg-4 col-sm-6">
+					<div class="info-box info-box4">
+						<div class="img"><i class="fa fa-lock"></i></div>
+						<div class="info">
+							<h2 class="hd">Döküman Erişim Kontrolü</h2>
+							<p class="sub-txt">Eğitmenler ders materyallerine olan erişimi kontrol edebilirler.</p>
+						</div>
+					</div><!-- /.info-box -->
+				</div>
+				
+				<div class="col-lg-4 col-sm-6">
+					<div class="info-box info-box4">
+						<div class="img"><i class="fa fa-clock-o"></i></div>
+						<div class="info">
+							<h2 class="hd">Ödev Yönetimi</h2>
+							<p class="sub-txt">Eğitmenler ödevlerini çevrimiçi olarak vererek öğrenci gönderilerini değerlendirebilirler. Öğrenciler ise ödevlerini istedikleri herhangi bir yerden ve herhangi bir zamanda eğitmenlerine gönderebilirler  </p>
+						</div>
+					</div><!-- /.info-box -->
+				</div>
+
+				<div class="col-lg-4 col-sm-6">
+					<div class="info-box info-box4">
+						<div class="img"><i class="fa fa-bar-chart"></i></div>
+						<div class="info">
+							<h2 class="hd">Öğrenci Erişim İstatistikleri</h2>
+							<p class="sub-txt">Eğitmenler, öğrencilerin dersleriyle ilgili aktivitelerini çevrimiçi olarak takip ederek istatistiklerini görebilir ve böylece derse olan ilgileri hakkında bilgi sahibi olabilirler.</p>
+						</div>
+					</div><!-- /.info-box -->
+				</div>
+
+				<div class="col-lg-4 col-sm-6">
+					<div class="info-box info-box4">
+						<div class="img"><i class="fa fa-bell"></i></div>
+						<div class="info">
+							<h2 class="hd">Akıllı Bildirimler</h2>
+							<p class="sub-txt">Öğrenciler bir ders için yapılmış bir duyuru veya ödevi kendi bildirim alanlarından gerçek zamanlı olarak görerek dersle ilgili tüm aktivitelerden anında haberdar olurlar.</p>
+						</div>
+					</div><!-- /.info-box -->
+				</div>
+
+       
+			</div>
+
+		</div><!-- /.container -->
+	</section><!-- /.feature-section -->
+
+<section class="counter-section counter-section-1">
+	<div class="container">
+		<div class="row">
+
+			<div class="col-md-3">
+				<div class="count-box count-box1">
+					<div class="icon"><i class="fa fa-users"></i></div>
+					<div class="count-wrp"><b class="count">@kullaniciSayisi</b></div>
+					<h3>Kullanıcı</h3>
+				</div><!-- /.count-box -->
+			</div>
+
+			<div class="col-md-3">
+				<div class="count-box count-box1">
+					<div class="icon"><i class="fa fa-book"></i></div>
+					<div class="count-wrp"><b class="count">@dersSayisi</b></div>
+					<h3>Ders</h3>
+				</div><!-- /.count-box -->
+			</div>
+
+			<div class="col-md-3">
+				<div class="count-box count-box1">
+					<div class="icon"><i class="fa fa-bell"></i></div>
+					<div class="count-wrp"><b class="count">@bildirimSayisi</b></div>
+					<h3>Aktivite</h3>
+				</div><!-- /.count-box -->
+			</div>
+
+			<div class="col-md-3">
+				<div class="count-box count-box1">
+					<div class="icon"><i class="fa fa-clock-o"></i></div>
+					<div class="count-wrp"><b class="count">@odevGonderiSayisi</b>+</div>
+					<h3>Ödev Gönderisi</h3>
+				</div><!-- /.count-box -->
+			</div>
+
+		</div><!-- /.row -->
+	</div><!-- /.container -->
+</section><!-- /.counter-section -->
+
+	<!-- Footer section -->
+	<section class="footer-section footer-section-4">
+		<div class="container">
+			<div class="row eqh">
+				<div class="col-md-3 logo-wrp">
+					<img src="@Href("~/Images/logo_tr.png")" alt="BulutDers">
+				</div><!-- /Logo and address -->
+
+			</div>
+			<hr>
+			<p class="copyright">BulutDers &copy; @DateTime.Now.Year</p>
+		</div>
+	</section><!-- ./Footer section -->
+	
+
+</div>
+<!-- /#page --> 
+
+<!-- JavaScript --> 
+<script src="@Href("~/web/lib/jquery/jquery.min.js")"></script> 
+<script src="@Href("~/web/lib/bootstrap/js/bootstrap.min.js")"></script>
+<script src="@Href("~/web/lib/Swiper/js/swiper.jquery.min.js")"></script>
+<script src="@Href("~/web/lib/jquery-validation/jquery.validate.min.js")"></script>
+<script src="@Href("~/web/lib/bootstrap-datepicker/js/bootstrap-datepicker.min.js")"></script>
+<script src="@Href("~/web/lib/bootstrap-datetimepicker/js/moment.min.js")"></script>
+<script src="@Href("~/web/lib/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js")"></script>
+
+<script src="@Href("~/web/js/plugins.js")"></script>
+<script src="@Href("~/web/js/rgen.js")"></script>
+
+</body>
+</html>

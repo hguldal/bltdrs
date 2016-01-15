@@ -1,0 +1,35 @@
+﻿@{
+    if (!WebSecurity.IsAuthenticated)
+    {
+        Response.Redirect("~/Hesap/Giris");
+                  
+    }
+
+ var BildirimID=Request.QueryString["BildirimID"];
+
+     if (string.IsNullOrEmpty(BildirimID))
+     {
+        Response.Redirect("~/Shared/Hata");
+        Response.End();
+     }
+  var db=Database.Open("fb1ae");
+ 
+  var queryBildirim= db.QuerySingle("SELECT * FROM Bildirim WHERE BildirimID=@0",BildirimID);
+  
+  if (queryBildirim==null)
+  {
+       Response.Redirect("~/Shared/Hata");
+       Response.End();
+  }
+ 
+  if (db.QueryValue("SELECT COUNT(*) FROM BildirimOkunmasiGereken WHERE UserID=@0 AND BildirimID=@1",WebSecurity.CurrentUserId,queryBildirim.BildirimID)<1)
+  {
+    Response.Redirect("~/Shared/Hata");
+       Response.End();  
+  }
+
+  db.Execute("DELETE FROM BildirimOkunmasiGereken WHERE UserID=@0 AND BildirimID=@1",WebSecurity.CurrentUserId,BildirimID);
+  Response.Redirect(Href(queryBildirim.Url));
+  
+  }
+
