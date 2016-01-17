@@ -112,7 +112,7 @@
                      @if (roller.Contains("Ogretici")) {
                     <td><h4><label class="label label-orange">@ders.KabulKodu</label></h4></td>
                     }
-                    <td>@db.QueryValue("SELECT COUNT(*) FROM DersTakip WHERE DersID=@0 AND Durum=2",ders.DersID)</td>
+                    <td><strong>@db.QueryValue("SELECT COUNT(*) FROM DersTakip WHERE DersID=@0 AND Durum=2",ders.DersID)</strong></td>
                       @if (ders.Arsivlendi==0) {
                         <td><i class="fa fa-check-circle fa-2x text-success" title="@Resources.Resource.lblAktif"></i></td>
                         }
