@@ -4,7 +4,8 @@
         Response.Redirect("~/Hesap/Giris?returnUrl=Odev/VerdigimOdevler");
     }
     Layout = "~/Shared/_LayoutYeni.cshtml";  
-
+     
+    var roller=Roles.GetRolesForUser(WebSecurity.CurrentUserName);
     var db=Database.Open("fb1ae");
     var queryKullanici=db.QuerySingle("SELECT * FROM Profiles WHERE userID=@0",WebSecurity.CurrentUserId);
    
@@ -14,12 +15,22 @@
            Culture=UICulture="tr-TR";
        }
     
-    var queryDerslerim=db.Query("SELECT * FROM Ders WHERE UserID=@0 AND Arsivlendi=0",WebSecurity.CurrentUserId);
-    var queryOdevler=db.Query("SELECT * FROM Odev INNER JOIN Ders ON Odev.DersID=Ders.DersID WHERE Odev.Silindi=0 AND Ders.UserID=@0 ORDER BY Odev.EklenmeTarihi DESC",WebSecurity.CurrentUserId);
+    IEnumerable<dynamic> queryDerslerim=null;
+    IEnumerable<dynamic> queryOdevler=null;
+    if (roller.Contains("Ogretici")) {
+        queryDerslerim=db.Query("SELECT * FROM Ders WHERE UserID=@0 AND Arsivlendi=0",WebSecurity.CurrentUserId);
+        queryOdevler=db.Query("SELECT * FROM Odev INNER JOIN Ders ON Odev.DersID=Ders.DersID WHERE Odev.Silindi=0 AND Ders.UserID=@0 ORDER BY Odev.EklenmeTarihi DESC",WebSecurity.CurrentUserId);
+    }
+    else if (roller.Contains("Ogrenci"))
+    {
+        queryOdevler=db.Query("SELECT * FROM Odev INNER JOIN Ders ON Odev.DersID=Ders.DersID WHERE Odev.Silindi=0 AND Ders.DersID IN (SELECT DersID FROM DersTakip WHERE UserID=@0 AND Durum=2) ORDER BY Odev.EklenmeTarihi DESC",WebSecurity.CurrentUserId);
+    }
+    
+    
 
     db.Close();
 }
-@if (Roles.IsUserInRole("Ogretici"))
+@if (roller.Contains("Ogretici"))
 {
     @section css
     {
@@ -40,7 +51,7 @@
 <div class="row">
 
    <div class="col-lg-12">
-       @if (Roles.IsUserInRole("Ogretici")) {
+       @if (roller.Contains("Ogretici")) {
        <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalYeniOdevVer">
          <i class="fa fa-plus-circle"></i> @Resources.Resource.lblYeniBirOdevVer
         </button>
@@ -51,10 +62,16 @@
        <table id="lstOdevler" class="table table-hover">
         <thead>
             <tr>
-                <th>@Resources.Resource.lblDers</th>
                 <th>@Resources.Resource.lblOdevBasligi</th>
+                <th>@Resources.Resource.lblIslemler</th>
+                <th>@Resources.Resource.lblDers</th>
+                @if (roller.Contains("Ogrenci"))
+                {
+                     <th>@Resources.Resource.lblOdevGonderildi</th>
+                }
+               
                 
-                <th></th>
+                
                
             </tr>
         </thead>
@@ -62,14 +79,45 @@
             @foreach (var odev in queryOdevler)
             {
                 <tr>
-                    <td><i class="fa fa-clock-o fa-2x text-success"></i><a href="@Href("~/Ders?DersID=")@odev.DersID"> @odev.DersAdi </a> </td>
-                    <td><a href="@Href("~/Odev/Goster?OdevID=")@odev.OdevID" title="Gözat"> @odev.Baslik </a></td>
+                    <td><a href="@Href("~/Odev/Goster?OdevID=")@odev.OdevID" title="Gözat"><i class="fa fa-clock-o fa-2x text-success"></i> @odev.Baslik </a></td>
+                   
                        <td> 
-                        <a href="@Href("~/Odev/Goster?OdevID=")@odev.OdevID" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.lblOdeveGozat"><i class="fa fa-search-plus"></i> </a>
-                        <a href="@Href("~/Odev/Ayarlar?OdevID=")@odev.OdevID" class="btn btn-warning" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.lblOdevAyarlari"><i class="fa fa-cog"></i></a>
-                        <a href="@Href("~/Odev/OdevGonderileri?OdevID=")@odev.OdevID" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.lblOdeviniGonderenler"><i class="fa fa-user"></i></a>
-                        <a href="#" class="btn btn-danger btnOdevSil" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.lblOdeviSil" data-OdevID="@odev.OdevID"><i class="fa fa-remove"></i></a>                   
+                            <div class="dropdown">
+
+                        
+                                  <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-primary btn-xs">
+                                    <i class="fa fa-cog"></i>
+                                    <span class="caret"></span>
+                                  </button>
+                                  
+                                  <ul class="dropdown-menu" aria-labelledby="dLabel">
+                                        <li> <a href="@Href("~/Odev/Goster?OdevID=")@odev.OdevID"><i class="fa fa-search-plus"></i> @Resources.Resource.lblOdeveGozat</a></li>
+                                      
+                                        @if (roller.Contains("Ogretici")){
+                                            <li><a href="@Href("~/Odev/Ayarlar?OdevID=")@odev.OdevID"><i class="fa fa-cog"></i> @Resources.Resource.lblOdevAyarlari</a></li>
+                                            <li><a href="@Href("~/Odev/OdevGonderileri?OdevID=")@odev.OdevID"><i class="fa fa-user"></i> @Resources.Resource.lblOdeviniGonderenler</a></li>
+                                            <li><a href="#" class="btnOdevSil" data-OdevID="@odev.OdevID"><i class="fa fa-remove"></i> @Resources.Resource.lblOdeviSil</a></li>
+                                        }
+                                        
+                                  </ul>
+                            </div>
+                
                     </td>
+                    <td><a href="@Href("~/Ders?DersID=")@odev.DersID"> @odev.DersAdi </a> </td>
+                    @if (roller.Contains("Ogrenci"))
+                    {
+                        var queryOdevGonderisi=db.QuerySingle("SELECT * FROM OdevGonderisi WHERE Silindi=0 AND OdevID=@0 AND UserID=@1",odev.OdevID,WebSecurity.CurrentUserId);
+                        <td>
+                        @if (queryOdevGonderisi!=null)
+                         {
+                             <i class="fa fa-check-circle fa-2x text-success" title="@Resources.Resource.lblOdevGonderildi"></i>
+                         }
+                         else
+                         {
+                             <i class="fa fa-times-circle fa-2x text-danger" title="@Resources.Resource.lblOdevGonderilmedi"></i>
+                         }
+                        </td>
+                    }
                </tr>
             }
          </tbody>
@@ -81,7 +129,7 @@
     </div>
 
 
- @if (Roles.IsUserInRole("Ogretici")) {
+ @if (roller.Contains("Ogretici")) {
 <div class="modal" id="modalYeniOdevVer" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
