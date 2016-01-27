@@ -357,28 +357,13 @@
                         </a>
                     </li>
      
-                     <!--Ödevler-->
-                    @if (roller.Contains("Ogretici"))
-                    {
+                     <!--Ödevler-->
                       <li>
-                        <a href="@Href("~/Odev/VerdigimOdevler")">
+                        <a href="@Href("~/Odev/Liste")">
                             <i class="menu-icon fa fa-clock-o fa-fw"></i>
                             <span class="menu-text"> @Resources.Resource.lblOdevler </span>
                         </a>
-                    </li>  
-                    }
-                    else if (roller.Contains("Ogrenci"))
-                    {
-                      <li>
-                        <a href="@Href("~/Odev/VerilenOdevler")">
-                            <i class="menu-icon fa fa-clock-o fa-fw"></i>
-                            <span class="menu-text"> @Resources.Resource.lblOdevler </span>
-                        </a>
-                    </li>  
-                    }
-
-                     
-
+                    </li>  
                     <!--Dökümanlar-->
                 @if (roller.Contains("Ogretici"))
                                 {

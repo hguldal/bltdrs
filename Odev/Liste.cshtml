@@ -152,7 +152,7 @@
                          <label>@Resources.Resource.lblBaslik</label>
                         <input type="text" id="txtOdevBaslik" class="form-control" name="Baslik">
                         <label>@Resources.Resource.lblOdevMetni</label>
-                        <textarea name="Aciklama" class="form-control" rows="5"></textarea>
+                        <textarea name="Aciklama" class="form-control" rows="5" id="txtAciklama"></textarea>
                         
                </div>
 
@@ -166,7 +166,7 @@
                        
                         
                  <label>@Resources.Resource.lblSonTeslimTarihi</label>
-                        <input type="text" name="SonTeslimTarihi" class="form-control">
+                        <input type="text" name="SonTeslimTarihi" class="form-control" id="txtSonTeslimTarihi">
                    
             <label>@Resources.Resource.lblDosyaEki</label>
                         <div role="tabpanel">
@@ -181,7 +181,7 @@
                           <div class="tab-content">
                             <div role="tabpanel" class="tab-pane active" id="tabBilgisayar">
                                 <br>
-                                    <input type="file" class="form-control" id="txtBilgisayardanDosya"  name="file" placeholder="@Resources.Resource.lblDosyaSec">
+                                    <input type="file" class="form-control" id="txtBilgisayardanDosya"  name="file" placeholder="@Resources.Resource.lblDosyaSec">(Max 1MB)
                             </div>
                             
                               <div role="tabpanel" class="tab-pane" id="tabDosyalar">
@@ -212,6 +212,7 @@
    
 @section js
 {
+    <script src="http://malsup.github.com/jquery.form.js"></script>
     <script src="@Href("~/Shared/Plugins/moment/moment.min.js")"></script>
     <script src="@Href("~/Shared/Plugins/daterangepicker/daterangepicker.js")"></script>
     <script src="@Href(string.Format("~/Shared/Javascript/Dil/{0}/Odev/Liste.js",dil))"></script>
