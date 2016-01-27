@@ -1,0 +1,80 @@
+﻿@{
+
+   if (WebSecurity.IsAuthenticated==false || Roles.IsUserInRole("Ogretici")==false)
+     {
+        
+        Response.StatusCode=401;
+        Response.End(); 
+     }
+
+   if (IsPost)
+   {
+   
+    var DersID=Request["DersID"];
+    var Baslik=Request["Baslik"];
+    var Aciklama=Request["Aciklama"];
+    var OdevGonderimi=Request["OdevGonderimi"];
+    var DosyaID=-1;
+    var SonTeslimTarihi=DateTime.Now.AddDays(7);
+    var db=Database.Open("fb1ae");
+    var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0 AND UserID=@1",DersID, WebSecurity.CurrentUserId);
+    
+    if (queryDers.UserID!=WebSecurity.CurrentUserId)
+    {
+         Response.StatusCode=400;
+         Response.End();  
+    }
+
+    if (string.IsNullOrEmpty(Request["DosyaID"]))
+    {
+        DosyaID=Request["DosyaID"].AsInt();
+    }
+    
+    if (!string.IsNullOrEmpty(Request["SonTeslimTarihi"]))
+    {
+        
+        var SonTeslimTar=Request["SonTeslimTarihi"];
+        var tarihParca=SonTeslimTar.Split('-');
+        int gun= tarihParca[0].AsInt();
+        int ay= tarihParca[1].AsInt();
+        int yil= tarihParca[2].AsInt();
+        SonTeslimTarihi=new DateTime(yil,ay,gun,23,59,59);
+    }
+
+    Random r2=new Random();
+                
+    var yeniOdevID=r2.Next(1000,1000000);
+
+    while (db.QueryValue("SELECT COUNT(*) FROM Odev WHERE OdevID=@0",yeniOdevID)>0)
+       {
+         yeniOdevID=r2.Next(1000,1000000);
+       }
+        
+    db.Execute("INSERT INTO Odev(Baslik,Aciklama,DersID,SonTeslimTarihi,OdevID,DosyaID,OdevGonderimi,UserID) VALUES(@0,@1,@2,@3,@4,@5,@6,@7)",Baslik,Aciklama,DersID,SonTeslimTarihi,yeniOdevID,DosyaID,OdevGonderimi,WebSecurity.CurrentUserId);
+    var querySonEklenenOdev=db.QuerySingle("SELECT Odev.OdevID,Odev.Baslik,Odev.Aciklama,Odev.DersID,(CAST(datepart(dd,Odev.SonTeslimTarihi) as nvarchar(2)) + '.' + CAST(datepart(mm,Odev.SonTeslimTarihi) as nvarchar(2)) + '.' + CAST(datepart(yy,Odev.SonTeslimTarihi) as nvarchar(4))) as SonTeslim,Ders.DersAdi,Odev.DosyaID FROM Odev INNER JOIN Ders ON Ders.DersID=Odev.DersID WHERE Odev.OdevID=@0",yeniOdevID);
+    
+    db.Execute("INSERT INTO Aktivite(UserID,DersID,Renk,Ikon,URL,IlaveMetin,IliskiliOge,EylemID) VALUES(@0,@1,@2,@3,@4,@5,@6,@7)",WebSecurity.CurrentUserId,queryDers.DersID,"info","fa-clock-o",Href("~/Odev/Goster?OdevID=" + yeniOdevID),Baslik,"odvver" + yeniOdevID.ToString(),3);
+   
+   //herbir öğrenci için bildirim ekle
+
+    var queryDersiAlanOgrenciler=db.Query("SELECT * FROM DersTakip WHERE DersID=@0 AND Durum=2",DersID);
+    if (queryDersiAlanOgrenciler!=null)
+    {
+      db.Execute("INSERT INTO Bildirim(Url,EylemiYapanUserID,IliskiliOge,EylemID,DersID) VALUES(@0,@1,@2,@3,@4)","~/Odev/Goster?OdevID=" + yeniOdevID,WebSecurity.CurrentUserId,"odvver" + yeniOdevID.ToString(),11,DersID);
+      var eklenenBildirimID=db.GetLastInsertId();
+
+      db.Execute("INSERT INTO BildirimOkunmasiGereken(UserID,BildirimID) (SELECT UserID,@0 FROM DersTakip WHERE DersID=@1 AND Durum=2)",eklenenBildirimID,queryDers.DersID);
+      db.Execute("INSERT INTO Gorev(UserID,BitisTarihi,Url,Baslik,Aciklama,IliskiliOge) (SELECT UserID,@0,@1,@2,@3,@5 FROM DersTakip WHERE DersID=@4 AND Durum=2)",SonTeslimTarihi,Href("~/Odev/Goster?OdevID=") + yeniOdevID,Baslik,Aciklama,DersID,"odvver" + yeniOdevID.ToString());     
+     
+    }
+    
+    Json.Write(querySonEklenenOdev, Response.Output);
+    db.Close();   
+    Response.ContentType = "application/json";
+    Response.End();
+   
+    }
+    
+}
+
+
