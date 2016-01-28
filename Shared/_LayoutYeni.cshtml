@@ -9,8 +9,7 @@
     var roller=Roles.GetRolesForUser(WebSecurity.CurrentUserName);
     var db=Database.Open("fb1ae");
     DateTime bitis=new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,0,0,0);
-    var queryGorevler=db.Query("SELECT * FROM Gorev WHERE UserID=@0 AND Tamamlandi=0 AND BitisTarihi>=@1 AND Silindi=0 ORDER BY BitisTarihi DESC",WebSecurity.CurrentUserId,bitis);
-    var queryBildirimler=db.Query("SELECT * FROM BildirimOkunmasiGereken INNER JOIN Bildirim ON Bildirim.BildirimID=BildirimOkunmasiGereken.BildirimID INNER JOIN Profiles ON Bildirim.EylemiYapanUserID=Profiles.userID WHERE BildirimOkunmasiGereken.UserID=@0 AND Bildirim.Silindi=0 ORDER BY BildirimOkunmasiGereken.BildirimID DESC",WebSecurity.CurrentUserId);
+   var queryBildirimler=db.Query("SELECT * FROM BildirimOkunmasiGereken INNER JOIN Bildirim ON Bildirim.BildirimID=BildirimOkunmasiGereken.BildirimID INNER JOIN Profiles ON Bildirim.EylemiYapanUserID=Profiles.userID WHERE BildirimOkunmasiGereken.UserID=@0 AND Bildirim.Silindi=0 ORDER BY BildirimOkunmasiGereken.BildirimID DESC",WebSecurity.CurrentUserId);
     List<Bildirim> listeBildirimler=new List<Bildirim>();
     foreach(var bildirim in queryBildirimler)
     {
@@ -188,66 +187,6 @@
                                 </ul>
                                 <!--/Messages Dropdown-->
                             </li>
-                           
-
-                            <li>
-                                <a class="dropdown-toggle" data-toggle="dropdown" title="Tasks" href="#">
-                                    <i class="icon fa fa-tasks"></i>
-                                    @if (queryGorevler.Count()>0) {
-                                    <span class="badge badge-darkping">@queryGorevler.Count()</span>
-                                        }
-                                </a>
-                                <!--Tasks Dropdown-->
-                                <ul class="pull-right dropdown-menu dropdown-tasks dropdown-arrow ">
-                                    <li class="dropdown-header bordered-darkorange">
-                                        <i class="fa fa-tasks"></i>
-                                       
-                                        @queryGorevler.Count() @Resources.Resource.msgAdetHatirlaticinizVar
-                                    </li>
-
-                           @foreach (var item in queryGorevler)
-                            {
-                                
-                                
-                                if (hatirlaticiSayac==6)
-                                {
-                                    break;
-                                }
-                                hatirlaticiSayac++;
-                                var gecenGun=(DateTime.Now- item.BaslangicTarihi).Days;
-               
-                                var toplamGun=(item.BitisTarihi-item.BaslangicTarihi).Days;
-                                var kalanGun=toplamGun-gecenGun;
-                                if (kalanGun<0)
-                                {
-                                    kalanGun=0;
-                                }
-                                var yuzde=100-(100*gecenGun)/toplamGun;
-                                
-                                    <li>
-                                        <a href="@item.Url">
-                                            <div class="clearfix">
-                                                <span class="pull-left">@item.Baslik</span>
-                                                <span class="pull-right">@kalanGun @Resources.Resource.lblGunKaldi</span>
-                                            </div>
-
-                                            <div class="progress progress-xs">
-                                                <div style="width:@yuzde%" class="progress-bar"></div>
-                                            </div>
-                                        </a>
-                                    </li>
-                                   }
-
-                                    <li class="dropdown-footer">
-                                        <a href="@Href("~/Hatirlatici/?liste=aktif")">
-                                            @Resources.Resource.lblTumHatirlaticilariGor
-                                        </a>
-                                        
-                                    </li>
-                                </ul>
-                                <!--/Tasks Dropdown-->
-                            </li>
-                            
                             <li>
                                 <a class="login-area dropdown-toggle" data-toggle="dropdown">
                                     <div class="avatar" title="Profili Görüntüle">
