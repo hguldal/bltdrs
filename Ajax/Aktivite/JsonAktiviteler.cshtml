@@ -27,13 +27,13 @@
    
     if (roller.Contains("Ogretici"))
      {
-        queryAktiviteler=db.Query("SELECT top 25 * FROM Aktivite WHERE Silindi=0 AND UserID=@0 AND AktiviteID<@1 ORDER BY AktiviteID DESC",WebSecurity.CurrentUserId,sonAktiviteID);
+        queryAktiviteler=db.Query("SELECT top 25 * FROM Aktivite WHERE Silindi=0 AND Aktivite.DersID NOT IN (SELECT DersID FROM Ders WHERE Arsivlendi=1) AND UserID=@0 AND AktiviteID<@1 ORDER BY AktiviteID DESC",WebSecurity.CurrentUserId,sonAktiviteID);
          
      }
     else if (roller.Contains("Ogrenci"))
     {
         
-      queryAktiviteler=db.Query("SELECT top 25 * FROM Aktivite WHERE Silindi=0 AND Aktivite.DersID IN (SELECT DersID FROM DersTakip WHERE UserID=@0 AND Durum=2) AND Aktivite.AktiviteID<@1 ORDER BY AktiviteID DESC",WebSecurity.CurrentUserId,sonAktiviteID);  
+      queryAktiviteler=db.Query("SELECT top 25 * FROM Aktivite WHERE Silindi=0 AND Aktivite.DersID IN (SELECT DersID FROM DersTakip WHERE UserID=@0 AND Durum=2) AND Aktivite.DersID NOT IN (SELECT DersID FROM Ders WHERE Arsivlendi=1) AND Aktivite.AktiviteID<@1 ORDER BY AktiviteID DESC",WebSecurity.CurrentUserId,sonAktiviteID);  
         
     }
 
