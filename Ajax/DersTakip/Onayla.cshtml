@@ -41,15 +41,6 @@
            db.Execute("UPDATE DersTakip SET Durum=2,OnayTarihi=@2 WHERE DersID=@0 AND UserID=@1",DersID,UserID,DateTime.Now);
            db.Execute("UPDATE Bildirim SET Silindi=1 WHERE IliskiliOge=@0","drsistg" + UserID.ToString() + DersID.ToString());
            var queryOgrenci=db.QuerySingle("SELECT * FROM Profiles WHERE UserID=@0",UserID);
-           var queryDersinOdevleri=db.Query("SELECT * FROM Odev WHERE DersID=@0 AND Silindi=0 AND SonTeslimTarihi>=1",DersID,DateTime.Now);
-           
-            if (queryDersinOdevleri!=null)
-            {
-               foreach(var odev in queryDersinOdevleri)
-               {
-                   db.Execute("INSERT INTO Gorev(UserID,Baslik,Aciklama,Url,BitisTarihi) VALUES(@0,@1,@2,@3,@4)",UserID,odev.Baslik,odev.Aciklama,Href("~/Odev/Goster?OdevID=") + odev.OdevID,odev.SonTeslimTarihi);
-               }
-            }
 
            db.Close();   
            Response.Write("OK");

@@ -44,7 +44,7 @@
       queryDersler=db.Query("SELECT * FROM Ders WHERE Arsivlendi=0 AND DersID IN (SELECT DersID FROM DersTakip WHERE UserID=@0 AND Durum=2)",WebSecurity.CurrentUserId);  
       queryOdevler=db.Query("SELECT * FROM Odev WHERE Odev.Silindi=0 AND (Odev.DersID IN (SELECT DersID FROM DersTakip WHERE UserID=@0 AND Durum=2)) AND (Odev.OdevID NOT IN (SELECT OdevID FROM OdevGonderisi WHERE UserID=@0)) AND (Odev.OdevGonderimi<>2 OR Odev.SonTeslimTarihi>=@1) AND Odev.OdevGonderimi<>2 ORDER BY Odev.EklenmeTarihi DESC",WebSecurity.CurrentUserId,DateTime.Now);
     }
-
+  
     foreach(var aktivite in queryAktiviteler)
     {
        Aktivite a=new Aktivite();
@@ -61,15 +61,11 @@
        a.EylemID=aktivite.EylemID;
        a.Silindi=aktivite.Silindi;
        a.Tarih=aktivite.Tarih;
-      
        a.URL=aktivite.URL;
        a.UI_BegeniSayisi=db.QueryValue("SELECT count(*) FROM AktiviteBegeni WHERE Silindi=0 AND AktiviteID=@0",aktivite.AktiviteID);
        a.UI_AktiviteOkundu=db.QueryValue("SELECT count(*) FROM AktiviteOkunan WHERE AktiviteID=@0",aktivite.AktiviteID);
-       a.UI_GorunenTarih=Genel.DateLabel(aktivite.Tarih,dil);
-       
+       a.UI_GorunenTarih=Genel.DateLabel(aktivite.Tarih,dil);
        var queryAktiviteUser=db.QuerySingle("SELECT * FROM Profiles INNER JOIN Unvan ON Profiles.UnvanID=Unvan.UnvanID  WHERE userID=@0",aktivite.UserID);
-      
-      
        if (aktivite.UserID==WebSecurity.CurrentUserId)
        {
            a.UI_SilmeDugmesi=1;

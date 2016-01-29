@@ -32,7 +32,6 @@
         db.Execute("UPDATE Dosya SET Silindi=1 WHERE DosyaID IN (SELECT DosyaID FROM OdevGonderisi WHERE OdevID=@0)",OdevID);
         db.Execute("UPDATE Aktivite SET Silindi=1 WHERE IliskiliOge=@0","odvver" + OdevID.ToString());
         db.Execute("UPDATE Bildirim SET Silindi=1 WHERE IliskiliOge=@0","odvver" + OdevID.ToString());
-        db.Execute("UPDATE Gorev SET Silindi=1 WHERE IliskiliOge=@0","odvver" + OdevID.ToString());
         db.Close();
         Response.Write("OK");
         Response.End();

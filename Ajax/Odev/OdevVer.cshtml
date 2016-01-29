@@ -21,8 +21,14 @@
     var DosyaID=-1;
     var SonTeslimTarihi=DateTime.Now.AddDays(7);
     var db=Database.Open("fb1ae");
-    var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0 AND UserID=@1",DersID, WebSecurity.CurrentUserId);
+    var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0 AND UserID=@1 AND Arsivlendi=0",DersID, WebSecurity.CurrentUserId);
     
+    if (queryDers==null)
+    {
+            Response.StatusCode=502;
+            Response.End();  
+    }
+
     if (string.IsNullOrEmpty(Request["DosyaID"]))
     {
         DosyaID=Request["DosyaID"].AsInt();
@@ -115,7 +121,6 @@
       var eklenenBildirimID=db.GetLastInsertId();
 
       db.Execute("INSERT INTO BildirimOkunmasiGereken(UserID,BildirimID) (SELECT UserID,@0 FROM DersTakip WHERE DersID=@1 AND Durum=2)",eklenenBildirimID,queryDers.DersID);
-      db.Execute("INSERT INTO Gorev(UserID,BitisTarihi,Url,Baslik,Aciklama,IliskiliOge) (SELECT UserID,@0,@1,@2,@3,@5 FROM DersTakip WHERE DersID=@4 AND Durum=2)",SonTeslimTarihi,Href("~/Odev/Goster?OdevID=") + yeniOdevID,Baslik,Aciklama,DersID,"odvver" + yeniOdevID.ToString());     
      
     }
     
