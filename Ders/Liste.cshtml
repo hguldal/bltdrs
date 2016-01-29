@@ -98,6 +98,7 @@
                                       
                                         @if (roller.Contains("Ogretici")){
                                             <li><a href="@Href("~/Ders/Ayarlar/?DersID=")@ders.DersID"><i class="fa fa-gear"></i> @Resources.Resource.lblAyarlar</a></li>
+                                            <li><a href="#" class="btnDersSil" data-DersID="@ders.DersID"><i class="fa fa-times"></i> @Resources.Resource.lblDersSil</a></li>
                                         }
                                         else if (roller.Contains("Ogrenci")) {
                                             <li><a href="#" class="btnDersTakibiBirak" data-DersID="@ders.DersID"><i class="fa fa-remove"></i>  @Resources.Resource.lblDersiTakibiBirak</a></li>

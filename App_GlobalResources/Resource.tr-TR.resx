@@ -998,4 +998,9 @@
     <data name="lblErisimKoduKullanarakDerseKatil" xml:space="preserve">
     <value>Erişim Kodu Kullanarak Bir Derse Katıl</value>
 </data>
+
+  <data name="lblDersSil" xml:space="preserve">
+    <value>Dersi Sil</value>
+  </data>
+
 </root>

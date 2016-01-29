@@ -1002,4 +1002,8 @@
     <value>Join the Course via Access Code</value>
 </data>
 
+<data name="lblDersSil" xml:space="preserve">
+    <value>Delete Course</value>
+</data>
+
 </root>

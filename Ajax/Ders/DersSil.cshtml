@@ -29,8 +29,10 @@
         Response.End();
     }  
 
-    db.Execute("DELETE FROM DosyaIzinDers WHERE DersID=@0",DersID);
+    db.Execute("UPDATE Ders SET Silindi=1 WHERE DersID=@0",DersID);
 
     db.Close();
+    Response.Write("OK");
+    Response.End();
 }
 
