@@ -40,12 +40,12 @@
 
    if (roller.RoleName=="Ogretici")
        {
-           queryVerdigiDersler=db.Query("SELECT * FROM Ders WHERE UserID=@0 AND Arsivlendi=0",userID);
+           queryVerdigiDersler=db.Query("SELECT * FROM Ders WHERE UserID=@0 AND Arsivlendi=0 AND Silindi=0",userID);
        }
 
     if (roller.RoleName=="Ogrenci")
        {
-           queryTakipEttigiDersler=db.Query("SELECT * FROM Ders INNER JOIN DersTakip ON Ders.DersID=DersTakip.DersID WHERE Ders.Arsivlendi=0 AND DersTakip.Durum=2 AND DersTakip.UserID=@0",userID);
+           queryTakipEttigiDersler=db.Query("SELECT * FROM Ders INNER JOIN DersTakip ON Ders.DersID=DersTakip.DersID WHERE Ders.Arsivlendi=0 AND Ders.Silindi=0 AND DersTakip.Durum=2 AND DersTakip.UserID=@0",userID);
        }
     
     var enSonGorulmeTarihi=db.QuerySingle("SELECT TOP 1 * FROM Ziyaret WHERE UserID=@0 ORDER BY Tarih DESC",userID);

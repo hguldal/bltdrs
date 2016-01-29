@@ -20,7 +20,7 @@
      
        var db=Database.Open("fb1ae");
       
-       var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE KabulKodu=@0 AND Arsivlendi=0",erisimKodu);
+       var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE KabulKodu=@0 AND Arsivlendi=0 AND Silindi=0",erisimKodu);
        
        if (queryDers==null)
            {

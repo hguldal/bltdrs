@@ -60,12 +60,12 @@
    
    if (string.IsNullOrEmpty(sorgu))
     {
-        sorguIfadesiDers="SELECT  top 100 * FROM Ders WHERE Arsivlendi=0 AND AramalardaGoster=1";
+        sorguIfadesiDers="SELECT  top 100 * FROM Ders WHERE Arsivlendi=0 AND Ders.Silindi=0 AND AramalardaGoster=1";
     }
     else 
 
     {
-        sorguIfadesiDers="SELECT top 100 * FROM Ders INNER JOIN Profiles ON Ders.UserID=Profiles.userID WHERE Ders.Arsivlendi=0 AND Ders.AramalardaGoster=1 AND (" + icSorguIfadesiDers +" OR " + icSorguIfadesiKisi +")";
+        sorguIfadesiDers="SELECT top 100 * FROM Ders INNER JOIN Profiles ON Ders.UserID=Profiles.userID WHERE Ders.Arsivlendi=0 AND Ders.Silindi=0 AND Ders.AramalardaGoster=1 AND (" + icSorguIfadesiDers +" OR " + icSorguIfadesiKisi +")";
     }
 
     var queryKisiler=db.Query(sorguIfadesiKisi);

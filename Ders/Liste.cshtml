@@ -20,11 +20,11 @@
    IEnumerable<dynamic> queryDersler=null;
    if (roller.Contains("Ogretici"))
    {
-        queryDersler=db.Query("SELECT top 100 * FROM Ders WHERE userID=@0 ORDER BY Arsivlendi",WebSecurity.CurrentUserId);
+        queryDersler=db.Query("SELECT top 100 * FROM Ders WHERE Silindi=0 AND userID=@0 ORDER BY Arsivlendi",WebSecurity.CurrentUserId);
    }
    else if (roller.Contains("Ogrenci"))
    {
-       queryDersler=db.Query("SELECT top 100 * FROM Ders WHERE Arsivlendi=0 AND DersID IN (SELECT DersID FROM DersTakip WHERE UserID=@0 AND Durum=2)",WebSecurity.CurrentUserId);
+       queryDersler=db.Query("SELECT top 100 * FROM Ders WHERE Silindi=0 AND Arsivlendi=0 AND DersID IN (SELECT DersID FROM DersTakip WHERE UserID=@0 AND Durum=2)",WebSecurity.CurrentUserId);
    }
 
 }

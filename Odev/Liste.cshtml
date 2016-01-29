@@ -18,12 +18,12 @@
     IEnumerable<dynamic> queryDerslerim=null;
     IEnumerable<dynamic> queryOdevler=null;
     if (roller.Contains("Ogretici")) {
-        queryDerslerim=db.Query("SELECT * FROM Ders WHERE UserID=@0 AND Arsivlendi=0",WebSecurity.CurrentUserId);
-        queryOdevler=db.Query("SELECT * FROM Odev INNER JOIN Ders ON Odev.DersID=Ders.DersID WHERE Odev.Silindi=0 AND Ders.UserID=@0 AND Ders.Arsivlendi=0 ORDER BY Odev.EklenmeTarihi DESC",WebSecurity.CurrentUserId);
+        queryDerslerim=db.Query("SELECT * FROM Ders WHERE UserID=@0 AND Arsivlendi=0 AND Silindi=0",WebSecurity.CurrentUserId);
+        queryOdevler=db.Query("SELECT * FROM Odev INNER JOIN Ders ON Odev.DersID=Ders.DersID WHERE Odev.Silindi=0 AND Ders.UserID=@0 AND Ders.Arsivlendi=0 AND Ders.Silindi=0 ORDER BY Odev.EklenmeTarihi DESC",WebSecurity.CurrentUserId);
     }
     else if (roller.Contains("Ogrenci"))
     {
-        queryOdevler=db.Query("SELECT * FROM Odev INNER JOIN Ders ON Odev.DersID=Ders.DersID WHERE Odev.Silindi=0 AND Ders.Arsivlendi=0 AND Ders.DersID IN (SELECT DersID FROM DersTakip WHERE UserID=@0 AND Durum=2) ORDER BY Odev.EklenmeTarihi DESC",WebSecurity.CurrentUserId);
+        queryOdevler=db.Query("SELECT * FROM Odev INNER JOIN Ders ON Odev.DersID=Ders.DersID WHERE Odev.Silindi=0 AND Ders.Arsivlendi=0 AND Ders.Silindi=0 AND Ders.DersID IN (SELECT DersID FROM DersTakip WHERE UserID=@0 AND Durum=2) ORDER BY Odev.EklenmeTarihi DESC",WebSecurity.CurrentUserId);
     }
     
     
