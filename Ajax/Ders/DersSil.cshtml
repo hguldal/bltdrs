@@ -30,6 +30,10 @@
     }  
 
     db.Execute("UPDATE Ders SET Silindi=1 WHERE DersID=@0",DersID);
+    db.Execute("UPDATE Aktivite SET Silindi=1 WHERE DersID=@0",DersID);
+    db.Execute("UPDATE Bildirim SET Silindi=1 WHERE DersID=@0",DersID);
+    db.Execute("UPDATE Odev SET Silindi=1 WHERE DersID=@0",DersID);
+    db.Execute("UPDATE DersPano SET Silindi=1 WHERE DersID=@0",DersID);
 
     db.Close();
     Response.Write("OK");
