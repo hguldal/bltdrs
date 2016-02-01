@@ -33,7 +33,7 @@
      {
         queryAktiviteler=db.Query("SELECT top 25 * FROM Aktivite WHERE Aktivite.DersID NOT IN (SELECT DersID FROM Ders WHERE Arsivlendi=1 OR Ders.Silindi=1) AND Silindi=0 AND UserID=@0 ORDER BY AktiviteID DESC",WebSecurity.CurrentUserId);
         queryDersler=db.Query("SELECT * FROM Ders WHERE userID=@0 AND Arsivlendi=0 AND Silindi=0",WebSecurity.CurrentUserId); 
-        queryOdevler=db.Query("SELECT * FROM Odev INNER JOIN Ders ON Odev.DersID=Ders.DersID WHERE Odev.Silindi=0 AND Ders.UserID=@0 AND (Odev.OdevGonderimi<>2 OR Odev.SonTeslimTarihi>=@1) AND Odev.OdevGonderimi<>2 AND Ders.Arsivlendi=0 AND Ders.Silindi=0 ORDER BY Odev.EklenmeTarihi DESC",WebSecurity.CurrentUserId,DateTime.Now);
+        queryOdevler=db.Query("SELECT * FROM Odev INNER JOIN Ders ON Odev.DersID=Ders.DersID WHERE Odev.Silindi=0 AND Ders.UserID=@0 AND Ders.Arsivlendi=0 AND Ders.Silindi=0 ORDER BY Odev.EklenmeTarihi DESC",WebSecurity.CurrentUserId,DateTime.Now);
         queryOdevGonderileri=db.Query("SELECT * FROM OdevGonderisi INNER JOIN Odev ON OdevGonderisi.OdevID=Odev.OdevID WHERE OdevGonderisi.Durum=1 AND Odev.DersID IN (SELECT DersID FROM Ders WHERE UserID=@0 AND Arsivlendi=0 AND Silindi=0) ORDER BY OdevGonderisi.OdevGonderiID DESC",WebSecurity.CurrentUserId);
         
      }
@@ -219,10 +219,46 @@
                                             <table class="table">
                                             @foreach (var ders in queryDersler)
                                             {
-                                                <tr><td><a href="@Href("~/Ders/?DersID=")@ders.DersID">@ders.DersAdi</a></td></tr>
+                                                <tr><td><a href="@Href("~/Ders/?DersID=")@ders.DersID"><i class="fa fa-book"></i> @ders.DersAdi</a></td>                                                @if (roller.Contains("Ogretici"))                                                {
+                                                     <td><h4><label class="label label-orange">@ders.KabulKodu</label></h4></td>
+                                                }                                                 </tr>
                                             }
                                                 </table><hr>
  
+                                        </div><!--Widget Body-->
+                                    </div><!--Widget-->         <div class="widget">
+               <div class="widget-header bordered-top bordered-palegreen ">
+                                            
+                                            <span class="widget-caption"><strong>@Resources.Resource.lblOdevler</strong></span>
+                                            <div class="widget-buttons">
+
+                                              <a href="#" data-toggle="collapse">
+                                                    <i class="fa fa-minus"></i>
+                                                </a>
+                                              
+                                                <a href="#" data-toggle="maximize">
+                                                    <i class="fa fa-expand"></i>
+                                                </a>
+                                               
+                                            </div><!--Widget Buttons-->
+                                        </div><!--Widget Header-->
+                                        <div class="widget-body" style="height: 300px;overflow: auto;">
+                                            <table class="table">                                                <tr><td></td><td>@Resources.Resource.lblOdevGonderimi</td></tr>
+                                            @foreach (var odev in queryOdevler)
+                                            {
+                                                <tr>
+                                                    <td><a href="@Href("~/Odev/Goster?OdevID=" + odev.OdevID)"><i class="fa fa-clock-o"></i> @odev.Baslik </a></td>
+                                                    <td>  
+                                                        <label>
+                                                            <input class="checkbox-slider colored-primary checkBoxOdevGonderimiAcKapa" type="checkbox" title="@Resources.Resource.lblOdevGonderimi" data-OdevID="@odev.OdevID" @if (odev.OdevGonderimi==1) {<text>checked</text>} >
+                                                            <span class="text"></span>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                            }
+                                                </table><hr>
+                                            <a href="@Href("~/Odev/Liste")"><i class="fa fa-plus-circle"></i> @Resources.Resource.lblYeniBirOdevVer</a>
+                                           
                                         </div><!--Widget Body-->
                                     </div><!--Widget-->
         @if (roller.Contains("Ogrenci"))
@@ -290,41 +326,7 @@
                                            
                                         </div><!--Widget Body-->
                                     </div><!--Widget-->
-            <div class="widget">
-               <div class="widget-header bordered-top bordered-palegreen ">
-                                            
-                                            <span class="widget-caption"><strong>@Resources.Resource.lblOdevler</strong></span>
-                                            <div class="widget-buttons">
-
-                                              <a href="#" data-toggle="collapse">
-                                                    <i class="fa fa-minus"></i>
-                                                </a>
-                                              
-                                                <a href="#" data-toggle="maximize">
-                                                    <i class="fa fa-expand"></i>
-                                                </a>
-                                               
-                                            </div><!--Widget Buttons-->
-                                        </div><!--Widget Header-->
-                                        <div class="widget-body">
-                                            <table class="table">
-                                            @foreach (var odev in queryOdevler)
-                                            {
-                                                <tr>
-                                                    <td><a href="@Href("~/Odev/Goster?OdevID=" + odev.OdevID)">@odev.Baslik</a></td>
-                                                    <td>  
-                                                        <label>
-                                                            <input class="checkbox-slider checkBoxOdevGonderimiAcKapa" type="checkbox" title="@Resources.Resource.lblOdevGonderimi" data-OdevID="@odev.OdevID" checked>
-                                                            <span class="text"></span>
-                                                        </label>
-                                                    </td>
-                                                </tr>
-                                            }
-                                                </table><hr>
-                                            <a href="@Href("~/Odev/Liste")"><i class="fa fa-plus-circle"></i> @Resources.Resource.lblYeniBirOdevVer</a>
-                                           
-                                        </div><!--Widget Body-->
-                                    </div><!--Widget-->
+           
 
             
         }
