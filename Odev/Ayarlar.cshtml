@@ -30,7 +30,14 @@
         Response.End();
     }
  
-   var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0",queryOdev.DersID);
+   var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0 AND Silindi=0",queryOdev.DersID);
+
+   if (queryDers==null)
+    {
+        Response.Redirect("~/Shared/Hata");
+        Response.End();
+    }
+
 
    if (queryDers.UserID!=WebSecurity.CurrentUserId)
    {

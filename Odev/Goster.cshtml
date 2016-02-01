@@ -29,9 +29,21 @@
         Response.Redirect("~/Shared/Hata");
         Response.End();
     }  
-   var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0",queryOdev.DersID);
+   var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0 AND Silindi=0",queryOdev.DersID);
+
+   if (queryDers==null)
+    {
+        Response.Redirect("~/Shared/Hata");
+        Response.End();
+    }  
 
    var takipci=(db.QueryValue("SELECT COUNT(*) FROM DersTakip WHERE DersID=@0 AND UserID=@1 AND Durum=2",queryOdev.DersID,WebSecurity.CurrentUserId)>0);
+   
+   if (queryDers.Arsivlendi==1)
+   {
+       takipci=false;
+   }
+
    var dersSorumlusu=(queryDers.UserID==WebSecurity.CurrentUserId);
 
    if (!(takipci==false || dersSorumlusu==false))
