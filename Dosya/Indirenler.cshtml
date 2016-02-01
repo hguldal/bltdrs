@@ -16,7 +16,7 @@
            Culture=UICulture="tr-TR";
        }
 
-    var queryDosya=db.QuerySingle("SELECT * FROM Dosya WHERE DosyaID=@0 AND UserID=@1",dosyaID,WebSecurity.CurrentUserId);
+    var queryDosya=db.QuerySingle("SELECT * FROM Dosya WHERE DosyaID=@0 AND UserID=@1 AND Silindi=0",dosyaID,WebSecurity.CurrentUserId);
     if (queryDosya==null)
     {
         Response.Redirect("~/Shared/Hata?Kod=dosyayaerisimengellendi");
