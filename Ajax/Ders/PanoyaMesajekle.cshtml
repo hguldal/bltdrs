@@ -35,7 +35,14 @@
      var db=Database.Open("fb1ae");
  
      // Ders bilgilerini veritabanından oku
-     var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0",DersID);
+     var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0 AND Silindi=0 AND Arsivlendi=0",DersID);
+     
+     if (queryDers==null)
+     {
+      Response.StatusCode=500;
+       Response.End();  
+     }
+
      
      // İşlemi yapan kullanıcı dersi takip ediyor mu kontrol et.
      var takipci=(db.QueryValue("SELECT COUNT(*) FROM DersTakip WHERE UserID=@0 AND DersID=@1 AND Durum=2",WebSecurity.CurrentUserId,DersID)>0);

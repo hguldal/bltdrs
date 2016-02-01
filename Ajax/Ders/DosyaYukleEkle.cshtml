@@ -38,8 +38,14 @@
     var db=Database.Open("fb1ae");
     
     // Ders bilgilerini veritabanından oku.
-    var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0 AND UserID=@1",DersID, WebSecurity.CurrentUserId);
+    var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0 AND UserID=@1 AND Silindi=0 AND Arsivlendi=0",DersID, WebSecurity.CurrentUserId);
     
+    if (queryDers==null)
+    {
+      Response.StatusCode=502;
+      Response.End();   
+    }
+
     // Eğer işlemi yapan kullanıcı dersin sahibi değilse hata kodu döndür.
     if (queryDers.UserID!=WebSecurity.CurrentUserId)
     {
