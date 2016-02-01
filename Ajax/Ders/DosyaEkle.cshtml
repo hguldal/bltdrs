@@ -32,6 +32,7 @@
     
     if (queryDers==null)
     {
+      db.Close();
       Response.StatusCode=502;
       Response.End();   
     }

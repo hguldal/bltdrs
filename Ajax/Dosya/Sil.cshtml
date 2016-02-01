@@ -17,10 +17,11 @@
          Response.End();
      }
     var db=Database.Open("fb1ae");
-    var queryDosya=db.QuerySingle("SELECT * FROM Dosya WHERE DosyaID=@0 AND UserID=@1",DosyaID,WebSecurity.CurrentUserId);
+    var queryDosya=db.QuerySingle("SELECT * FROM Dosya WHERE DosyaID=@0 AND UserID=@1 AND Silindi=0",DosyaID,WebSecurity.CurrentUserId);
    
     if (queryDosya==null)
       {
+        db.Close();
         Response.StatusCode=500;
         Response.End();  
       }

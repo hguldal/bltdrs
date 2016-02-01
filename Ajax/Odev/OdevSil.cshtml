@@ -21,8 +21,14 @@
      var db=Database.Open("fb1ae");
  
      var queryOdev=db.QuerySingle("SELECT * FROM Odev WHERE OdevID=@0",OdevID);
-     var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0",queryOdev.DersID);
-   
+     var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0 AND Silindi=0",queryOdev.DersID);
+    
+    if (queryDers==null)
+     {
+       db.Close();
+       Response.StatusCode=500;
+       Response.End();  
+     }
 
     if (WebSecurity.CurrentUserId==queryDers.UserID)
     {

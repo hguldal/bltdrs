@@ -39,7 +39,8 @@
      
      if (queryDers==null)
      {
-      Response.StatusCode=500;
+       db.Close();
+       Response.StatusCode=500;
        Response.End();  
      }
 

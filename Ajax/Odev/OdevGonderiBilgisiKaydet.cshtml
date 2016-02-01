@@ -47,8 +47,14 @@
  
      var queryOdevGonderisi=db.QuerySingle("SELECT * FROM OdevGonderisi INNER JOIN Odev ON OdevGonderisi.OdevID=Odev.OdevID WHERE OdevGonderiID=@0",OdevGonderiID);
      
-     var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0",queryOdevGonderisi.DersID);
-   
+     var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0 AND Silindi=0",queryOdevGonderisi.DersID);
+     
+     if (queryDers==null)
+     {
+       db.Close();
+       Response.StatusCode=500;
+       Response.End();  
+     }
 
     if (WebSecurity.CurrentUserId==queryDers.UserID)
     {
