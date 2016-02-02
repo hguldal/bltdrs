@@ -2,10 +2,7 @@
     if (!WebSecurity.IsAuthenticated)
     {
         Response.Redirect("~/Hesap/Giris");
-    }
-    
-    
-
+    }  
     var roller=Roles.GetRolesForUser(WebSecurity.CurrentUserName);
     var db=Database.Open("fb1ae");
     DateTime bitis=new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,0,0,0);
@@ -74,6 +71,10 @@
     <link href="@Href("~/Shared/Plugins/font-awesome/css/font-awesome.min.css")" rel="stylesheet" type="text/css">
     <link href="@Href("~/Shared/Plugins/jquery.growl/jquery.growl.css")" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="@Href("~/Shared/Plugins/selectize/dist/css/selectize.bootstrap3.css")">
+     <script type="text/javascript">
+            var timerStart = Date.now();
+        </script>
+
     @RenderSection("css", required: false)
    
 
@@ -381,6 +382,8 @@
                  @RenderBody()
                 </div>
                 <!-- /Page Body -->
+  
+
             </div>
             <!-- /Page Content -->
         </div>
@@ -410,8 +413,16 @@
     <!--Page Related Scripts-->
    
     @RenderSection("js", required: false)
-   
-    
+
+    <script type="text/javascript">
+             $(document).ready(function() {
+                 console.log("Icerik Hazirlanma Suresi: ", Date.now()-timerStart);
+             });
+             $(window).load(function() {
+                 console.log("Sayfa Yuklenme Suresi:", Date.now()-timerStart);
+             });
+        </script>
+ 
 </body>
 <!--  /Body -->
 </html>

@@ -1,0 +1,49 @@
+﻿@helper DosyaIkonu(string DosyaAdi)
+ {
+
+     var dosyaUzantisi = DosyaAdi.Substring(DosyaAdi.LastIndexOf('.')+1);
+ 
+ 
+     if (dosyaUzantisi=="pptx" || dosyaUzantisi=="ppt") 
+     {
+          <i class="fa fa-file-powerpoint-o fa-2x text-success"></i>
+     }
+     else if (dosyaUzantisi=="pdf")
+     {
+        <i class="fa fa-file-pdf-o fa-2x text-success"></i>   
+     }
+     else if (dosyaUzantisi=="jpg" || dosyaUzantisi=="jpeg" || dosyaUzantisi=="bmp" || dosyaUzantisi=="gif" || dosyaUzantisi=="tiff" || dosyaUzantisi=="png" )
+     {
+        <i class="fa fa-file-photo-o fa-2x text-success"></i>   
+     }
+     else if (dosyaUzantisi=="xlsx" || dosyaUzantisi=="xls") 
+     {
+          <i class="fa fa-file-excel-o fa-2x text-success"></i>
+     }
+
+     else if (dosyaUzantisi=="mov" || dosyaUzantisi=="mpg" || dosyaUzantisi=="mpeg" || dosyaUzantisi=="avi") 
+     {
+          <i class="fa fa-file-movie-o fa-2x text-success"></i>
+     }
+
+     else if (dosyaUzantisi=="zip" || dosyaUzantisi=="rar" || dosyaUzantisi=="7z" || dosyaUzantisi=="gzip") 
+     {
+          <i class="fa fa-file-archive-o fa-2x text-success"></i>
+     }
+   
+     else if (dosyaUzantisi=="mp3" || dosyaUzantisi=="wav") 
+     {
+          <i class="fa fa-file-audio-o fa-2x text-success"></i>
+     }
+   
+     else if (dosyaUzantisi=="docx" || dosyaUzantisi=="doc") 
+     {
+          <i class="fa fa-file-word-o fa-2x text-success"></i>
+     }
+     else
+     {
+        <i class="fa fa-file-text-o fa-2x text-success"></i>   
+     }
+ 
+ 
+ }
