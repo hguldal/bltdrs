@@ -1,15 +1,53 @@
 ﻿@{
-    
+  
+  // Bu prosedür sisteme yeni bir klasor ekler.
+  // Bu prosedürü sadece oturumu açmış ve Öğretici rolünde olan bir kullanıcı çalıştırabilir.
+ 
+ if (WebSecurity.IsAuthenticated==false || Roles.IsUserInRole("Ogretici")==false)
+     {    
+        Response.StatusCode=401;
+        Response.End(); 
+     }
+     
+     // Formla birlikte dönderilen ders bilgilerini oku
+     var klasorAdi=Request["KlasorAdi"];      
+     var konum=Request["Konum"];
+
+     // Dersin adı mutlaka olmalı eğer ders adı gönderilmemiş ise hata kodu döndür.
+     if (string.IsNullOrEmpty(klasorAdi))
+     {
+       
+       Response.StatusCode=501;
+       Response.End();
+     }
+
+     if (string.IsNullOrEmpty(konum))
+     {
+       
+       konum="-1";
+     }
+
+     var db=Database.Open("fb1ae");
+     Random r=new Random();
+     
+     // Klasör için rastgele bir ID oluştur.        
+     var yeniKlasorID=r.Next(1000,1000000);
+     
+     // ID daha önce kullanılmamış olmalı. Kontrol et. Kullanılmışsa, kullanılmamış bir kod bulana kadar dene
+     while (db.QueryValue("SELECT COUNT(*) FROM Klasor WHERE KlasorID=@0",yeniKlasorID)>0)
+        {
+            yeniKlasorID=r.Next(1000,1000000);
+        }
+
+      
+      // Klasörü veritabanına ekle
+      db.Execute("INSERT INTO Klasor(KlasorID,KlasorAdi,UserID,Konum) VALUES(@0,@1,@2,@3)",yeniKlasorID,klasorAdi,WebSecurity.CurrentUserId,konum);
+      
+      db.Close();   
+      Response.Write(yeniKlasorID);
+      Response.End();         
 }
 
-<!DOCTYPE html>
 
-<html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <title></title>
-    </head>
-    <body>
-        
-    </body>
-</html>
+
+

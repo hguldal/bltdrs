@@ -5,11 +5,11 @@
     }
     Layout = "~/Shared/_LayoutYeni.cshtml";  
  
-   var gorunum=Request.QueryString["Gorunum"];
+   var konum=Request.QueryString["Konum"];
 
-   if (string.IsNullOrEmpty(gorunum))
+   if (string.IsNullOrEmpty(konum))
       {
-          gorunum="-1";
+          konum="-1";
       }
 
    if (!Roles.IsUserInRole("Ogretici"))
@@ -26,7 +26,8 @@
            Culture=UICulture="tr-TR";
        }
 
-    var queryDosyalar=db.Query("SELECT * FROM Dosya WHERE userID=@0 AND Silindi=0 AND Dosya.YuklenmeTuru<>2 AND Konum=@1 ORDER BY EklenmeTarihi DESC",WebSecurity.CurrentUserId,gorunum);
+    var queryDosyalar=db.Query("SELECT * FROM Dosya WHERE userID=@0 AND Silindi=0 AND Dosya.YuklenmeTuru<>2 AND Konum=@1 ORDER BY EklenmeTarihi DESC",WebSecurity.CurrentUserId,konum);
+    var queryKlasorler=db.Query("SELECT * FROM Klasor WHERE Silindi=0 AND Konum=@0",konum);
     db.Close();
   
 }
@@ -41,7 +42,7 @@
    <h1>@Resources.Resource.lblDosyalar</h1>
 }
 <div class="row">
-    
+    <span id="spnKonum" data-Konum="@konum"></span>
    <div class="col-lg-12">
           
        @if (Roles.IsUserInRole("Ogretici"))
@@ -53,6 +54,16 @@
        <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalKlasorEkle">
             <i class="fa fa-plus-circle"></i> Yeni Klasör
         </button>
+
+       <a href="#" class="pull-right"> Benimle Paylaşılmış Dosyalar
+       </a>
+        
+       <a href="#" class="pull-right"> Geri Dönüşüm Kutusu
+       </a>
+
+        <a href="#" class="pull-right"> Ödevlerle Gönderilmiş Dosyalar
+                   </a>
+
        }
            <br><br>    
         <table id="lstDosyalar" class="table table-hover">
@@ -68,50 +79,26 @@
         </thead>
          <tbody>
  
-             <tr>
-                 <td></td>
-                <td>
-                    <a href="#" class="text-success">
-                    <span class="fa-stack">
-                        <i class="fa fa-folder-o fa-stack-2x"></i>
-                        <i class="fa fa-recycle fa-stack-1x"></i>
-                    </span> Geri Dönüşüm Kutusu
-                   </a>
-                </td>
-                 <td></td>
-                 <td></td>
-                 <td></td>
-             </tr>
 
+            @foreach (var klasor in queryKlasorler)
+            {
              <tr>
+                 <td>
+                     <label>
+                       <input type="checkbox" class="colored-primary">
+                       <span class="text"></span>
+                     </label>
+                 </td>
+                 <td>
+                    <a href="@Href("~/Dosya/Liste?Konum=" + klasor.KlasorID)"><i class="fa fa-folder fa-2x"></i> @klasor.KlasorAdi</a>
+                 </td>
+                 <td>--</td>
+                 <td>@Genel.DateLabel(klasor.OlusturmaTarihi,dil)</td>
                  <td></td>
-                <td>
-                    <a href="#" class="text-success">
-                    <span class="fa-stack">
-                        <i class="fa fa-folder-o fa-stack-2x"></i>
-                        <i class="fa fa-share fa-stack-1x"></i>
-                    </span> Benimle Paylaşılmış Dosyalar
-                   </a>
-                </td>
-                 <td></td>
-                 <td></td>
-                 <td></td>
-             </tr>
 
-             <tr>
-                 <td></td>
-                <td>
-                    <a href="#" class="text-success">
-                    <span class="fa-stack">
-                        <i class="fa fa-folder-o fa-stack-2x"></i>
-                        <i class="fa fa-clock-o fa-stack-1x"></i>
-                    </span> Ödevlerle Gönderilmiş Dosyalar
-                   </a>
-                </td>
-                 <td></td>
-                 <td></td>
-                 <td></td>
              </tr>
+            
+            }
 
             @foreach (var dosya in queryDosyalar)
             {
@@ -173,6 +160,31 @@
     </div>
   </div>
 </div>
+
+
+<div class="modal" id="modalKlasorEkle" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Klasör Oluştur</h4>
+      </div>
+      <div class="modal-body">
+        
+
+         <label>Klasör Adı:</label>
+         <input type="text" class="form-control" name="txtKlasorAdi" id="txtKlasorAdi" placeholder="Oluşturulmasını istediğiniz klasörünü adını bu alan girin..." required />
+        
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="btnKlasorOlustur">@Resources.Resource.lblTamam</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">@Resources.Resource.lblIptal</button>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
     }
 
 @section js
