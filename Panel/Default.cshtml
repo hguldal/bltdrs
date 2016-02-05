@@ -226,7 +226,7 @@
                                                 </table><hr>
  
                                         </div><!--Widget Body-->
-                                    </div><!--Widget-->         <div class="widget">
+                                    </div><!--Widget-->         @if (roller.Contains("Ogretici")) {         <div class="widget">
                <div class="widget-header bordered-top bordered-palegreen ">
                                             
                                             <span class="widget-caption"><strong>@Resources.Resource.lblOdevler</strong></span>
@@ -260,7 +260,7 @@
                                             <a href="@Href("~/Odev/Liste")"><i class="fa fa-plus-circle"></i> @Resources.Resource.lblYeniBirOdevVer</a>
                                            
                                         </div><!--Widget Body-->
-                                    </div><!--Widget-->
+                                    </div><!--Widget-->        }
         @if (roller.Contains("Ogrenci"))
         {
             <div class="widget">
