@@ -28,6 +28,7 @@
 
     var queryDosyalar=db.Query("SELECT * FROM Dosya WHERE userID=@0 AND Silindi=0 AND Dosya.YuklenmeTuru<>2 AND Konum=@1 ORDER BY EklenmeTarihi DESC",WebSecurity.CurrentUserId,konum);
     var queryKlasorler=db.Query("SELECT * FROM Klasor WHERE Silindi=0 AND Konum=@0",konum);
+    var queryUstKlasor=db.QuerySingle("SELECT * FROM Klasor WHERE KlasorID=@0",konum);
     db.Close();
   
 }
@@ -55,15 +56,6 @@
             <i class="fa fa-plus-circle"></i> Yeni Klasör
         </button>
 
-       <a href="#" class="pull-right"> Benimle Paylaşılmış Dosyalar
-       </a>
-        
-       <a href="#" class="pull-right"> Geri Dönüşüm Kutusu
-       </a>
-
-        <a href="#" class="pull-right"> Ödevlerle Gönderilmiş Dosyalar
-                   </a>
-
        }
            <br><br>    
         <table id="lstDosyalar" class="table table-hover">
@@ -79,13 +71,35 @@
         </thead>
          <tbody>
  
+            @if (queryUstKlasor!=null)
+            {
+                <tr>
+                 <td class="col-md-1 text-center">
+                     
+                 </td>
+                 <td>
+                     @if (queryUstKlasor.Konum==-1)
+                     {
+                        <a href="@Href("~/Dosya/Liste")"><i class="fa fa-arrow-circle-up fa-2x"></i> Bir Üst Konum</a> 
+                     }
+                     else
+                     {
+                        <a href="@Href("~/Dosya/Liste?Konum=" + queryUstKlasor.Konum)"><i class="fa fa-arrow-circle-up fa-2x"></i> Bir Üst Konum</a>
+                    }
+                 </td>
+                 <td>--</td>
+                 <td></td>
+                 <td></td>
+
+             </tr>
+            }
 
             @foreach (var klasor in queryKlasorler)
             {
              <tr>
-                 <td>
+                 <td class="col-md-1 text-center">
                      <label>
-                       <input type="checkbox" class="colored-primary">
+                       <input type="checkbox" class="colored-primary chkBoxOge">
                        <span class="text"></span>
                      </label>
                  </td>
@@ -104,9 +118,9 @@
             {
                 
                 <tr>
-                    <td>
+                    <td class="col-md-1 text-center">
                        <label>
-                       <input type="checkbox" class="colored-primary">
+                       <input type="checkbox" class="colored-primary chkBoxOge">
                        <span class="text"></span>
                       </label>                    </td>
                     <td><a href="@Href("~/Dosya/Indir?DosyaID=")@dosya.DosyaID">@HelperDosya.DosyaIkonu(dosya.DosyaAdi) @dosya.DosyaAdi</a></td>
