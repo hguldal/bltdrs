@@ -18,9 +18,15 @@
     var boyut=Request["DosyaBoyut"];
     var dosyaAdi=Request["DosyaAdi"];
     var dosyaTuru=Request["DosyaTuru"];
+    var konum=Request["Konum"];
     if (string.IsNullOrEmpty(aciklama))
     {
         aciklama=dosyaAdi;
+    }
+
+    if (string.IsNullOrEmpty(konum))
+    {
+        konum="-1";
     }
 
 
@@ -33,7 +39,7 @@
              yeniDosyaID=r.Next(1000,1000000);
           }
     
-        db.Execute("INSERT INTO Dosya(DosyaID,UserID,Aciklama,Boyut,Uzanti,Tur,DosyaAdi,KayitAdi) VALUES(@0,@1,@2,@3,@4,@5,@6,@7)",yeniDosyaID,WebSecurity.CurrentUserId,aciklama,boyut,"",dosyaTuru,dosyaAdi,azureDosyaAdi);
+        db.Execute("INSERT INTO Dosya(DosyaID,UserID,Aciklama,Boyut,Uzanti,Tur,DosyaAdi,KayitAdi,Konum) VALUES(@0,@1,@2,@3,@4,@5,@6,@7,@8)",yeniDosyaID,WebSecurity.CurrentUserId,aciklama,boyut,"",dosyaTuru,dosyaAdi,azureDosyaAdi,konum);
 
         var queryEklenenDosya=db.QuerySingle("SELECT * FROM Dosya WHERE DosyaID=@0",yeniDosyaID);
         db.Close();   
