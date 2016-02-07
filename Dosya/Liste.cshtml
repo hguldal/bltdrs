@@ -56,6 +56,10 @@
             <i class="fa fa-plus-circle"></i> Yeni Klasör
         </button>
 
+        <button type="button" class="btn btn-primary btn-lg" id="btnOgeSil">
+            <i class="fa fa-times"></i> Sil
+        </button>
+
        }
            <br><br>    
         <table id="lstDosyalar" class="table table-hover">
@@ -96,7 +100,7 @@
 
             @foreach (var klasor in queryKlasorler)
             {
-             <tr>
+             <tr data-OgeID="k_@klasor.KlasorID">
                  <td class="col-md-1 text-center">
                      <label>
                        <input type="checkbox" class="colored-primary chkBoxOge">
@@ -117,7 +121,7 @@
             @foreach (var dosya in queryDosyalar)
             {
                 
-                <tr>
+                <tr data-OgeID="d_@dosya.DosyaID">
                     <td class="col-md-1 text-center">
                        <label>
                        <input type="checkbox" class="colored-primary chkBoxOge">
