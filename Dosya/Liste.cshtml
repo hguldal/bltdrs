@@ -102,7 +102,7 @@
 
             @foreach (var klasor in queryKlasorler)
             {
-             <tr>
+             <tr class="KlasorSatiri">
                  <td class="col-md-1 text-center">
                      <label>
                        <input type="checkbox" data-OgeID="k_@klasor.KlasorID" class="colored-primary chkBoxOge">
@@ -142,7 +142,7 @@
             @foreach (var dosya in queryDosyalar)
             {
                 
-                <tr>
+                <tr class="DosyaSatiri">
                     <td class="col-md-1 text-center">
                        <label>
                        <input type="checkbox" class="colored-primary chkBoxOge"  data-OgeID="d_@dosya.DosyaID">
