@@ -31,12 +31,12 @@
      Random r=new Random();
      
      // Klasör için rastgele bir ID oluştur.        
-     var yeniKlasorID=r.Next(1000,1000000);
+     var yeniKlasorID=r.Next(1000,10000000);
      
      // ID daha önce kullanılmamış olmalı. Kontrol et. Kullanılmışsa, kullanılmamış bir kod bulana kadar dene
      while (db.QueryValue("SELECT COUNT(*) FROM Klasor WHERE KlasorID=@0",yeniKlasorID)>0)
         {
-            yeniKlasorID=r.Next(1000,1000000);
+            yeniKlasorID=r.Next(1000,10000000);
         }
 
       

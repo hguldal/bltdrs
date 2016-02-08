@@ -56,7 +56,7 @@
             <i class="fa fa-plus-circle"></i> Yeni Klasör
         </button>
 
-        <button type="button" class="btn btn-primary btn-lg" id="btnOgeSil">
+        <button type="button" class="btn btn-primary btn-lg" id="btnCokluSil">
             <i class="fa fa-times"></i> Sil
         </button>
 
@@ -66,10 +66,12 @@
         <thead>
             <tr>
                <th></th>
-                <th>@Resources.Resource.lblAd</th>
-                <th> @Resources.Resource.lblBoyut</th>
-                <th> @Resources.Resource.lblEklenmeTarihi</th>
+                <th>@Resources.Resource.lblAd</th> 
                 <th></th>
+                <th> @Resources.Resource.lblBoyut</th> 
+               
+                <th> @Resources.Resource.lblEklenmeTarihi</th>
+               
                 
             </tr>
         </thead>
@@ -100,19 +102,38 @@
 
             @foreach (var klasor in queryKlasorler)
             {
-             <tr data-OgeID="k_@klasor.KlasorID">
+             <tr>
                  <td class="col-md-1 text-center">
                      <label>
-                       <input type="checkbox" class="colored-primary chkBoxOge">
+                       <input type="checkbox" data-OgeID="k_@klasor.KlasorID" class="colored-primary chkBoxOge">
                        <span class="text"></span>
                      </label>
                  </td>
                  <td>
                     <a href="@Href("~/Dosya/Liste?Konum=" + klasor.KlasorID)"><i class="fa fa-folder fa-2x"></i> @klasor.KlasorAdi</a>
                  </td>
+                 <td>
+                        
+                      <div class="dropdown">
+
+                        
+                                  <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-primary btn-xs">
+                                    <i class="fa fa-cog"></i>
+                                    <span class="caret"></span>
+                                  </button>
+                                  
+                                  <ul class="dropdown-menu" aria-labelledby="dLabel">
+                                      <li><a href="#" class="btnOgeSil" data-OgeID="k_@klasor.KlasorID"><i class="fa fa-remove"></i> @Resources.Resource.lblDosyayiSil</a></li>
+                                     
+                                  </ul>
+                            </div>
+                 
+                 </td>
                  <td>--</td>
+                 
+            
                  <td>@Genel.DateLabel(klasor.OlusturmaTarihi,dil)</td>
-                 <td></td>
+                 
 
              </tr>
             
@@ -121,25 +142,43 @@
             @foreach (var dosya in queryDosyalar)
             {
                 
-                <tr data-OgeID="d_@dosya.DosyaID">
+                <tr>
                     <td class="col-md-1 text-center">
                        <label>
-                       <input type="checkbox" class="colored-primary chkBoxOge">
+                       <input type="checkbox" class="colored-primary chkBoxOge"  data-OgeID="d_@dosya.DosyaID">
                        <span class="text"></span>
                       </label>                    </td>
                     <td><a href="@Href("~/Dosya/Indir?DosyaID=")@dosya.DosyaID">@HelperDosya.DosyaIkonu(dosya.DosyaAdi) @dosya.DosyaAdi</a></td>
+                    
+                      <td>
+
+                         <div class="dropdown">
+
+                        
+                                  <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-primary btn-xs">
+                                    <i class="fa fa-cog"></i>
+                                    <span class="caret"></span>
+                                  </button>
+                                  
+                                  <ul class="dropdown-menu" aria-labelledby="dLabel">
+                                      <li><a href="@Href("~/Dosya/Indir?DosyaID=")@dosya.DosyaID"><i class="fa fa-cloud-download"></i> @Resources.Resource.lblKarşıdanYukle</a></li>
+                                      <li><a href="@Href("~/Dosya/Ayarlar?DosyaID=")@dosya.DosyaID"><i class="fa fa-cog"></i> @Resources.Resource.lblDosyaAyarlari</a></li>
+                                      <li><a href="@Href("~/Dosya/Indirenler?DosyaID=")@dosya.DosyaID"><i class="fa fa-arrow-circle-o-down"></i> @Resources.Resource.lblDosyayiYukleyenKullanicilar</a></li>
+                                      <li><a href="#" class="btnOgeSil" data-OgeID="d_@dosya.DosyaID"><i class="fa fa-remove"></i> @Resources.Resource.lblDosyayiSil</a></li>
+                                  </ul>
+                            </div>
+
+                    </td>
+                    
                     <td>
 
                     @Genel.StorageLabel((double)dosya.Boyut)
                     </td>
-                    <td>@Genel.DateLabel(dosya.EklenmeTarihi,dil)</td>
-                    <td>
-                        <a href="@Href("~/Dosya/Indir?DosyaID=")@dosya.DosyaID" class="btn btn-info btn-sm" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.lblKarşıdanYukle"><i class="fa fa-cloud-download"></i></a>
-                        <a href="@Href("~/Dosya/Ayarlar?DosyaID=")@dosya.DosyaID" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.lblDosyaAyarlari"><i class="fa fa-cog"></i></a>
-                        <a href="@Href("~/Dosya/Indirenler?DosyaID=")@dosya.DosyaID" class="btn btn-success btn-sm" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.lblDosyayiYukleyenKullanicilar"><i class="fa fa-arrow-circle-o-down"></i></a>
-                        <button class="btn btn-danger btnDosyaSil btn-sm" data-DosyaID="@dosya.DosyaID" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.lblDosyayiSil"><i class="fa fa-remove"></i></button>
 
-                    </td>
+                  
+
+                    <td>@Genel.DateLabel(dosya.EklenmeTarihi,dil)</td>
+                    
                    
                 </tr>
             }

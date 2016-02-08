@@ -18,14 +18,19 @@
        Response.StatusCode=500;
        Response.End();
      }
-        
-    var db=Database.Open("fb1ae");
-    var ogeTur=OgeID.Substring(0,2);
+    string[] silinecekOgeler = OgeID.Split(',');
     
-    if (ogeTur=="d_") //ID si gelen öğe dosya ise direkt sil.
+    var db=Database.Open("fb1ae");
+
+    foreach (var silinecekOge in silinecekOgeler)
+    {
+      
+      var ogeTur=silinecekOge.Substring(0,2);
+    
+    if (ogeTur=="d_")
      {
-         OgeID=OgeID.Replace("d_",""); 
-         var queryDosya=db.QuerySingle("SELECT * FROM Dosya WHERE DosyaID=@0 AND UserID=@1",OgeID,WebSecurity.CurrentUserId);
+         var tmpSilinecekOge=silinecekOge.Replace("d_",""); 
+         var queryDosya=db.QuerySingle("SELECT * FROM Dosya WHERE DosyaID=@0 AND UserID=@1",tmpSilinecekOge,WebSecurity.CurrentUserId);
          if (queryDosya==null)
          {
              Response.StatusCode=501;
@@ -33,7 +38,7 @@
              Response.End();
          }
 
-         db.Execute("UPDATE Dosya SET Silindi=1 WHERE DosyaID=@0 AND UserID=@1",OgeID,WebSecurity.CurrentUserId);
+         db.Execute("UPDATE Dosya SET Silindi=1 WHERE DosyaID=@0 AND UserID=@1",tmpSilinecekOge,WebSecurity.CurrentUserId);
          var azureStorageHesapAdi=System.Configuration.ConfigurationManager.AppSettings["AzureStorageHesapAdi"];	
          var azureStorageHesapAnahtari=System.Configuration.ConfigurationManager.AppSettings["AzureStorageHesapAnahtari"];
   
@@ -47,15 +52,25 @@
      }
      else if (ogeTur=="k_")
      {
-          OgeID=OgeID.Replace("k_",""); 
+        var tmpSilinecekOge=silinecekOge.Replace("k_",""); 
+         var queryKlasor=db.QuerySingle("SELECT * FROM Klasor WHERE KlasorID=@0 AND UserID=@1",tmpSilinecekOge,WebSecurity.CurrentUserId);
+         if (queryKlasor==null)
+         {
+             Response.StatusCode=501;
+             db.Close();
+             Response.End();
+         }
+
+         db.Execute("UPDATE Klasor SET Silindi=1 WHERE KlasorID=@0 AND UserID=@1",tmpSilinecekOge,WebSecurity.CurrentUserId);
      }
+        
+    }
+
      
- 
-    
 
      db.Close();
      Response.Write("OK");
      Response.End();
      
     
-     }
+}
