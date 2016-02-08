@@ -1,0 +1,61 @@
+﻿@using Microsoft.WindowsAzure.Storage;
+@using Microsoft.WindowsAzure.Storage.Auth;
+@using Microsoft.WindowsAzure.Storage.Blob;
+@{
+  if (!WebSecurity.IsAuthenticated)
+   
+        {
+            Response.StatusCode=401;
+            Response.End();
+                   
+        }  
+
+    var OgeID=Request["OgeID"];
+    
+    if (string.IsNullOrEmpty(OgeID))
+     {
+    
+       Response.StatusCode=500;
+       Response.End();
+     }
+        
+    var db=Database.Open("fb1ae");
+    var ogeTur=OgeID.Substring(0,2);
+    
+    if (ogeTur=="d_") //ID si gelen öğe dosya ise direkt sil.
+     {
+         OgeID=OgeID.Replace("d_",""); 
+         var queryDosya=db.QuerySingle("SELECT * FROM Dosya WHERE DosyaID=@0 AND UserID=@1",OgeID,WebSecurity.CurrentUserId);
+         if (queryDosya==null)
+         {
+             Response.StatusCode=501;
+             db.Close();
+             Response.End();
+         }
+
+         db.Execute("UPDATE Dosya SET Silindi=1 WHERE DosyaID=@0 AND UserID=@1",OgeID,WebSecurity.CurrentUserId);
+         var azureStorageHesapAdi=System.Configuration.ConfigurationManager.AppSettings["AzureStorageHesapAdi"];	
+         var azureStorageHesapAnahtari=System.Configuration.ConfigurationManager.AppSettings["AzureStorageHesapAnahtari"];
+  
+         var connString=string.Format("DefaultEndpointsProtocol=http;AccountName={0};AccountKey={1};",azureStorageHesapAdi,azureStorageHesapAnahtari);
+         CloudStorageAccount storageHesap = CloudStorageAccount.Parse(connString);		
+         var blobIstemci = storageHesap.CreateCloudBlobClient();
+         var container = blobIstemci.GetContainerReference("dosyalar");
+         CloudBlockBlob blockBlob = container.GetBlockBlobReference(queryDosya.KayitAdi);
+         blockBlob.Delete();
+         
+     }
+     else if (ogeTur=="k_")
+     {
+          OgeID=OgeID.Replace("k_",""); 
+     }
+     
+ 
+    
+
+     db.Close();
+     Response.Write("OK");
+     Response.End();
+     
+    
+     }
