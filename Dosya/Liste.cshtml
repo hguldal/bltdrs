@@ -60,6 +60,10 @@
             <i class="fa fa-times"></i> Sil
         </button>
 
+        <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalKlasorSec">
+            <i class="fa fa-arrow-circle-up"></i> Taşı
+        </button>
+
        }
            <br><br>    
         <table id="lstDosyalar" class="table table-hover">
@@ -235,6 +239,46 @@
       </div>
       <div class="modal-footer">
           <button type="button" class="btn btn-primary" id="btnKlasorOlustur">@Resources.Resource.lblTamam</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">@Resources.Resource.lblIptal</button>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal" id="modalKlasorSec" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Klasör Seç</h4>
+      </div>
+      <div class="modal-body" style="height:300px;overflow: auto;">
+        <span id="spnKlasorSecUstKonum">-2</span>
+        <span id="spnKlasorSecKonum">-1</span>
+        <table class="table table-hover" id="tableKlasorSecKlasorListesi">
+            
+          @foreach (var klasor in queryKlasorler)
+            {
+             <tr>
+                 <td class="col-md-1 text-center">
+                     <label>
+                       <input type="checkbox" data-KlasorID="@klasor.KlasorID" class="colored-primary chkBoxKlasorSecOge">
+                       <span class="text"></span>
+                     </label>
+                 </td>
+                 <td>
+                    <button class="btn btn-link lnkKlasorSecOge" data-KlasorID="@klasor.KlasorID" data-Konum="@klasor.Konum"><i class="fa fa-folder fa-2x"></i> @klasor.KlasorAdi</button>
+                 </td>
+              
+             </tr>
+            
+            }
+        </table>
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="btnKlasorSec">@Resources.Resource.lblTamam</button>
         <button type="button" class="btn btn-default" data-dismiss="modal">@Resources.Resource.lblIptal</button>
         
       </div>

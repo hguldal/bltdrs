@@ -1,0 +1,27 @@
+﻿@{
+  
+ if (WebSecurity.IsAuthenticated==false || Roles.IsUserInRole("Ogretici")==false)
+     {    
+        Response.StatusCode=401;
+        Response.End(); 
+     }
+   
+   
+   var konum=Request["Konum"];
+
+
+     if (string.IsNullOrEmpty(konum))
+     {
+       
+       konum="-1";
+     }  
+    var db=Database.Open("fb1ae");
+   
+    var queryKlasorler=db.Query("SELECT * FROM Klasor WHERE Konum=@0 AND UserID=@1 AND Silindi=0",konum,WebSecurity.CurrentUserId);
+    Json.Write(queryKlasorler, Response.Output);
+    db.Close();   
+    Response.ContentType = "application/json";
+    Response.End();
+
+}
+
