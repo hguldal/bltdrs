@@ -311,6 +311,12 @@ public class Bildirim
 
 }
 
+public class GezintiKlasor
+{
+    public long UstKlasor;
+    public IEnumerable<dynamic> AltKlasorler;
+}
+
 public static class HTMLParser
 {
     public static string Link(this string s, string url)

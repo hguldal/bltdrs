@@ -252,11 +252,10 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Klasör Seç</h4>
+        <h4 class="modal-title" id="myModalLabel">Klasör Seç</h4> 
       </div>
       <div class="modal-body" style="height:300px;overflow: auto;">
-        <span id="spnKlasorSecUstKonum">-2</span>
-        <span id="spnKlasorSecKonum">-1</span>
+        <i class="fa fa-spinner fa-spin fa-2x hide" id="spinnerIcon"></i>
         <table class="table table-hover" id="tableKlasorSecKlasorListesi">
             
           @foreach (var klasor in queryKlasorler)
@@ -269,7 +268,7 @@
                      </label>
                  </td>
                  <td>
-                    <button class="btn btn-link lnkKlasorSecOge" data-KlasorID="@klasor.KlasorID" data-Konum="@klasor.Konum"><i class="fa fa-folder fa-2x"></i> @klasor.KlasorAdi</button>
+                    <button class="btn btn-link lnkKlasorSecOge" data-KlasorID="@klasor.KlasorID"><i class="fa fa-folder fa-2x"></i> @klasor.KlasorAdi</button>
                  </td>
               
              </tr>
