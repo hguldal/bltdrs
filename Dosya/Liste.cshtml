@@ -56,11 +56,11 @@
             <i class="fa fa-plus-circle"></i> Yeni Klasör
         </button>
 
-        <button type="button" class="btn btn-primary btn-lg" id="btnCokluSil">
+        <button type="button" class="btn btn-primary btn-lg" id="btnCokluSil" disabled="true">
             <i class="fa fa-times"></i> Sil
         </button>
 
-        <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalKlasorSec">
+        <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalKlasorSec" disabled="true" id="btnKlasoreTasi">
             <i class="fa fa-arrow-circle-up"></i> Taşı
         </button>
 
@@ -83,7 +83,7 @@
  
             @if (queryUstKlasor!=null)
             {
-                <tr>
+                <tr class="KlasorSatiri">
                  <td class="col-md-1 text-center">
                      
                  </td>
