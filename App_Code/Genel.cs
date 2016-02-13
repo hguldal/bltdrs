@@ -316,6 +316,12 @@ public class GezintiKlasor
     public long UstKlasor;
     public IEnumerable<dynamic> AltKlasorler;
 }
+public struct LinkGezintiKlasor
+{
+  public string KlasorID;
+  public string KlasorAdi;  
+}
+
 
 public static class HTMLParser
 {
