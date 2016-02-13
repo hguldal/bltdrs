@@ -306,36 +306,12 @@
                     </li>  
                     <!--Dökümanlar-->
                 @if (roller.Contains("Ogretici"))
-                                {
-                    <li>
-                        <a href="#" class="menu-dropdown">
+                   {                     <li>
+                        <a href="@Href("~/Dosya/Liste")">
                             <i class="menu-icon fa fa-files-o fa-fw"></i>
                             <span class="menu-text"> @Resources.Resource.lblDosyalar </span>
-                            <i class="menu-expand"></i>
                         </a>
-                        
-                        <ul class="submenu">
-
-                              
-                                    <li><a href="@Href("~/Dosya")"> 
-                                            <span class="menu-text"> @Resources.Resource.lblDosyalar</span>
-                                        </a>
-                                    </li>
-
-                                    <li>
-                                        <a href="@Href("~/Dosya/OdevDosyalari")"> 
-                                            <span class="menu-text"> @Resources.Resource.lblOdevlerleGonderilenler</span>
-                                        </a>
-                                    </li>
-                                
-                                 <li>
-                                     <a href="@Href("~/Dosya/BenimlePaylasilan")">
-                                          <span class="menu-text"> Benimle Paylaşılanlar </span>
-                                     </a>
-                                 </li>
-                           </ul>
-
-                    </li>
+                    </li>  
                     }
                     
 

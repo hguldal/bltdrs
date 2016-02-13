@@ -26,7 +26,7 @@
            Culture=UICulture="tr-TR";
        }
 
-    var queryDosyalar=db.Query("SELECT * FROM Dosya WHERE userID=@0 AND Silindi=0 AND Dosya.YuklenmeTuru<>2 AND Konum=@1 ORDER BY EklenmeTarihi DESC",WebSecurity.CurrentUserId,konum);
+    var queryDosyalar=db.Query("SELECT * FROM Dosya WHERE userID=@0 AND Silindi=0 AND Konum=@1 ORDER BY EklenmeTarihi DESC",WebSecurity.CurrentUserId,konum);
     var queryKlasorler=db.Query("SELECT * FROM Klasor WHERE Silindi=0 AND Konum=@0",konum);
     var queryUstKlasor=db.QuerySingle("SELECT * FROM Klasor WHERE KlasorID=@0",konum);
     var KonumID=konum;
@@ -99,12 +99,13 @@
          </div>  
 
        }
-           <br><br> <br>
+           <br>
         <table id="lstDosyalar" class="table table-hover">
         <thead>
             <tr>
                <th></th>
                 <th>@Resources.Resource.lblAd</th> 
+                <th></th>
                 <th></th>
                 <th> @Resources.Resource.lblBoyut</th> 
                
@@ -131,8 +132,9 @@
                         <a href="@Href("~/Dosya/Liste?Konum=" + queryUstKlasor.Konum)"><i class="fa fa-arrow-circle-up fa-2x"></i> Bir Üst Konum</a>
                     }
                  </td>
-                 <td>--</td>
                  <td></td>
+                 <td></td>
+                 <td>--</td>
                  <td></td>
 
              </tr>
@@ -167,6 +169,7 @@
                             </div>
                  
                  </td>
+                 <td></td>
                  <td>--</td>
                  
             
@@ -186,8 +189,10 @@
                        <input type="checkbox" class="colored-primary chkBoxOge"  data-OgeID="d_@dosya.DosyaID">
                        <span class="text"></span>
                       </label>                    </td>
-                    <td><a href="@Href("~/Dosya/Indir?DosyaID=")@dosya.DosyaID">@HelperDosya.DosyaIkonu(dosya.DosyaAdi) @dosya.DosyaAdi</a></td>
-                    
+                    <td><a href="@Href("~/Dosya/Indir?DosyaID=")@dosya.DosyaID">@HelperDosya.DosyaIkonu(dosya.DosyaAdi) @dosya.DosyaAdi</a>
+                  
+                    </td>
+                   
                       <td>
 
                          <div class="dropdown">
@@ -207,7 +212,13 @@
                             </div>
 
                     </td>
+                    <td>
+                        @if (dosya.YuklenmeTuru==2)
+                        {
+                            <label class="label label-orange" title="@Resources.Resource.lblOdevGonderisi" data-toggle="tooltip" data-placement="top"><i class="fa fa-clock-o"></i></label>
+                        }
                     
+                    </td>
                     <td>
 
                     @Genel.StorageLabel((double)dosya.Boyut)
