@@ -44,11 +44,6 @@
    <h1>@Resources.Resource.lblTumBildirimler</h1>
 }
 
-@section css
-{
-    <link rel="stylesheet" href="@Href("~/Shared/Plugins/daterangepicker/daterangepicker-bs3.css")">   
-}
- 
 <div class="row">
     
 
@@ -109,9 +104,7 @@
 </div>
 
 @section js
-{
-    <script src="@Href("~/Shared/Plugins/datatables/jquery.dataTables.min.js")"></script>
-    <script src="@Href("~/Shared/Plugins/datatables/dataTables.bootstrap.js")"></script>   
+{  
     <script src="@Href(string.Format("~/Shared/Javascript/Dil/{0}/Bildirim/Default.js",dil))"></script>
     <script src="@Href("~/Shared/Javascript/Bildirim/Default.min.js")"></script> 
 }
