@@ -8,6 +8,8 @@
     
     var roller=Roles.GetRolesForUser(WebSecurity.CurrentUserName);
     var db=Database.Open("fb1ae");
+    var arsivdekileriGoster=Request.QueryString["ArsivdekileriGoster"];
+
     
     var queryKullanici=db.QuerySingle("SELECT * FROM Profiles WHERE userID=@0",WebSecurity.CurrentUserId);
    
@@ -20,7 +22,15 @@
    IEnumerable<dynamic> queryDersler=null;
    if (roller.Contains("Ogretici"))
    {
-        queryDersler=db.Query("SELECT top 100 * FROM Ders WHERE Silindi=0 AND userID=@0 ORDER BY Arsivlendi",WebSecurity.CurrentUserId);
+       if (arsivdekileriGoster=="1")
+       {
+        queryDersler=db.Query("SELECT  * FROM Ders WHERE Silindi=0 AND userID=@0 ORDER BY Arsivlendi",WebSecurity.CurrentUserId);   
+       }
+       else
+       {
+           queryDersler=db.Query("SELECT  * FROM Ders WHERE Silindi=0 AND userID=@0 AND Arsivlendi=0",WebSecurity.CurrentUserId);
+       }
+        
    }
    else if (roller.Contains("Ogrenci"))
    {
@@ -47,6 +57,12 @@
             <i class="fa fa-plus-circle"></i>  @Resources.Resource.lblYeniBirDersOlustur
             </button> 
        <br>
+        <br>
+        <label>
+           <input type="checkbox" class="colored-primary" id="chkArsivdekiDersleriGoster" @if(arsivdekileriGoster=="1") {<text>checked</text>}>
+           <span class="text">Arşivdeki Dersleri Göster</span>
+        </label>
+        <br>
         }
       
        @if (roller.Contains("Ogrenci")) {
@@ -114,6 +130,7 @@
                     <td><h4><label class="label label-orange">@ders.KabulKodu</label></h4></td>
                     }
                     <td><strong>@db.QueryValue("SELECT COUNT(*) FROM DersTakip WHERE DersID=@0 AND Durum=2",ders.DersID)</strong></td>
+                   
                       @if (ders.Arsivlendi==0) {
                         <td><i class="fa fa-check-circle fa-2x text-success" title="@Resources.Resource.lblAktif"></i></td>
                         }

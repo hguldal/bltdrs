@@ -8,7 +8,7 @@ public static class KodUret
     public static string YeniKod()
     {
         string uretilenKod="";
-        char[] karakterler=new char[36] {'q','w','e','r','w','r','t','y','u','p','a','s','d','f','g','h','j','k','i','z','x','c','v','b','n','m','0','1','2','3','4','5','6','7','8','9'};
+        char[] karakterler=new char[36] {'q','w','e','r','w','r','t','y','u','p','a','s','d','f','g','h','j','k','i','z','x','c','v','b','n','m','1','1','2','3','4','5','6','7','8','9'};
         Random r=new Random();
 
         for (int i=0;i<kodKarakterSayisi;i++)
@@ -23,7 +23,7 @@ public static class KodUret
      public static string YeniKod(int karakterSayisi)
     {
         string uretilenKod="";
-        char[] karakterler=new char[36] {'q','w','e','r','w','r','t','y','u','p','a','s','d','f','g','h','j','k','i','z','x','c','v','b','n','m','0','1','2','3','4','5','6','7','8','9'};
+        char[] karakterler=new char[36] {'q','w','e','r','w','r','t','y','u','p','a','s','d','f','g','h','j','k','i','z','x','c','v','b','n','m','1','1','2','3','4','5','6','7','8','9'};
         Random r=new Random();
 
         for (int i=0;i<karakterSayisi;i++)
