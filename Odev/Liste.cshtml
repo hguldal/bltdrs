@@ -17,9 +17,12 @@
     
     IEnumerable<dynamic> queryDerslerim=null;
     IEnumerable<dynamic> queryOdevler=null;
+    IEnumerable<dynamic> queryOdevGonderileri=null;
+
     if (roller.Contains("Ogretici")) {
         queryDerslerim=db.Query("SELECT * FROM Ders WHERE UserID=@0 AND Arsivlendi=0 AND Silindi=0",WebSecurity.CurrentUserId);
         queryOdevler=db.Query("SELECT * FROM Odev INNER JOIN Ders ON Odev.DersID=Ders.DersID WHERE Odev.Silindi=0 AND Ders.UserID=@0 AND Ders.Arsivlendi=0 AND Ders.Silindi=0 ORDER BY Odev.EklenmeTarihi DESC",WebSecurity.CurrentUserId);
+        queryOdevGonderileri=db.Query("SELECT * FROM OdevGonderisi INNER JOIN Odev ON OdevGonderisi.OdevID=Odev.OdevID WHERE OdevGonderisi.Durum=1 AND Odev.DersID IN (SELECT DersID FROM Ders WHERE UserID=@0 AND Arsivlendi=0 AND Silindi=0) ORDER BY OdevGonderisi.OdevGonderiID DESC",WebSecurity.CurrentUserId);
     }
     else if (roller.Contains("Ogrenci"))
     {
@@ -55,6 +58,10 @@
        @if (roller.Contains("Ogretici")) {
        <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalYeniOdevVer">
          <i class="fa fa-plus-circle"></i> @Resources.Resource.lblYeniBirOdevVer
+        </button>
+
+       <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalOdevGonderileri">
+         <i class="fa fa-user"></i> @Resources.Resource.lblOdeviniGonderenler
         </button>
        <br>
        }
@@ -225,6 +232,42 @@
       <div class="modal-footer">
           <button type="button" class="btn btn-primary" id="btnOdevVer">@Resources.Resource.lblTamam</button>
         <button type="button" class="btn btn-default" data-dismiss="modal">@Resources.Resource.lblIptal</button>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="modal" id="modalOdevGonderileri" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">@Resources.Resource.lblOdeviniGonderenler</h4>
+      </div>
+      <div class="modal-body">
+        <div style="height: 300px;overflow: auto;">
+                                            <table class="table table-hover">
+                                            @foreach (var odevgonderisi in queryOdevGonderileri)
+                                            {
+                                                <tr>
+                                                    <td>@HelperProfil.KucukKunye(odevgonderisi.UserID)</td>
+                                                    <td>  
+                                                       <a href="@Href("~/Odev/OdevGonderisi?OdevGonderiID=" + odevgonderisi.OdevGonderiID)" class="btn btn-xs btn-info" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.lblDetaylar"><i class="fa fa-search-plus"></i></a>
+                                                       <button class="btn btn-xs btn-primary btnOdevGonderisiIncelendi" data-OdevGonderiID="@odevgonderisi.OdevGonderiID" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.lblIncelendi"><i class="fa fa-check-square-o"></i></button>
+                                                    </td>
+                                                </tr>
+                                            }
+                                                </table><hr>
+                                            
+                                           
+                                        </div><!--Widget Body-->
+      </div>
+      <div class="modal-footer">
+          
+        <button type="button" class="btn btn-default" data-dismiss="modal">@Resources.Resource.lblKapat</button>
         
       </div>
     </div>
