@@ -96,7 +96,7 @@
          }
 
       //dosyayı ekle
-     db.Execute("INSERT INTO Dosya(DosyaID,UserID,Aciklama,Boyut,Uzanti,Tur,DosyaAdi,KayitAdi,YuklenmeTuru) VALUES(@0,@1,@2,@3,@4,@5,@6,@7,@8)",yeniDosyaID,queryDers.UserID,queryOdev.Baslik + " ödevinin dosyası",boyut,"",dosyaTuru,dosyaAdi,azureDosyaAdi,2);
+     db.Execute("INSERT INTO Dosya(DosyaID,UserID,Aciklama,Boyut,Uzanti,Tur,DosyaAdi,KayitAdi,YuklenmeTuru,YukleyenUserID) VALUES(@0,@1,@2,@3,@4,@5,@6,@7,@8,@9)",yeniDosyaID,queryDers.UserID,queryOdev.Baslik + " ödevinin dosyası",boyut,"",dosyaTuru,dosyaAdi,azureDosyaAdi,2,WebSecurity.CurrentUserId);
              
              
      //ödevi gönderen öğrenciye erişim izni ver

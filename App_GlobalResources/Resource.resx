@@ -510,7 +510,7 @@
 <value>File Settings</value>
 </data>
 <data name="lblDosyalar" xml:space="preserve">
-<value>Cloud Storage</value>
+<value>Files</value>
 </data>
 <data name="lblOdevlerleGonderilenler" xml:space="preserve">
 <value>Files in submission</value>

@@ -77,7 +77,7 @@
       }
 
    // Diske kaydedilmiş olan dosya bilgilerini veritabanına yaz.
-    db.Execute("INSERT INTO Dosya(DosyaID,UserID,Aciklama,Boyut,Uzanti,Tur,DosyaAdi,KayitAdi) VALUES(@0,@1,@2,@3,@4,@5,@6,@7)",yeniDosyaID,WebSecurity.CurrentUserId,aciklama,boyut,"",dosyaTuru,dosyaAdi,azureDosyaAdi);
+    db.Execute("INSERT INTO Dosya(DosyaID,UserID,Aciklama,Boyut,Uzanti,Tur,DosyaAdi,KayitAdi,YukleyenUserID) VALUES(@0,@1,@2,@3,@4,@5,@6,@7,@8)",yeniDosyaID,WebSecurity.CurrentUserId,aciklama,boyut,"",dosyaTuru,dosyaAdi,azureDosyaAdi,WebSecurity.CurrentUserId);
     // Dosyayı derse dahil et.
     db.Execute("INSERT INTO DersDosyalari(DosyaID,DersID) VALUES(@0,@1)",yeniDosyaID,DersID);
     // Dersi takip edenler için dosyaya erişim hakkı ver.

@@ -23,7 +23,8 @@
     }
     else if (roller.Contains("Ogrenci"))
     {
-        queryOdevler=db.Query("SELECT * FROM Odev INNER JOIN Ders ON Odev.DersID=Ders.DersID WHERE Odev.Silindi=0 AND Ders.Arsivlendi=0 AND Ders.Silindi=0 AND Ders.DersID IN (SELECT DersID FROM DersTakip WHERE UserID=@0 AND Durum=2) ORDER BY Odev.EklenmeTarihi DESC",WebSecurity.CurrentUserId);
+        queryOdevler=db.Query("SELECT * FROM Odev INNER JOIN Ders ON Odev.DersID=Ders.DersID WHERE Odev.Silindi=0 AND Ders.Arsivlendi=0 AND Ders.Silindi=0 AND Ders.DersID IN (SELECT DersID FROM DersTakip WHERE UserID=@0 AND Durum=2) AND (Odev.OdevID NOT IN (SELECT OdevID FROM OdevGonderisi WHERE UserID=@0)) AND (Odev.OdevGonderimi<>2 OR Odev.SonTeslimTarihi>=@1) AND Odev.OdevGonderimi<>2 ORDER BY Odev.EklenmeTarihi DESC",WebSecurity.CurrentUserId,DateTime.Now);
+        //queryOdevler=db.Query("SELECT * FROM Odev WHERE Odev.Silindi=0 AND (Odev.DersID IN (SELECT DersID FROM DersTakip WHERE UserID=@0 AND Durum=2)) AND (Odev.OdevID NOT IN (SELECT OdevID FROM OdevGonderisi WHERE UserID=@0)) AND (Odev.OdevGonderimi<>2 OR Odev.SonTeslimTarihi>=@1) AND Odev.OdevGonderimi<>2 ORDER BY Odev.EklenmeTarihi DESC",WebSecurity.CurrentUserId,DateTime.Now);
     }
     
     
@@ -58,7 +59,10 @@
        <br>
        }
        <br>
-               
+             <div class="widget">
+               <div class="widget-header bordered-top bordered-blue ">
+               </div>   
+                   <div class="widget-body">
        <table id="lstOdevler" class="table table-hover">
         <thead>
             <tr>
@@ -70,7 +74,10 @@
                      <th>@Resources.Resource.lblOdevGonderildi</th>
                 }
                
-                
+                @if (roller.Contains("Ogretici"))
+                {
+                    <th>@Resources.Resource.lblOdevGonderimi</th>
+                }
                 
                
             </tr>
@@ -98,6 +105,10 @@
                                             <li><a href="@Href("~/Odev/OdevGonderileri?OdevID=")@odev.OdevID"><i class="fa fa-user"></i> @Resources.Resource.lblOdeviniGonderenler</a></li>
                                             <li><a href="#" class="btnOdevSil" data-OdevID="@odev.OdevID"><i class="fa fa-remove"></i> @Resources.Resource.lblOdeviSil</a></li>
                                         }
+                                        else if (roller.Contains("Ogrenci"))
+                                        {
+                                        <li> <a href="@Href("~/Odev/Goster?OdevID=")@odev.OdevID"><i class="fa fa-check"></i> @Resources.Resource.lblOdeviGonder</a></li>    
+                                        }
                                         
                                   </ul>
                             </div>
@@ -118,11 +129,23 @@
                          }
                         </td>
                     }
+
+                    @if (roller.Contains("Ogretici"))
+                    {
+                        <td>  
+                            <label>
+                                <input class="checkbox-slider colored-primary checkBoxOdevGonderimiAcKapa" type="checkbox" title="@Resources.Resource.lblOdevGonderimi" data-OdevID="@odev.OdevID" @if (odev.OdevGonderimi==1) {<text>checked</text>} >
+                                <span class="text"></span>
+                            </label>
+                          </td>
+                    }
                </tr>
             }
          </tbody>
     </table>
-
+                       </div>
+                   
+            </div>
         </div>
 
   
