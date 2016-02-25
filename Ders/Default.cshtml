@@ -65,7 +65,7 @@
      }
      else if (liste=="odev")
      {
-       queryOdevler=db.Query("SELECT * FROM Odev WHERE DersID=@0 AND Silindi=0 ORDER BY EklenmeTarihi DESC",DersID); 
+       queryOdevler=db.Query("SELECT * FROM Odev INNER JOIN Ders ON Odev.DersID=Ders.DersID WHERE Odev.Silindi=0 AND Ders.DersID=@0 AND Ders.Arsivlendi=0 AND Ders.Silindi=0 ORDER BY Odev.EklenmeTarihi DESC",DersID);
      }
      else if (liste=="dosya")
      {
@@ -337,12 +337,23 @@
                 </button>
                 }
                   <br><br>
-                    <table id="lstOdevler" class="table table-hover">
+                        <table id="lstOdevler" class="table table-hover">
         <thead>
             <tr>
-                <th>@Resources.Resource.lblOdev</th>
+                <th>@Resources.Resource.lblOdevBasligi</th>
+                <th>@Resources.Resource.lblIslemler</th>
+                <th>@Resources.Resource.lblDers</th>
+                @if (takipEdiyor && queryDers.Arsivlendi==0)
+                {
+                     <th>@Resources.Resource.lblOdevGonderildi</th>
+                }
+               
+                @if (dersSahibi && queryDers.Arsivlendi==0)
+                {
+                    <th>@Resources.Resource.lblOdevGonderimi</th>
+                }
+
                 
-                <th></th>
                
             </tr>
         </thead>
@@ -350,18 +361,59 @@
             @foreach (var odev in queryOdevler)
             {
                 <tr>
-                    <td><i class="fa fa-clock-o fa-2x text-success"></i> <a href="@Href("~/Odev/Goster?OdevID=")@odev.OdevID"> @odev.Baslik </a></td>
-                      <td> 
-                    <a href="@Href("~/Odev/Goster?OdevID=")@odev.OdevID" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.lblOdeveGozat"><i class="fa fa-search-plus"></i> </a>
-                        @if (WebSecurity.CurrentUserId==queryDers.UserID)
-                        {
-                            
-                            <a href="@Href("~/Odev/Ayarlar?OdevID=")@odev.OdevID" class="btn btn-warning" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.lblOdevAyarlari"><i class="fa fa-cog"></i></a>
-                            <a href="@Href("~/Odev/OdevGonderileri?OdevID=")@odev.OdevID" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.lblOdeviniGonderenler"><i class="fa fa-user"></i></a>
-                            <a href="#" class="btn btn-danger btnOdevSil" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.lblOdeviSil" data-OdevID="@odev.OdevID"><i class="fa fa-remove"></i></a>    
-                        }
+                    <td><a href="@Href("~/Odev/Goster?OdevID=")@odev.OdevID" title="Gözat"><i class="fa fa-clock-o fa-2x text-success"></i> @odev.Baslik </a></td>
+                   
+                       <td> 
+                            <div class="dropdown">
+
                         
+                                  <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-primary btn-xs">
+                                    <i class="fa fa-cog"></i>
+                                    <span class="caret"></span>
+                                  </button>
+                                  
+                                  <ul class="dropdown-menu" aria-labelledby="dLabel">
+                                        <li> <a href="@Href("~/Odev/Goster?OdevID=")@odev.OdevID"><i class="fa fa-search-plus"></i> @Resources.Resource.lblOdeveGozat</a></li>
+                                      
+                                        @if (dersSahibi && queryDers.Arsivlendi==0){
+                                            <li><a href="@Href("~/Odev/Ayarlar?OdevID=")@odev.OdevID"><i class="fa fa-cog"></i> @Resources.Resource.lblOdevAyarlari</a></li>
+                                            <li><a href="@Href("~/Odev/OdevGonderileri?OdevID=")@odev.OdevID"><i class="fa fa-user"></i> @Resources.Resource.lblOdeviniGonderenler</a></li>
+                                            <li><a href="#" class="btnOdevSil" data-OdevID="@odev.OdevID"><i class="fa fa-remove"></i> @Resources.Resource.lblOdeviSil</a></li>
+                                        }
+                                        else if (takipEdiyor && queryDers.Arsivlendi==0)
+                                        {
+                                        <li> <a href="@Href("~/Odev/Goster?OdevID=")@odev.OdevID"><i class="fa fa-check"></i> @Resources.Resource.lblOdeviGonder</a></li>    
+                                        }
+                                        
+                                  </ul>
+                            </div>
+                
                     </td>
+                    <td><a href="@Href("~/Ders?DersID=")@odev.DersID"> @odev.DersAdi </a> </td>
+                    @if (takipEdiyor && queryDers.Arsivlendi==0)
+                    {
+                        var queryOdevGonderisi=db.QuerySingle("SELECT * FROM OdevGonderisi WHERE Silindi=0 AND OdevID=@0 AND UserID=@1",odev.OdevID,WebSecurity.CurrentUserId);
+                        <td>
+                        @if (queryOdevGonderisi!=null)
+                         {
+                             <i class="fa fa-check-circle fa-2x text-success" title="@Resources.Resource.lblOdevGonderildi"></i>
+                         }
+                         else
+                         {
+                             <i class="fa fa-times-circle fa-2x text-danger" title="@Resources.Resource.lblOdevGonderilmedi"></i>
+                         }
+                        </td>
+                    }
+
+                    @if (dersSahibi && queryDers.Arsivlendi==0)
+                    {
+                        <td>  
+                            <label>
+                                <input class="checkbox-slider colored-primary checkBoxOdevGonderimiAcKapa" type="checkbox" title="@Resources.Resource.lblOdevGonderimi" data-OdevID="@odev.OdevID" @if (odev.OdevGonderimi==1) {<text>checked</text>} >
+                                <span class="text"></span>
+                            </label>
+                          </td>
+                    }
                </tr>
             }
          </tbody>
@@ -385,7 +437,7 @@
         <h4 class="modal-title" id="myModalLabelOdev">@Resources.Resource.lblYeniBirOdevVer</h4>
       </div>
       <div class="modal-body">
-        <form method="post" enctype="multipart/form-data" id="frmOdevEkle">
+        <form method="post" id="frmOdevEkle">
                     <div class="row">
                     <div class="col-lg-6">
                          <label>@Resources.Resource.lblBaslik</label>
@@ -401,40 +453,13 @@
                         </select>
 
                        <br>
-                            
-                        
+                     
                </div>
-                        <div class="col-lg-6">
-                             <label>@Resources.Resource.lblTeslimTarihi</label>
-                        <input name="SonTeslimTarihi" class="form-control" type="text" >
-                   
-                        <br>
+                   <div class="col-lg-6">
+
                         <p><strong>@Resources.Resource.lblDosyaEki</strong></p>
-                        <div role="tabpanel">
-
-                          <!-- Nav tabs -->
-                          <ul class="nav nav-tabs" role="tablist">
-                            <li role="presentation" class="active"><a href="#tabBilgisayar" aria-controls="home" role="tab" data-toggle="tab">@Resources.Resource.lblBilgisayardan</a></li>
-                            <li role="presentation"><a href="#tabDosyalar" aria-controls="profile" role="tab" data-toggle="tab">@Resources.Resource.lblDosyalarimdan</a></li>
-                          </ul>
-
-                          <!-- Tab panes -->
-                          <div class="tab-content">
-                            <div role="tabpanel" class="tab-pane active" id="tabBilgisayar">
-                                <br>
-                                    <input type="file" class="form-control" id="txtBilgisayardanDosya"  name="file" placeholder="@Resources.Resource.lblDosyaSec">
-                            </div>
-                            
-                              <div role="tabpanel" class="tab-pane" id="tabDosyalar">
-                                  <br>
-                                    <select class="form-control" placeholder="@Resources.Resource.lblDosyaBul" id="txtDosyalardanDosya" name="DosyaID">
-                                    </select>
-
-                                    
-                              </div>
-                         </div>
-
-                        </div>
+                             <select class="form-control" placeholder="@Resources.Resource.lblDosyaBul" id="txtDosyalardanDosyaOdev" name="DosyaID">
+                             </select>
                         </div>
                     </div>
                 </form>
@@ -497,10 +522,7 @@ else if (liste=="dosya" && dersSahibi && queryDers.Arsivlendi==0 && queryDers.Si
 @section js
 {
 <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
-<script src="@Href("~/Shared/Plugins/datatables/jquery.dataTables.min.js")"></script>
-<script src="@Href("~/Shared/Plugins/datatables/dataTables.bootstrap.js")"></script>
-<script src="http://malsup.github.com/jquery.form.js"></script>
-<script src="@Href("~/Shared/Plugins/daterangepicker/daterangepicker.js")"></script>
+
 <script src="@Href(string.Format("~/Ders/Js/Ders.Labels.{0}.js",dil))"></script>   
 <script src="@Href("~/Ders/Js/Default.min.js")"></script>
 }
