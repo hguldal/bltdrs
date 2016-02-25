@@ -501,25 +501,6 @@ else if (liste=="dosya" && dersSahibi && queryDers.Arsivlendi==0 && queryDers.Si
 <script src="@Href("~/Shared/Plugins/datatables/jquery.dataTables.min.js")"></script>
 <script src="@Href("~/Shared/Plugins/datatables/dataTables.bootstrap.js")"></script>
 <script src="http://malsup.github.com/jquery.form.js"></script>
-<script src="@Href(string.Format("~/Shared/Javascript/Dil/{0}/Ders/Default.js",dil))"></script>
-<script src="@Href("~/Shared/Javascript/Ders/Default.min.js")"></script>
-@if (liste=="pano")
-    {
-        <script src="@Href(string.Format("~/Shared/Javascript/Dil/{0}/Ders/MesajPanosu.js",dil))"></script>
-        <script src="@Href("~/Shared/Javascript/Ders/MesajPanosu.min.js")"></script>    
-    }
-    else if (liste=="dosya")
-    {
-        <script src="@Href(string.Format("~/Shared/Javascript/Dil/{0}/Ders/Dosya.js",dil))"></script>
-        <script src="@Href("~/Shared/Javascript/Ders/Dosya.min.js")"></script>    
-    }
-    else if (liste=="odev")
-    {
-        <script src="@Href("~/Shared/Plugins/moment/moment.min.js")"></script>
-        <script src="@Href("~/Shared/Plugins/daterangepicker/daterangepicker.js")"></script>
-        <script src="@Href(string.Format("~/Shared/Javascript/Dil/{0}/Ders/Odev.js",dil))"></script>
-        <script src="@Href("~/Shared/Javascript/Ders/Odev.min.js")"></script>    
-    }
-    
-    
-}
+<script src="@Href("~/Shared/Plugins/daterangepicker/daterangepicker.js")"></script>
+<script src="@Href(string.Format("~/Ders/Js/Ders.Labels.{0}.js",dil))"></script>   
+<script src="@Href("~/Ders/Js/Ders.min.js")"></script>
