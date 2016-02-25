@@ -1,0 +1,51 @@
+var mesajlar = {
+    islemtamam:'OK',
+    islemsirasindahata: 'An error occured',
+    dersayarlarikaydedildi:'Settings were saved successfully',
+    dersayarlarikaydedilirkenhata:'An error occured while saving settings',
+    silinecekkodusec:'You must select an access code',
+    beklenmeyenhata:'Unexpected Error',
+    ogrencibasariylaonaylandi:'Student was approved successfully',
+    ogrencierisimdurdurulacak:'Course access will be stopped for student. Are you sure ?',
+    ogrenciderseerisimdurduruldu:'Access stopped',
+    derstakipediliyorveyaistekgonderilmis:'The course is already following or a request was already sent to following',
+    takipistegigonderildi:'Following request was sent to instructer successfuly',
+    erisimiznikaldirilacak:'Accessing to the file will be stopped for students. Are you sure ? ',
+    dosyaboyutubuyuk:'File is too big',
+    dosyaicinyetersizalan:'Your storage space is not enough. Please upgrade you account type',
+    dosyasecilmedi:'No file selected',
+    dosyabasariylaeklendi:'The file was added successfully',
+    dosyaeklenirkenhata:'An error occurred while adding file',
+    dosyazatenekli:'You have already added this file to the course',
+    dersadigirilmedi:'Enter the course name',
+    durdur:'Stop',
+    gozat:'Explore',
+    ayarlar:'Settings',
+    dersiolusturuldu:' was created',
+    dersadibos:'Enter the course name',
+    derstakibirakilacak:'Unfollow the course ? ',
+    erisimkodugirilmedi:'Enter access code',
+    dersekatilimbasarisizoldu:'Joining the course is fail. Please check your access code',
+    tamam:'Ok',
+    azonce:'Just now',
+    mesajpaylasilirkenhata:'An error occurred when sending the message',
+    mesajsilinecek:'Message will be deleted. Are you sure ?',
+    basliksecilmedi:'You have to choose a title for the assignment',
+    odevayarlari:'Assignment Settings',
+    odevinigonderenler:'Sender of Assignment',
+    odevbasariylaolusturuldu:'Assignment was created successfully ',
+    odeveklenirkenhata:'An error occurred while adding assignment',
+    odevsilinecek:'Assignment will be deleted. Are you sure ?'
+};
+
+var ayarlar = {
+    datatablelangurl:'',
+    dtformat:'MM-DD-YYYY',
+    dtpickerlocale: {
+            applyLabel: 'Ok',
+            cancelLabel: 'Cancel',
+            daysOfWeek: ['Sn', 'Sun', 'Mon', 'Tue', 'Thu', 'Fri', 'Sat'],
+            monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+            firstDay: 1
+        }
+};
