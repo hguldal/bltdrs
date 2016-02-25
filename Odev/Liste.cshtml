@@ -169,7 +169,7 @@
       </div>
       <div class="modal-body">
         <form method="post" enctype="multipart/form-data" id="frmOdevEkle">
-                    <div class="row">
+             <div class="row">
                     <div class="col-lg-6">
                         <label>@Resources.Resource.lblDers</label>
                         <select name="DersID" id="cmbDersID">
@@ -191,43 +191,15 @@
                         <select id="cmbOdevGonderimi" class="form-control" name="OdevGonderimi">
                             <option value="1"> @Resources.Resource.lblAcik</option>
                             <option value="2"> @Resources.Resource.lblKapali</option>
-                            <option value="3"> @Resources.Resource.lblSonTeslimTarihineGoreOtomatik</option>
-                        </select>
-                       
-                        
-                 <label>@Resources.Resource.lblSonTeslimTarihi</label>
-                        <input type="text" name="SonTeslimTarihi" class="form-control" id="txtSonTeslimTarihi">
+                         </select>
                    
             <label>@Resources.Resource.lblDosyaEki</label>
-                        <div role="tabpanel">
 
-                          <!-- Nav tabs -->
-                          <ul class="nav nav-tabs" role="tablist">
-                            <li role="presentation" class="active"><a href="#tabBilgisayar" aria-controls="home" role="tab" data-toggle="tab">@Resources.Resource.lblBilgisayardan</a></li>
-                            <li role="presentation"><a href="#tabDosyalar" aria-controls="profile" role="tab" data-toggle="tab">@Resources.Resource.lblDosyalarimdan</a></li>
-                          </ul>
-
-                          <!-- Tab panes -->
-                          <div class="tab-content">
-                            <div role="tabpanel" class="tab-pane active" id="tabBilgisayar">
-                                <br>
-                                    <input type="file" class="form-control" id="txtBilgisayardanDosya"  name="file" placeholder="@Resources.Resource.lblDosyaSec">(Max 1MB)
-                            </div>
-                            
-                              <div role="tabpanel" class="tab-pane" id="tabDosyalar">
-                                  <br>
-                                  <select class="form-control" placeholder="@Resources.Resource.lblDosyaBul" id="cmbDosyalardanDosya" name="DosyaID">
-                                  </select>
-                                    
-                              </div>
-                         </div>
-
-                        </div>
-
-                           
+              <select class="form-control" placeholder="@Resources.Resource.lblDosyaBul" id="cmbDosyalardanDosya" name="DosyaID"></select>
+                      
             </div>
                  </div>
-                </form>
+        </form>
       </div>
       <div class="modal-footer">
           <button type="button" class="btn btn-primary" id="btnOdevVer">@Resources.Resource.lblTamam</button>
@@ -278,9 +250,6 @@
    
 @section js
 {
-    <script src="http://malsup.github.com/jquery.form.js"></script>
-    <script src="@Href("~/Shared/Plugins/moment/moment.min.js")"></script>
-    <script src="@Href("~/Shared/Plugins/daterangepicker/daterangepicker.js")"></script>
     <script src="@Href(string.Format("~/Shared/Javascript/Dil/{0}/Odev/Liste.js",dil))"></script>
     <script src="@Href("~/Shared/Javascript/Odev/Liste.min.js")"></script>  
 }
