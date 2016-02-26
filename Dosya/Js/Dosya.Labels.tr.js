@@ -9,7 +9,11 @@ var mesajlar = {
     erisimdurduruldu:'Kişinin dosyaya olan erişimi durdurdun',
     dersicinerisimhakkivar:'Bu ders için dosyaya erişim izni zaten var',
     dersicinerisimdurdurulacak:'Seçtiğin dersin öğrencilerinin dosyaya olan erişimini durdurmak üzeresin. Emin misin ?',
-    dersicinerisimdurduruldu:'Öğrencilerin dosyaya olan erişimi durduruldu'
-
+    dersicinerisimdurduruldu:'Öğrencilerin dosyaya olan erişimi durduruldu',
+    dosyaboyutubuyuk:'Seçtiğin dosyanın boyutu çok büyük',
+    dosyaicinyetersizalan:'Bu dosyayı yükleyebilmek için yeterli depolama alanı yok. Depolama alanınızı arttırmak için lütfen hesap türünüzü yükseltin.',
+    dosyasecilmedi:'Dosya seçmediniz.',
+    dosyabasariylaeklendi:'Dosyayı başarıyla ekledin',
+    dosyaeklenirkenhata:'Dosya eklenirken bir hata oluştu.',
+    dosyasilinecek:'Dosyanız silinecek. Emin misiniz ?'
 };
-
