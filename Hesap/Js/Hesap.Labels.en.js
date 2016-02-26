@@ -11,5 +11,15 @@ var mesajlar = {
     profilfotografisec:'Select photo',
     adveyasoyadgirilmedi:'Enter name or surname',
     profilbilgileriguncellendi:'Profile was updated successfully',
-    islemsirasindahatameydanageldi:'Unexpected error !'
+    islemsirasindahatameydanageldi:'Unexpected error !',
+    epostaadresigirilmedi:'Enter e-mail',
+    parolagirilmedi:'Enter password',
+    geciciparolaepostayagonderildi:'Temporary password was sent to your e-mail',
+    epostakayitlidegildi:'E-mail you have entered is not registered',
+    islemsirasindabirhata:'Unexpected error',
+    adgirilmedi:'Enter your name',
+    soyadgirilmedi:'Enter your surname',
+    parolatekrargir:'Re-enter your password',
+    egitmenkayitkodugir:'Enter instructer verification code'
 };
+
