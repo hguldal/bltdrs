@@ -143,8 +143,8 @@
     <!-- Custom Theme JavaScript -->
     <script src="@Href("~/Shared/Tema/js/sb-admin-2.js")"></script>
    <script src="@Href("~/Shared/Plugins/selectize/dist/js/standalone/selectize.js")"></script>
-    <script src="@Href("~/Shared/Javascript/Dil/tr/Global.js")"></script>
-    <script src="@Href("~/Shared/Javascript/Global.min.js")"></script>
+    <script src="@Href(string.Format("~/Shared/Js/Global.Labels.{0}.js",dil))"></script>
+    <script src="@Href("~/Shared/Js/Global.min.js")"></script>
 
      @RenderSection("js", required: false)
    
