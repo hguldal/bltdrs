@@ -29,6 +29,7 @@
     var queryDosyalar=db.Query("SELECT * FROM Dosya WHERE userID=@0 AND Silindi=0 AND Konum=@1 ORDER BY EklenmeTarihi DESC",WebSecurity.CurrentUserId,konum);
     var queryKlasorler=db.Query("SELECT * FROM Klasor WHERE Silindi=0 AND Konum=@0 AND UserID=@1",konum,WebSecurity.CurrentUserId);
     var queryUstKlasor=db.QuerySingle("SELECT * FROM Klasor WHERE KlasorID=@0 AND UserID=@1 AND Silindi=0",konum,WebSecurity.CurrentUserId);
+    
     var KonumID=konum;
                             
     List<LinkGezintiKlasor> ustKlasorler=new List<LinkGezintiKlasor>();
@@ -78,6 +79,10 @@
 
         <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalKlasorSec" disabled="true" id="btnKlasoreTasiModalAc">
             <i class="fa fa-arrow-circle-up"></i> Taşı
+        </button>
+   
+        <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalDersSec" disabled="true" id="btnDerstePaylas">
+            <i class="fa fa-share"></i> Derste Paylaş
         </button>
 
         <br>
@@ -207,6 +212,7 @@
                                       <li><a href="@Href("~/Dosya/Indir?DosyaID=")@dosya.DosyaID"><i class="fa fa-cloud-download"></i> @Resources.Resource.lblKarşıdanYukle</a></li>
                                       <li><a href="@Href("~/Dosya/Ayarlar?DosyaID=")@dosya.DosyaID"><i class="fa fa-cog"></i> @Resources.Resource.lblDosyaAyarlari</a></li>
                                       <li><a href="@Href("~/Dosya/Indirenler?DosyaID=")@dosya.DosyaID"><i class="fa fa-arrow-circle-o-down"></i> @Resources.Resource.lblDosyayiYukleyenKullanicilar</a></li>
+                                      <li><a href="#" class="btnDersteDosyaPaylas" data-OgeID="d_@dosya.DosyaID" data-toggle="modal" data-target="#modalDersSec"><i class="fa fa-share"></i> Derste Paylaş</a></li>
                                       <li><a href="#" class="btnOgeSil" data-OgeID="d_@dosya.DosyaID"><i class="fa fa-remove"></i> @Resources.Resource.lblDosyayiSil</a></li>
                                   </ul>
                             </div>
@@ -240,12 +246,12 @@
     </div>
 @if (Roles.IsUserInRole("Ogretici"))
        {
-<div class="modal" id="modalDosyaEkle" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal" id="modalDosyaEkle" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">@Resources.Resource.lblYeniBirDokumanEkle</h4>
+        <h4 class="modal-title" id="myModalLabel1">@Resources.Resource.lblYeniBirDokumanEkle</h4>
       </div>
       <div class="modal-body">
         
@@ -268,12 +274,12 @@
 </div>
 
 
-<div class="modal" id="modalKlasorEkle" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal" id="modalKlasorEkle" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Klasör Oluştur</h4>
+        <h4 class="modal-title" id="myModalLabel2">Klasör Oluştur</h4>
       </div>
       <div class="modal-body">
         
@@ -292,37 +298,46 @@
 </div>
 
 
-<div class="modal" id="modalKlasorSec" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal" id="modalKlasorSec" tabindex="-1" role="dialog" aria-labelledby="myModalLabel3" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Klasör Seç</h4> 
+        <h4 class="modal-title" id="myModalLabel3">Klasör Seç</h4> 
       </div>
       <div class="modal-body" style="height:300px;overflow: auto;">
         <i class="fa fa-spinner fa-spin fa-2x hide" id="spinnerIcon"></i>
         <table class="table table-hover" id="tableKlasorSecKlasorListesi">
             
-          @foreach (var klasor in queryKlasorler)
-            {
-             <tr>
-                 <td class="col-md-1 text-center">
-                     <label>
-                       <input type="checkbox" data-KlasorID="@klasor.KlasorID" class="colored-primary chkBoxKlasorSecOge">
-                       <span class="text"></span>
-                     </label>
-                 </td>
-                 <td>
-                    <button class="btn btn-link lnkKlasorSecOge" data-KlasorID="@klasor.KlasorID"><i class="fa fa-folder fa-2x"></i> @klasor.KlasorAdi</button>
-                 </td>
-              
-             </tr>
-            
-            }
+         
         </table>
       </div>
       <div class="modal-footer">
           <button type="button" class="btn btn-primary" id="btnKlasoreTasi">@Resources.Resource.lblTamam</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">@Resources.Resource.lblIptal</button>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal" id="modalDersSec" tabindex="-1" role="dialog" aria-labelledby="myModalLabel4" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel4">Ders Seç</h4> 
+      </div>
+      <div class="modal-body" style="height:300px;overflow: auto;">
+        <i class="fa fa-spinner fa-spin fa-2x hide" id="spinnerIcon"></i>
+        <table class="table table-hover" id="tableVerilenDerslerListesi">
+            
+         
+        </table>
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="btnDerstePaylas">@Resources.Resource.lblTamam</button>
         <button type="button" class="btn btn-default" data-dismiss="modal">@Resources.Resource.lblIptal</button>
         
       </div>
