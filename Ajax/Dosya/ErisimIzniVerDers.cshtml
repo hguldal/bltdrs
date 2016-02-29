@@ -42,16 +42,16 @@
                 continue;
             }
 
-                if (db.QueryValue("SELECT COUNT(*) FROM DosyaIzinDers WHERE DosyaID=@0 AND DersID=@1",tmpizinVerilecekDosya,izinVerilecekDers)>0)
-                {
+            if (db.QueryValue("SELECT COUNT(*) FROM DosyaIzinDers WHERE DosyaID=@0 AND DersID=@1",tmpizinVerilecekDosya,izinVerilecekDers)>0)
+              {
                      continue;
-                }
+              }
                  db.Execute("INSERT INTO DosyaIzinDers(DosyaID,DersID) VALUES(@0,@1)",tmpizinVerilecekDosya,izinVerilecekDers);
                  db.Execute("INSERT INTO DersDosyalari(DosyaID,DersID) VALUES(@0,@1)",tmpizinVerilecekDosya,izinVerilecekDers);
 
                 // Derse dosya eklenmiş olması yeni bir aktivite anlamına geliyor. Yeni bir aktivite oluştur.
                 var queryEklenenDosya=db.QuerySingle("SELECT * FROM Dosya WHERE DosyaID=@0",tmpizinVerilecekDosya);
-                db.Execute("INSERT INTO Aktivite(UserID,DersID,Renk,Ikon,URL,IlaveMetin,IliskiliOge,EylemID) VALUES(@0,@1,@2,@3,@4,@5,@6,@7)",WebSecurity.CurrentUserId,DersID,"success","fa-file-text-o",Href("~/Dosya/Indir?DosyaID=" + tmpizinVerilecekDosya),queryEklenenDosya.Aciklama,"drsdsy" + tmpizinVerilecekDosya.ToString(),1);
+                db.Execute("INSERT INTO Aktivite(UserID,DersID,Renk,Ikon,URL,IlaveMetin,IliskiliOge,EylemID) VALUES(@0,@1,@2,@3,@4,@5,@6,@7)",WebSecurity.CurrentUserId,izinVerilecekDers,"success","fa-file-text-o",Href("~/Dosya/Indir?DosyaID=" + tmpizinVerilecekDosya.ToString()),queryEklenenDosya.Aciklama,"drsdsy" + tmpizinVerilecekDosya.ToString(),1);
    
                 // Yeni bir aktivite oluşturulması dersi takip edenlere yeni bir bildirim oluşturulmasını gerektiriyor. Yeni bir bildirim oluştur.
                 db.Execute("INSERT INTO Bildirim(Url,EylemiYapanUserID,IliskiliOge,EylemID,DersID) VALUES(@0,@1,@2,@3,@4)","~/Ders/?DersID=" + izinVerilecekDers + "&Liste=dosya",WebSecurity.CurrentUserId,"drsdsy" + tmpizinVerilecekDosya.ToString(),2,izinVerilecekDers);
