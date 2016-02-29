@@ -32,9 +32,7 @@
          var queryDosya=db.QuerySingle("SELECT * FROM Dosya WHERE DosyaID=@0 AND UserID=@1",tmpTasinacakOge,WebSecurity.CurrentUserId);
          if (queryDosya==null)
          {
-             Response.StatusCode=501;
-             db.Close();
-             Response.End();
+            continue;
          }
 
          db.Execute("UPDATE Dosya SET Konum=@0 WHERE DosyaID=@1 AND UserID=@2",HedefID, tmpTasinacakOge,WebSecurity.CurrentUserId);
@@ -45,9 +43,7 @@
         var queryKlasor=db.QuerySingle("SELECT * FROM Klasor WHERE KlasorID=@0 AND UserID=@1",tmpTasinacakOge,WebSecurity.CurrentUserId);
          if (queryKlasor==null)
          {
-             Response.StatusCode=501;
-             db.Close();
-             Response.End();
+            continue;
          }
          if (Convert.ToString(queryKlasor.KlasorID)!=HedefID)
          {
