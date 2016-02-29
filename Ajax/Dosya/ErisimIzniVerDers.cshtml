@@ -29,8 +29,7 @@
 
         if (WebSecurity.CurrentUserId!=queryDosya.UserID)
         {
-            Response.StatusCode=400;
-            Response.End();
+            continue;
         }
 
         foreach (var izinVerilecekDers in izinVerilecekDersler)
@@ -40,16 +39,12 @@
 
             if (queryDers==null)
             {
-                Response.StatusCode=400;
-                Response.End();  
+                continue;
             }
 
                 if (db.QueryValue("SELECT COUNT(*) FROM DosyaIzinDers WHERE DosyaID=@0 AND DersID=@1",tmpizinVerilecekDosya,izinVerilecekDers)>0)
                 {
-                    db.Close();
-                    Response.Write("zatenvar");
-
-                    Response.End();
+                     continue;
                 }
                  db.Execute("INSERT INTO DosyaIzinDers(DosyaID,DersID) VALUES(@0,@1)",tmpizinVerilecekDosya,izinVerilecekDers);
                  db.Execute("INSERT INTO DersDosyalari(DosyaID,DersID) VALUES(@0,@1)",tmpizinVerilecekDosya,izinVerilecekDers);
