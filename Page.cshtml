@@ -1,0 +1,20 @@
+﻿@{
+       Layout = "~/Shared/_LayoutYeni.cshtml";   
+}
+
+<div>
+    <button id="btnDosyaSecModal" class="btn btn-primary btn-lg"> Dosya Seç</button>
+</div>
+
+
+@section js
+{ 
+ <script src="@Href("~/Shared/Js/Moduller/DosyaSec.Js")"></script>  
+ <script>
+     $('#btnDosyaSecModal').click(function () {
+         DosyaSec.Goster();
+     });
+
+ </script>
+}
+
