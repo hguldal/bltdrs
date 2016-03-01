@@ -1,9 +1,10 @@
 
-var DosyaSec = (function () {
-    var secilenDosya = '';
+var DosyaSecDialog = (function () {
+    var secilenDosyaID = -1;
     var dosyaYuklemeDugmesi = false;
+    var gosterilenKonum = -1;
     var modalHtml = '' +
-    '<div class="modal" id="modalDosyaSec" tabindex="-1" role="dialog" aria-labelledby="myModalLabel4" aria-hidden="true">' +
+    '<div class="modal" id="modalDosyaSecDialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel4" aria-hidden="true">' +
           '<div class="modal-dialog">' +
             '<div class="modal-content">' +
               '<div class="modal-header">' +
@@ -18,26 +19,38 @@ var DosyaSec = (function () {
                 '</table>' +
               '</div>' +
               '<div class="modal-footer">' +
-                  '<button type="button" class="btn btn-primary" id="btnDosyaSecTamam">Tamam</button>' +
+                  '<button type="button" class="btn btn-primary" id="btnDosyaSecDialogTamam">Tamam</button>' +
                   '<button type="button" class="btn btn-default" data-dismiss="modal">Iptal</button>' +
               '</div>' +
             '</div>' +
           '</div>' +
     '</div>';
+
+
     var Goster = function () {
         $('body').append(modalHtml);
-        $('#modalDosyaSec').modal();
+        $('#modalDosyaSecDialog').modal();
+
+      
+        $('#modalDosyaSecDialog').on('hidden.bs.modal', function (e) {
+
+            $('#modalDosyaSecDialog').remove();
+            DosyaSecDialog.dispatchEvent(olay);
+        });
     };
 
     var Gizle = function () {
 
     };
 
+   
+
 
     return {
         Goster: Goster,
         Gizle: Gizle,
-        DosyaYuklemeDugmesi: dosyaYuklemeDugmesi
+        DosyaYuklemeDugmesi: dosyaYuklemeDugmesi,
+        SecilenDosyaID: secilenDosyaID
     };
 })();
  
