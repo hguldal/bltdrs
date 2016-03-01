@@ -12,10 +12,8 @@
  <script src="@Href("~/Shared/Js/Moduller/DosyaSec.Js")"></script>  
  <script>
      $('#btnDosyaSecModal').click(function (event) {
-         DosyaSecDialog.Goster();
-         event.preventDefault();
+         $('body').DosyaSecDialog('Ac');
          
-         alert(DosyaSecDialog.SecilenDosyaID);
      });
 
  </script>
