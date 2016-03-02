@@ -3,6 +3,15 @@
 
     $.fn.DosyaSecDialog = function (eylem) {
 
+        var defaults = $.extend({
+
+
+            onImageShow: function () { }
+
+
+
+        }, options);
+
         if (eylem === "Ac") {
             var modalHtml = '' +
                 '<div class="modal" id="modalDosyaSecDialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel4" aria-hidden="true">' +
@@ -32,9 +41,43 @@
         }
 
         if (eylem === "Kapat") {
-            
+
         }
 
     };
 
 } (jQuery));
+
+
+
+(function($) {
+
+   // This variable is available only inside this plugin
+   var text = "Hello World";
+
+    $.fn.helloWorld = function(options) {
+
+        // Plugin options default values
+        var settings = $.extend({
+            class: "active",
+            id: "hello_world_container",
+            onTextAdd: function() {} // Callback function is empty by default
+        }, options );
+
+        return this.each( function() {
+            $(this).text(text);
+            $(this).attr("class", settings.class);
+            $(this).attr("id", settings.id);
+            settings.onTextAdd.call();
+        });
+
+    }
+
+}(jQuery)); 
+
+
+$("h2").helloWorld({
+   onTextAdd: function() {
+      alert("The text has been added.");
+   }
+});

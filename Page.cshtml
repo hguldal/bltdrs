@@ -11,10 +11,9 @@
 { 
  <script src="@Href("~/Shared/Js/Moduller/DosyaSec.Js")"></script>  
  <script>
-     $('#btnDosyaSecModal').click(function (event) {
-         $('body').DosyaSecDialog('Ac');
-         
-     });
+     $('#btnDosyaSecModal').helloWorld({ onTextAdd: function () { alert("The text has been added."); } });
+
+
 
  </script>
 }
