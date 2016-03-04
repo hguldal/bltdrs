@@ -21,7 +21,7 @@
             Response.End();  
     }
 
-    if (string.IsNullOrEmpty(Request["DosyaID"]))
+    if (!string.IsNullOrEmpty(Request["DosyaID"]))
     {
         DosyaID=Request["DosyaID"].AsInt();
     }
