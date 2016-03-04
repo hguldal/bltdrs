@@ -26,7 +26,6 @@ function DegiskenleriSifirla()
 function AzureDosyaYukle(file)
 {
            if (file == null) {
-                //hata
                return false;
            }
            $('.Modal').modal('hide');
@@ -48,16 +47,17 @@ function AzureDosyaYukle(file)
                        success: function (res) {
                            submitUri = res;
                            uploadFileInBlocks();
+                           return azureDosyaAdi;
 
                        },
                        error: function (res, status, xhr) {
-                           HataMesaji("Microsoft Azure: Can't get the Shared Access Signature");
+                           return false;
                        }
                    });
 
                },
                error: function (res) {
-                   HataMesaji(mesajlar.dosyaeklenirkenhata);
+
                    return false;
                }
            }); 
@@ -155,7 +155,7 @@ function handleFileSelect(dosya) {
 
 
                    //dosya başarıyla yüklendi
-                   return data;
+                   return azureDosyaAdi;
 
                },
                error: function (xhr, desc, err) {

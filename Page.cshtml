@@ -3,18 +3,18 @@
 }
 
 <div>
+    <input type="file" class="form-control" id="txtDosya" required name="file">
     <button id="btnDosyaSecModal" class="btn btn-primary btn-lg"> Dosya Seç</button>
 </div>
 
 
 @section js
 { 
- <script src="@Href("~/Shared/Js/Moduller/DosyaSec.Js")"></script>  
- <script>
-     $('#btnDosyaSecModal').helloWorld({ onTextAdd: function () { alert("The text has been added."); } });
+ <script src="@Href("~/Shared/Js/Moduller/DosyaYukle.Js")"></script>  
+<script>
+    var dosya = $('#txtDosya')[0].files[0];
+    console.log(AzureDosyaYukle(dosya));
 
-
-
- </script>
+</script>
 }
 
