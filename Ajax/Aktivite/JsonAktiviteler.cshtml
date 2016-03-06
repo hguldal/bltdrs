@@ -44,10 +44,11 @@
        a.UserID=aktivite.UserID;
        a.DersID=aktivite.DersID;
        a.Ikon=aktivite.Ikon;
+       a.EylemID=aktivite.EylemID;
        a.IlaveFoto=aktivite.IlaveFoto;
        a.IlaveMetin=aktivite.IlaveMetin;
        a.IlaveURL=aktivite.IlaveURL;
-       a.Metin=aktivite.Metin;
+       a.Metin= Genel.AktiviteEylemindenMetne(aktivite.EylemID,dil);
        a.Renk=aktivite.Renk;
        a.Silindi=aktivite.Silindi;
        a.Tarih=aktivite.Tarih;
