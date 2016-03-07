@@ -5,5 +5,11 @@ var mesajlar = {
    begenmektenvazgec:'Cancel Like',
    begen:'Like',
    begenisayisi:'Likes',
-   odevgonderimikapatilacak:'Are you sure ?'
+
+   islemtamam:'Ok',   
+   derssecilmedi:'Select course',
+   basliksecilmedi:'Enter the assigment title',
+   odevbasariylaeklendi:'Assigment was added successfully',
+   verilmesirasindabirhataolustu:'An error occured when assigment adding',    
+   islemsirasindabirhataolustu:'Unexpected error'   
 };

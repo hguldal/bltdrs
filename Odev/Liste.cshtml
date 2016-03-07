@@ -15,12 +15,12 @@
            Culture=UICulture="tr-TR";
        }
     
-    IEnumerable<dynamic> queryDerslerim=null;
+  
     IEnumerable<dynamic> queryOdevler=null;
     IEnumerable<dynamic> queryOdevGonderileri=null;
 
     if (roller.Contains("Ogretici")) {
-        queryDerslerim=db.Query("SELECT * FROM Ders WHERE UserID=@0 AND Arsivlendi=0 AND Silindi=0",WebSecurity.CurrentUserId);
+  
         queryOdevler=db.Query("SELECT * FROM Odev INNER JOIN Ders ON Odev.DersID=Ders.DersID WHERE Odev.Silindi=0 AND Ders.UserID=@0 AND Ders.Arsivlendi=0 AND Ders.Silindi=0 ORDER BY Odev.EklenmeTarihi DESC",WebSecurity.CurrentUserId);
         queryOdevGonderileri=db.Query("SELECT * FROM OdevGonderisi INNER JOIN Odev ON OdevGonderisi.OdevID=Odev.OdevID WHERE OdevGonderisi.Durum=1 AND Odev.DersID IN (SELECT DersID FROM Ders WHERE UserID=@0 AND Arsivlendi=0 AND Silindi=0) ORDER BY OdevGonderisi.OdevGonderiID DESC",WebSecurity.CurrentUserId);
     }
@@ -56,10 +56,6 @@
 
    <div class="col-lg-12">
        @if (roller.Contains("Ogretici")) {
-       <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalYeniOdevVer">
-         <i class="fa fa-plus-circle"></i> @Resources.Resource.lblYeniBirOdevVer
-        </button>
-
        <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalOdevGonderileri">
          <i class="fa fa-user"></i> @Resources.Resource.lblOdeviniGonderenler
         </button>
@@ -160,59 +156,6 @@
 
 
  @if (roller.Contains("Ogretici")) {
-<div class="modal" id="modalYeniOdevVer" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">@Resources.Resource.lblYeniBirOdevVer</h4>
-      </div>
-      <div class="modal-body">
-        <form method="post" id="frmOdevEkle">
-             <div class="row">
-                    <div class="col-lg-6">
-                        <label>@Resources.Resource.lblDers</label>
-                        <select name="DersID" id="cmbDersID">
-                         @foreach(var ders in queryDerslerim)
-                         {
-                             <option value="@ders.DersID">@ders.DersAdi</option>
-                         }
-                        </select>
-                        
-                         <label>@Resources.Resource.lblBaslik</label>
-                        <input type="text" id="txtOdevBaslik" class="form-control" name="Baslik">
-                        
-                        <label>@Resources.Resource.lblOdevMetni</label>
-                        <textarea name="Aciklama" class="form-control" rows="5" id="txtAciklama"></textarea>
-                        
-               </div>
-
-            <div class="col-lg-6">
-                <label>@Resources.Resource.lblOdevGonderimi</label>
-                        <select id="cmbOdevGonderimi" class="form-control" name="OdevGonderimi" id="cmbOdevGonderimi">
-                            <option value="1"> @Resources.Resource.lblAcik</option>
-                            <option value="2"> @Resources.Resource.lblKapali</option>
-                         </select>
-                   
-            <label>@Resources.Resource.lblDosyaEki</label>
-
-              <select class="form-control" placeholder="@Resources.Resource.lblDosyaBul" id="cmbDosyalardanDosya" name="DosyaID"></select>
-                      
-            </div>
-                 </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-          <button type="button" class="btn btn-primary" id="btnOdevVer">@Resources.Resource.lblTamam</button>
-        <button type="button" class="btn btn-default" data-dismiss="modal">@Resources.Resource.lblIptal</button>
-        
-      </div>
-    </div>
-  </div>
-</div>
-
-
-
 <div class="modal" id="modalOdevGonderileri" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">

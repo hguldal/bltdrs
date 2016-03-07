@@ -24,11 +24,11 @@
     var roller=Roles.GetRolesForUser(WebSecurity.CurrentUserName);
     var sonAktiviteID="";
     List<Aktivite> listeAktiviteler=new List<Aktivite>();
-    IEnumerable<dynamic> queryAktiviteler=null;
+    IEnumerable<dynamic> queryAktiviteler=null;    IEnumerable<dynamic> queryDerslerim=null;
     
     if (roller.Contains("Ogretici"))
      {
-        queryAktiviteler=db.Query("SELECT top 25 * FROM Aktivite WHERE Aktivite.DersID NOT IN (SELECT DersID FROM Ders WHERE Arsivlendi=1 OR Ders.Silindi=1) AND Silindi=0 AND UserID=@0 ORDER BY AktiviteID DESC",WebSecurity.CurrentUserId);   
+        queryAktiviteler=db.Query("SELECT top 25 * FROM Aktivite WHERE Aktivite.DersID NOT IN (SELECT DersID FROM Ders WHERE Arsivlendi=1 OR Ders.Silindi=1) AND Silindi=0 AND UserID=@0 ORDER BY AktiviteID DESC",WebSecurity.CurrentUserId);        queryDerslerim=db.Query("SELECT  * FROM Ders WHERE Silindi=0 AND userID=@0 AND Arsivlendi=0",WebSecurity.CurrentUserId);   
      }
     else if (roller.Contains("Ogrenci"))
     {
@@ -96,7 +96,27 @@
 }
 
 <div class="row"> 
-    <div class="col-lg-12">
+    <div class="col-lg-12">                     @if (roller.Contains("Ogretici"))                   {
+
+                        
+                       <div class="dropdown">
+
+                        
+                                  <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-primary btn-lg shiny">
+                                    <i class="fa fa-plus-circle"></i>
+                                    <span class="caret"></span>
+                                  </button>
+
+                     <ul class="dropdown-menu">
+                              <li><a href="#"><i class="fa fa-book"></i> Duyuru Yap</a></li>
+                              <li><a href="#"><i class="fa fa-file"></i> Dosya Paylaş</a></li>
+                              <li><a href="#" data-toggle="modal" data-target="#modalYeniOdevVer"><i class="fa fa-clock-o"></i> Ödev Ver</a></li>
+
+                     </ul>
+                    </div>
+
+                              
+                   }                   <br><br>
     <div class="widget">
                <div class="widget-header bordered-top bordered-blueberry">
                                             
@@ -113,7 +133,7 @@
                                                
                                             </div><!--Widget Buttons-->                     
                 </div><!--Widget Header-->
-               <div class="widget-body">
+               <div class="widget-body">      
                  <table class="table table-hover" id="tabloAktiviteler" >		
        <thead>		
             <tr>		
@@ -211,8 +231,57 @@
       </div>
     </div>
   </div>
-</div>
- 
+</div> @if (roller.Contains("Ogretici")) {
+<div class="modal" id="modalYeniOdevVer" tabindex="-1" role="dialog" aria-labelledby="odevVermyModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="odevVermyModalLabel">@Resources.Resource.lblYeniBirOdevVer</h4>
+      </div>
+      <div class="modal-body">
+        <form method="post" id="odevVerfrmOdevEkle">
+             <div class="row">
+                    <div class="col-lg-6">
+                        <label>@Resources.Resource.lblDers</label>
+                        <select name="DersID" id="odevVercmbDersID">
+                         @foreach(var ders in queryDerslerim)
+                         {
+                             <option value="@ders.DersID">@ders.DersAdi</option>
+                         }
+                        </select>
+                        
+                         <label>@Resources.Resource.lblBaslik</label>
+                        <input type="text" id="odevVertxtOdevBaslik" class="form-control" name="Baslik">
+                        
+                        <label>@Resources.Resource.lblOdevMetni</label>
+                        <textarea name="Aciklama" class="form-control" rows="5" id="odevVertxtAciklama"></textarea>
+                        
+               </div>
+
+            <div class="col-lg-6">
+                <label>@Resources.Resource.lblOdevGonderimi</label>
+                        <select class="form-control" name="OdevGonderimi" id="odevVercmbOdevGonderimi">
+                            <option value="1"> @Resources.Resource.lblAcik</option>
+                            <option value="2"> @Resources.Resource.lblKapali</option>
+                         </select>
+                   
+            <label>@Resources.Resource.lblDosyaEki</label>
+
+              <select class="form-control" placeholder="@Resources.Resource.lblDosyaBul" id="odevVercmbDosyalardanDosya" name="DosyaID"></select>
+                      
+            </div>
+                 </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="odevVerbtnOdevVer">@Resources.Resource.lblTamam</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">@Resources.Resource.lblIptal</button>
+        
+      </div>
+    </div>
+  </div>
+</div>}
 @section js
 {
    <script src="@Href(string.Format("~/Panel/Js/Panel.Labels.{0}.js",dil))"></script>
