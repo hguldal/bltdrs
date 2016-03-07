@@ -108,9 +108,9 @@
                                   </button>
 
                      <ul class="dropdown-menu">
-                              <li><a href="#" data-toggle="modal" data-target="#modalDuyuruYap"><i class="fa fa-book"></i> Duyuru Yap</a></li>
-                              <li><a href="#" data-toggle="modal" data-target="#modalDosyaEkle"><i class="fa fa-file"></i> Dosya Paylaş</a></li>
-                              <li><a href="#" data-toggle="modal" data-target="#modalYeniOdevVer"><i class="fa fa-clock-o"></i> Ödev Ver</a></li>
+                              <li><a href="#" data-toggle="modal" data-target="#modalDuyuruYap"><i class="fa fa-book fa-fw"></i> Duyuru Yap</a></li>
+                              <li><a href="#" data-toggle="modal" data-target="#modalDosyaEkle"><i class="fa fa-file fa-fw"></i> Dosya Paylaş</a></li>
+                              <li><a href="#" data-toggle="modal" data-target="#modalYeniOdevVer"><i class="fa fa-clock-o fa-fw"></i> Ödev Ver</a></li>
 
                      </ul>
                     </div>
@@ -245,6 +245,7 @@
                     <div class="col-lg-6">
                         <label>@Resources.Resource.lblDers</label>
                         <select name="DersID" id="odevVercmbDersID" class="form-control">
+                            <option value=""></option>
                          @foreach(var ders in queryDerslerim)
                          {
                              <option value="@ders.DersID">@ders.DersAdi</option>
@@ -292,6 +293,7 @@
         
             <label>@Resources.Resource.lblDers</label>
             <select name="DersID" id="dosyaPaylasodevVercmbDersID" class="form-control">
+                <option value=""></option>
                 @foreach(var ders in queryDerslerim)
                   {
                      <option value="@ders.DersID">@ders.DersAdi</option>
@@ -326,6 +328,7 @@
                     <div class="col-lg-12">
                         <label>@Resources.Resource.lblDers</label>
                         <select name="DersID" id="duyuruYapcmbDersID" class="form-control">
+                            <option value=""></option>
                          @foreach(var ders in queryDerslerim)
                          {
                              <option value="@ders.DersID">@ders.DersAdi</option>

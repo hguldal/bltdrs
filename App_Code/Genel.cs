@@ -234,7 +234,7 @@ public static string AktiviteEylemindenMetne(int EylemID,string dil)
            }
            else if (EylemID==2)
            {
-               returnString=" panosuna bir yazı ekledi";
+               returnString=" duyuru panosuna bir duyuru ekledi";
            }
            else if (EylemID==3)
            {
@@ -250,7 +250,7 @@ public static string AktiviteEylemindenMetne(int EylemID,string dil)
            }
            else if (EylemID==2)
            {
-               returnString=" shared a text in course board";
+               returnString=" added a announcement in course notice board";
            }
            else if (EylemID==3)
            {
