@@ -109,7 +109,7 @@
 
                      <ul class="dropdown-menu">
                               <li><a href="#"><i class="fa fa-book"></i> Duyuru Yap</a></li>
-                              <li><a href="#"><i class="fa fa-file"></i> Dosya Paylaş</a></li>
+                              <li><a href="#" data-toggle="modal" data-target="#modalDosyaEkle"><i class="fa fa-file"></i> Dosya Paylaş</a></li>
                               <li><a href="#" data-toggle="modal" data-target="#modalYeniOdevVer"><i class="fa fa-clock-o"></i> Ödev Ver</a></li>
 
                      </ul>
@@ -281,7 +281,39 @@
       </div>
     </div>
   </div>
-</div>}
+</div><div class="modal" id="modalDosyaEkle" tabindex="-1" role="dialog" aria-labelledby="dosyaPaylasmyModalLabel1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="dosyaPaylasmyModalLabel1">@Resources.Resource.lblYeniBirDokumanEkle</h4>
+      </div>
+      <div class="modal-body">
+        
+            <label>@Resources.Resource.lblDers</label>
+            <select name="DersID" id="dosyaPaylasodevVercmbDersID" class="form-control">
+                @foreach(var ders in queryDerslerim)
+                  {
+                     <option value="@ders.DersID">@ders.DersAdi</option>
+                  }
+             </select>
+          <br>
+         <label>@Resources.Resource.lblAciklama</label>
+         <textarea class="form-control" name="txtAciklama" id="dosyaPaylastxtAciklama" placeholder="@Resources.Resource.msgEklenecekDokumanileIlgiliKisaAciklamaGir" required></textarea>
+         <label>@Resources.Resource.lblBilgisayardaDosyaSec</label>
+         <input type="file" class="form-control" id="dosyaPaylastxtDosya" required name="file" placeholder="@Resources.Resource.lblDosyaSec">
+               
+        
+           
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="dosyaPaylasbtnDosyaEkle">@Resources.Resource.lblTamam</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">@Resources.Resource.lblIptal</button>
+        
+      </div>
+    </div>
+  </div>
+</div>}
 @section js
 {
    <script src="@Href(string.Format("~/Panel/Js/Panel.Labels.{0}.js",dil))"></script>
