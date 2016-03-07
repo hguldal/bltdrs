@@ -11,5 +11,11 @@ var mesajlar = {
    basliksecilmedi:'Enter the assigment title',
    odevbasariylaeklendi:'Assigment was added successfully',
    verilmesirasindabirhataolustu:'An error occured when assigment adding',    
-   islemsirasindabirhataolustu:'Unexpected error'   
+   islemsirasindabirhataolustu:'Unexpected error',
+
+   dosyaboyutubuyuk:'The file size is too big',
+   dosyaicinyetersizalan:'Your storage space is not enough. Please upgrade you account type',
+   dosyasecilmedi:'No file selected',
+   dosyabasariylaeklendi:'The file was added successfully',
+   dosyaeklenirkenhata:'An error occurred while adding file'
 };
