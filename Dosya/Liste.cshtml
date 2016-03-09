@@ -65,20 +65,9 @@
           
        @if (Roles.IsUserInRole("Ogretici"))
        {
-        <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalDosyaEkle">
-            <i class="fa fa-cloud-upload"></i> @Resources.Resource.lblYeniBirDokumanEkle
-        </button>
-
-       <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalKlasorEkle">
-            <i class="fa fa-plus-circle"></i> Yeni Klasör
-        </button>
-
+       
         <button type="button" class="btn btn-primary btn-lg" id="btnCokluSil" disabled>
             <i class="fa fa-times"></i> Sil
-        </button>
-
-        <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalKlasorSec" disabled="true" id="btnKlasoreTasiModalAc">
-            <i class="fa fa-arrow-circle-up"></i> Taşı
         </button>
    
         <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalDersSec" disabled="true" id="btnDerstePaylas">
@@ -87,21 +76,6 @@
 
         <br>
         <br>
-
-        <div class="page-breadcrumbs">
-                    <ul class="breadcrumb">
-                            <li><a href="@Href("~/Dosya/Liste")"><i class="fa fa-cloud"></i> Dosyalar </a></li>
-                        @{
-                          
-
-                                for (int i=ustKlasorler.Count-1;i>=0;i--)
-                                {
-                                    <li><a href="@Href("~/Dosya/Liste?Konum=" + @ustKlasorler[i].KlasorID)">@ustKlasorler[i].KlasorAdi</a></li>  
-                                }
-                        }
-                          
-                    </ul>
-         </div>  
 
        }
            <br>
