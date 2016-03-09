@@ -26,7 +26,16 @@
            Culture=UICulture="tr-TR";
        }
 
-    var queryDosyalar=db.Query("SELECT * FROM Dosya WHERE userID=@0 AND Silindi=0 AND Konum=@1 ORDER BY EklenmeTarihi DESC",WebSecurity.CurrentUserId,konum);
+       IEnumerable<dynamic> queryDosyalar=null;
+    
+        if (konum=="-1")
+        {
+            queryDosyalar=db.Query("SELECT * FROM Dosya WHERE userID=@0 AND Silindi=0 ORDER BY EklenmeTarihi DESC",WebSecurity.CurrentUserId);
+        }
+        else 
+        {
+            queryDosyalar=db.Query("SELECT * FROM Dosya INNER JOIN DersDosyalari ON DersDosyalari.DosyaID=Dosya.DosyaID WHERE Dosya.userID=@0 AND Dosya.Silindi=0 AND DersDosyalari.DersID=@1 ORDER BY EklenmeTarihi DESC",WebSecurity.CurrentUserId,konum);
+        }
  
     db.Close();
   
@@ -69,8 +78,11 @@
             <tr>
                <th></th>
                 <th>@Resources.Resource.lblAd</th> 
+               
                 <th></th>
+               
                 <th></th>
+                
                 <th> @Resources.Resource.lblBoyut</th> 
                
                 <th> @Resources.Resource.lblEklenmeTarihi</th>
@@ -79,70 +91,6 @@
             </tr>
         </thead>
          <tbody>
-            <tr class="KlasorSatiri hide"></tr>
-            @if (queryUstKlasor!=null)
-            {
-                <tr class="KlasorSatiri">
-                 <td class="col-md-1 text-center">
-                     
-                 </td>
-                 <td>
-                     @if (queryUstKlasor.Konum==-1)
-                     {
-                        <a href="@Href("~/Dosya/Liste")"><i class="fa fa-arrow-circle-up fa-2x"></i> Bir Üst Konum</a> 
-                     }
-                     else
-                     {
-                        <a href="@Href("~/Dosya/Liste?Konum=" + queryUstKlasor.Konum)"><i class="fa fa-arrow-circle-up fa-2x"></i> Bir Üst Konum</a>
-                    }
-                 </td>
-                 <td></td>
-                 <td></td>
-                 <td>--</td>
-                 <td></td>
-
-             </tr>
-            }
-
-            @foreach (var klasor in queryKlasorler)
-            {
-             <tr class="KlasorSatiri">
-                 <td class="col-md-1 text-center">
-                     <label>
-                       <input type="checkbox" data-OgeID="k_@klasor.KlasorID" class="colored-primary chkBoxOge">
-                       <span class="text"></span>
-                     </label>
-                 </td>
-                 <td>
-                    <a href="@Href("~/Dosya/Liste?Konum=" + klasor.KlasorID)"><i class="fa fa-folder fa-2x"></i> @klasor.KlasorAdi</a>
-                 </td>
-                 <td>
-                        
-                      <div class="dropdown">
-
-                        
-                                  <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-primary btn-xs">
-                                    <i class="fa fa-cog"></i>
-                                    <span class="caret"></span>
-                                  </button>
-                                  
-                                  <ul class="dropdown-menu" aria-labelledby="dLabel">
-                                      <li><a href="#" class="btnOgeSil" data-OgeID="k_@klasor.KlasorID"><i class="fa fa-remove"></i> @Resources.Resource.lblDosyayiSil</a></li>
-                                     
-                                  </ul>
-                            </div>
-                 
-                 </td>
-                 <td></td>
-                 <td>--</td>
-                 
-            
-                 <td>@Genel.DateLabel(klasor.OlusturmaTarihi,dil)</td>
-                 
-
-             </tr>
-            
-            }
 
             @foreach (var dosya in queryDosyalar)
             {
@@ -156,7 +104,7 @@
                     <td><a href="@Href("~/Dosya/Indir?DosyaID=")@dosya.DosyaID">@HelperDosya.DosyaIkonu(dosya.DosyaAdi) @dosya.DosyaAdi</a>
                   
                     </td>
-                   
+  
                       <td>
 
                          <div class="dropdown">
@@ -177,6 +125,9 @@
                             </div>
 
                     </td>
+                   
+   
+                    
                     <td>
                         @if (dosya.YuklenmeTuru==2)
                         {
@@ -184,6 +135,7 @@
                         }
                     
                     </td>
+ 
                     <td>
 
                     @Genel.StorageLabel((double)dosya.Boyut)
