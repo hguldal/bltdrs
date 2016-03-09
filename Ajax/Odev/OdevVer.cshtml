@@ -44,7 +44,12 @@
         
     db.Execute("INSERT INTO Odev(Baslik,Aciklama,DersID,SonTeslimTarihi,OdevID,DosyaID,OdevGonderimi,UserID) VALUES(@0,@1,@2,@3,@4,@5,@6,@7)",Baslik,Aciklama,DersID,SonTeslimTarihi,yeniOdevID,DosyaID,OdevGonderimi,WebSecurity.CurrentUserId);
     var querySonEklenenOdev=db.QuerySingle("SELECT Odev.OdevID,Odev.Baslik,Odev.Aciklama,Odev.DersID,(CAST(datepart(dd,Odev.SonTeslimTarihi) as nvarchar(2)) + '.' + CAST(datepart(mm,Odev.SonTeslimTarihi) as nvarchar(2)) + '.' + CAST(datepart(yy,Odev.SonTeslimTarihi) as nvarchar(4))) as SonTeslim,Ders.DersAdi,Odev.DosyaID FROM Odev INNER JOIN Ders ON Ders.DersID=Odev.DersID WHERE Odev.OdevID=@0",yeniOdevID);
-    
+   
+    if (DosyaID!=-1)
+    {
+         db.Execute("INSERT INTO DosyaIzinDers(DosyaID,DersID) VALUES(@0,@1)",DosyaID,DersID);
+    }
+   
     db.Execute("INSERT INTO Aktivite(UserID,DersID,Renk,Ikon,URL,IlaveMetin,IliskiliOge,EylemID) VALUES(@0,@1,@2,@3,@4,@5,@6,@7)",WebSecurity.CurrentUserId,queryDers.DersID,"info","fa-clock-o",Href("~/Odev/Goster?OdevID=" + yeniOdevID),Baslik,"odvver" + yeniOdevID.ToString(),3);
    
    //herbir öğrenci için bildirim ekle
