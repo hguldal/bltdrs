@@ -12,28 +12,28 @@
           konum="-1";
       }
 
-   if (!Roles.IsUserInRole("Ogretici"))
-    {
-        Response.Redirect("~/Shared/Hata?Kod=kullaniciegitmendegil");
-        Response.End();
-    }
-
     var db=Database.Open("fb1ae");
     var queryKullanici=db.QuerySingle("SELECT * FROM Profiles INNER JOIN UyelikTurleri ON Profiles.UyelikTuru=UyelikTurleri.UyelikID WHERE Profiles.userID=@0",WebSecurity.CurrentUserId);
     var dil=queryKullanici.Dil;
+
     if (dil=="tr")
        {
            Culture=UICulture="tr-TR";
        }
 
        IEnumerable<dynamic> queryDosyalar=null;
+       IEnumerable<dynamic> queryDersler=null;
+
     
         if (konum=="-1")
         {
-            queryDosyalar=db.Query("SELECT * FROM Dosya WHERE userID=@0 AND Silindi=0 ORDER BY EklenmeTarihi DESC",WebSecurity.CurrentUserId);
+            queryDosyalar=db.Query("SELECT * FROM Dosya WHERE userID=@0 AND Silindi=0 AND Dosya.YuklenmeTuru=1 ORDER BY EklenmeTarihi DESC",WebSecurity.CurrentUserId);
+            queryDersler=db.Query("SELECT  * FROM Ders WHERE Silindi=0 AND userID=@0 AND Arsivlendi=0",WebSecurity.CurrentUserId);
         }
+    
         else 
         {
+
             queryDosyalar=db.Query("SELECT * FROM Dosya INNER JOIN DersDosyalari ON DersDosyalari.DosyaID=Dosya.DosyaID WHERE Dosya.userID=@0 AND Dosya.Silindi=0 AND DersDosyalari.DersID=@1 ORDER BY EklenmeTarihi DESC",WebSecurity.CurrentUserId,konum);
         }
  
@@ -72,6 +72,15 @@
         <br>
 
        }
+
+             <div class="page-breadcrumbs">
+
+                    <ul class="breadcrumb">
+                            <li><a href="@Href("~/Dosya/Liste")"><i class="fa fa-cloud"></i> Dosyalar </a></li>
+                       
+                    </ul>
+         </div>  
+
            <br>
         <table id="lstDosyalar" class="table table-hover">
         <thead>
@@ -91,8 +100,27 @@
             </tr>
         </thead>
          <tbody>
-
-            @foreach (var dosya in queryDosyalar)
+             @if (konum=="-1")
+             {
+                
+                foreach (var ders in queryDersler)
+                {
+                  <tr>
+                     <td class="col-md-1 text-center"></td>
+                     <td>
+                        <a href="@Href("~/Dosya/Liste?Konum=" + ders.DersID)"><i class="fa fa-folder fa-2x"></i> @ders.DersAdi</a>
+                     </td>
+                     <td></td>
+                     <td></td>
+                     <td>--</td>
+                     <td></td>
+                 </tr>
+                }
+            }
+             else
+             {
+            
+            foreach (var dosya in queryDosyalar)
             {
                 
                 <tr class="DosyaSatiri">
@@ -147,6 +175,8 @@
                     
                    
                 </tr>
+            }
+
             }
          </tbody>
     </table>

@@ -231,58 +231,94 @@
       
         else if (liste=="dosya")
         {
-            <div>
-                <h3>@Resources.Resource.lblDosyalar</h3>
+            <h3>@Resources.Resource.lblDosyalar</h3>
             <br>
-            @if (dersSahibi && queryDers.Arsivlendi==0)
-                {
-                 
-                }
-                <br><br>
+             if (dersSahibi)
+                   {
+       
+                    <button type="button" class="btn btn-primary btn-lg" id="btnCokluSil" disabled>
+                        <i class="fa fa-times"></i> Sil
+                    </button>
+   
+                    <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalDersSec" disabled="true" id="btnDerstePaylas">
+                        <i class="fa fa-share"></i>Başka Bir Derste Paylaş
+                    </button>
 
-                    <table id="lstDersDosyalari" class="table table-hover">
-        <thead>
-            <tr>
-                <th> @Resources.Resource.lblAciklama</th>
-                <th> @Resources.Resource.lblDosyaAdi</th>
-                <th> @Resources.Resource.lblBoyut</th>
+                    <br>
+                    <br>
+
+                   }
+
+           
+          
+            <table id="lstDosyalar" class="table table-hover">
+                <thead>
+                    <tr>
+                       <th></th>
+                        <th>@Resources.Resource.lblAd</th> 
+               
+                        <th></th>
+               
+                        <th></th>
                 
-                <th></th>
+                        <th> @Resources.Resource.lblBoyut</th> 
+               
+                        <th> @Resources.Resource.lblEklenmeTarihi</th>
+               
                 
-            </tr>
-        </thead>
+                    </tr>
+                </thead>
          <tbody>
+         
             @foreach (var dosya in queryDosyalar)
             {
                 
-                <tr>
-                    <td><i class="fa fa-file-text-o fa-2x text-success"></i> <a href="@Href("~/Dosya/Indir?DosyaID=")@dosya.DosyaID"> @dosya.Aciklama </a> </td>
-                    <td><a href="@Href("~/Dosya/Indir?DosyaID=")@dosya.DosyaID"> @dosya.DosyaAdi</a></td>
-                    <td>
-
-                   
-                       @Genel.StorageLabel((double)dosya.Boyut)
-                       
-                    </td>
+                
+                <tr class="DosyaSatiri">
+                    <td class="col-md-1 text-center">
+                        @if (dersSahibi && dosya.UserID==WebSecurity.CurrentUserId)
+                        {
+                       <label>
+                       <input type="checkbox" class="colored-primary chkBoxOge"  data-OgeID="d_@dosya.DosyaID">
+                       <span class="text"></span>
+                      </label>                        }                    </td>
+                    <td><a href="@Href("~/Dosya/Indir?DosyaID=")@dosya.DosyaID">@HelperDosya.DosyaIkonu(dosya.DosyaAdi) @dosya.DosyaAdi</a>
                   
-                    <td>
-                        <a href="@Href("~/Dosya/Indir?DosyaID=")@dosya.DosyaID" class="btn btn-info btn-sm"><i class="fa fa-cloud-download"></i></a>
-                       @if (dosya.UserID==WebSecurity.CurrentUserId)
-                       {
-                            
-                            <a href="@Href("~/Dosya/Ayarlar?DosyaID=")@dosya.DosyaID" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.lblDosyaAyarlari"><i class="fa fa-cog"></i></a>    
-                            <a href="@Href("~/Dosya/Indirenler?DosyaID=")@dosya.DosyaID" class="btn btn-success btn-sm" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.lblDosyayiYukleyenKullanicilar"><i class="fa fa-arrow-circle-o-down"></i></a>
-                            <button class="btn btn-danger btn-sm btnDosyayiCikar" data-DosyaID="@dosya.DosyaID" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.lblDosyayiDerstenKaldir"><i class="fa fa-remove"></i></button>
-
-                       }
                     </td>
-                   
+  
+                      <td>
+
+                         <div class="dropdown">
+
+                        
+                                  <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-primary btn-xs">
+                                    <i class="fa fa-cog"></i>
+                                    <span class="caret"></span>
+                                  </button>
+                                  
+                                  <ul class="dropdown-menu" aria-labelledby="dLabel">
+                                      <li><a href="@Href("~/Dosya/Indir?DosyaID=")@dosya.DosyaID"><i class="fa fa-cloud-download"></i> @Resources.Resource.lblKarşıdanYukle</a></li>
+                                      @if (dersSahibi && dosya.UserID==WebSecurity.CurrentUserId)
+                                      {
+                                          <li><a href="@Href("~/Dosya/Ayarlar?DosyaID=")@dosya.DosyaID"><i class="fa fa-cog"></i> @Resources.Resource.lblDosyaAyarlari</a></li>
+                                          <li><a href="@Href("~/Dosya/Indirenler?DosyaID=")@dosya.DosyaID"><i class="fa fa-arrow-circle-o-down"></i> @Resources.Resource.lblDosyayiYukleyenKullanicilar</a></li>
+                                          <li><a href="#" class="btnDersteDosyaPaylas" data-OgeID="d_@dosya.DosyaID" data-toggle="modal" data-target="#modalDersSec"><i class="fa fa-share"></i> Derste Paylaş</a></li>
+                                          <li><a href="javascript:void(0);" class="btnOgeSil" data-OgeID="d_@dosya.DosyaID"><i class="fa fa-remove"></i> @Resources.Resource.lblDosyayiSil</a></li>
+                                       }
+                                  </ul>
+                            </div>
+
+                    </td>
+                    <td></td>
+                    <td> @Genel.StorageLabel((double)dosya.Boyut)</td>
+                    <td>@Genel.DateLabel(dosya.EklenmeTarihi,dil)</td>
                 </tr>
+           
             }
+           
          </tbody>
     </table>
-                </div>
-           
+         
         }
         else if (liste=="pano")
         {
@@ -414,11 +450,36 @@
 
         
        </div>
+       
 </div>
  <p><br><br></p>
    }
 
-
+@if (dersSahibi && liste=="dosya")
+{
+    <div class="modal" id="modalDersSec" tabindex="-1" role="dialog" aria-labelledby="myModalLabel4" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel4">Ders Seç</h4> 
+      </div>
+      <div class="modal-body" style="height:300px;overflow: auto;">
+        <i class="fa fa-spinner fa-spin fa-2x hide" id="spinnerIconDers"></i>
+        <table class="table table-hover" id="tableVerilenDerslerListesi">
+            
+         
+        </table>
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="btnDerstePaylasTamam">@Resources.Resource.lblTamam</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">@Resources.Resource.lblIptal</button>
+        
+      </div>
+    </div>
+  </div>
+</div>
+}
 
 @section js
 {
