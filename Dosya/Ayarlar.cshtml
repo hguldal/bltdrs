@@ -127,24 +127,6 @@
         
             <tr>
                 <td><strong>@Resources.Resource.lblPaylasildigiDersler</strong></td>         
-            </tr>
-            <tr>
-                <td>
-                    <input type="text" class="form-control" placeholder="@Resources.Resource.msgPaylasilacakKisiyiBul" id="txtIzinverilecekKisiler"><br>
-                    <select class="form-control" size="5" id="cmbDosyaErisimIzinleri">
-                        
-                       @foreach (var kisi in queryDosyaIzinKisi)
-                       {
-                           <option value="@kisi.userID">@HelperProfil.YaziliKunye(kisi.UserID)</option>
-                       }
-
-                    </select><br>
-                <button class="btn btn-danger btn-xs" id="btnDosyaErisimIzniKaldir"><i class="fa fa-times"></i> @Resources.Resource.lblSeciliKisiicinPaylasimiDurdur</button>
-               <br>
-                    @if (Roles.IsUserInRole("Ogretici"))
-                    {
-                     <tr>
-                        <td><strong>@Resources.Resource.lblPaylasildigiDersler</strong></td>         
                     </tr>
                     <tr>
                         <td>
@@ -160,7 +142,7 @@
                         </td>
                     </tr>
 
-                      }
+                     
                 </td>
             </tr>
            
