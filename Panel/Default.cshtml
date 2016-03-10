@@ -218,7 +218,7 @@
   </div>
 </div> @if (roller.Contains("Ogretici")) {
 <div class="modal" id="modalYeniOdevVer" tabindex="-1" role="dialog" aria-labelledby="odevVermyModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
+  <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -227,7 +227,7 @@
       <div class="modal-body">
         <form method="post" id="odevVerfrmOdevEkle">
              <div class="row">
-                    <div class="col-lg-6">
+                    <div class="col-lg-12">
                         <label>@Resources.Resource.lblDers</label>
                         <select name="DersID" id="odevVercmbDersID" class="form-control">
                             <option value=""></option>
@@ -241,23 +241,10 @@
                         <input type="text" id="odevVertxtOdevBaslik" class="form-control" name="Baslik">
                         
                         <label>@Resources.Resource.lblOdevMetni</label>
-                        <textarea name="Aciklama" class="form-control" rows="5" id="odevVertxtAciklama"></textarea>
+                        <textarea name="Aciklama" class="form-control" rows="10" id="odevVertxtAciklama"></textarea>
                         
                </div>
-
-            <div class="col-lg-6">
-                <label>@Resources.Resource.lblOdevGonderimi</label>
-                        <select class="form-control" name="OdevGonderimi" id="odevVercmbOdevGonderimi">
-                            <option value="1"> @Resources.Resource.lblAcik</option>
-                            <option value="2"> @Resources.Resource.lblKapali</option>
-                         </select>
-                   
-            <label>@Resources.Resource.lblDosyaEki</label>
-
-              <select class="form-control" placeholder="@Resources.Resource.lblDosyaBul" id="odevVercmbDosyalardanDosya" name="DosyaID"></select>
-                      
             </div>
-                 </div>
         </form>
       </div>
       <div class="modal-footer">
