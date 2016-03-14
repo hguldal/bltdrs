@@ -23,6 +23,13 @@
     }
     var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0 AND Silindi=0",DersID);
     var queryKullanici=db.QuerySingle("SELECT * FROM Profiles WHERE UserID=@0",WebSecurity.CurrentUserId);
+    var queryDersSahibi=db.QuerySingle("SELECT * FROM Profiles WHERE userID=@0",queryDers.UserID);
+    
+    var ogrenciSayisi=db.QueryValue("SELECT COUNT(*) FROM DersTakip WHERE DersID=@0 AND Durum=2",DersID);
+    var odevSayisi=db.QueryValue("SELECT count(*) FROM Odev INNER JOIN Ders ON Odev.DersID=Ders.DersID WHERE Odev.Silindi=0 AND Ders.DersID=@0 AND Ders.Arsivlendi=0 AND Ders.Silindi=0",DersID);
+    var dosyaSayisi=db.QueryValue("SELECT count(*) FROM DersDosyalari INNER JOIN Dosya ON DersDosyalari.DosyaID=Dosya.DosyaID WHERE DersDosyalari.DersID=@0 AND Dosya.Silindi=0 AND Dosya.YuklenmeTuru<>2",DersID);
+    var duyuruSayisi=db.QueryValue("SELECT count(*) FROM DersPano WHERE DersID=@0 AND Silindi=0",DersID);
+    
     var dil=queryKullanici.Dil;   
 
     if (dil=="tr")
@@ -99,74 +106,77 @@
 {
    <h1>@queryDers.DersAdi</h1>
 }
+<div class="row" id="divDersRow" data-DersID="@DersID">
+    <div class="col-lg-12">
+    
+     <div class="profile-container">
+                                <div class="profile-header row">
+                                    <div class="col-lg-2 col-md-4 col-sm-12 text-center">
+                                        <img src="http://bulutders.blob.core.windows.net/profilresimleri/@queryDersSahibi.Avatar" alt="" class="header-avatar" />
+                                    </div>
+                                    <div class="col-lg-5 col-md-8 col-sm-12 profile-info">
+                                        <div class="header-fullname">@queryDers.DersAdi</div>
 
-<div class="row" id="divDersRow" data-DersID="@DersID" >
- <div class="col-lg-12">
-       <h1>@queryDers.DersAdi 
-      @if (takipEdiyor)
-        {
-         <small class="pull-right"><small class="alert alert-success">@Resources.Resource.msgBuDersiTakipEdiyorsunuz</small></small> 
-        }
-        else if (takipEdiyor==false && Roles.IsUserInRole("Ogrenci"))
-        {
-           <small class="pull-right"><button class="btn btn-success btnDersiTakipEt" data-DersID="@queryDers.DersID"><i class="fa fa-plus"></i> @Resources.Resource.lblDersiTakipEt</button></small> 
-        }</h1>
-        <br>
-       <p>@queryDers.Aciklama</p>
-     
-  <hr>
-      <div>
-      @HelperProfil.KucukKunye(queryDers.UserID)
+                                        <div class="header-information">
+                                            @queryDers.Aciklama
+                                            <br><br>
+                                                                                     @if (takipEdiyor){
+                                        <a href="#" class="btn btn-palegreen btn-sm">
+                                            <i class="fa fa-check"></i>
+                                            @Resources.Resource.msgBuDersiTakipEdiyorsunuz
+                                        </a>
+                                        }
+                                        else if (takipEdiyor==false && Roles.IsUserInRole("Ogrenci"))
+                                        {
+                                          <button class="btn btn-primary btnDersiTakipEt btn-sm" data-DersID="@queryDers.DersID"><i class="fa fa-plus"></i> @Resources.Resource.lblDersiTakipEt</button>  
+                                        }
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-5 col-md-12 col-sm-12 col-xs-12 profile-stats">
+                                        <div class="row">
+                                            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 stats-col">
+                                                <div class="stats-value pink">@ogrenciSayisi</div>
+                                                <div class="stats-title">@Resources.Resource.lblOgrenci</div>
+                                            </div>
+                                            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 stats-col">
+                                                <div class="stats-value pink">@dosyaSayisi</div>
+                                                <div class="stats-title">Dosya</div>
+                                            </div>
+                                            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 stats-col">
+                                                <div class="stats-value pink">@odevSayisi</div>
+                                                <div class="stats-title">@Resources.Resource.lblOdev</div>
+                                            </div>
+                                            
+                                            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 stats-col">
+                                                <div class="stats-value pink">@duyuruSayisi</div>
+                                                <div class="stats-title">Duyuru</div>
+                                            </div>
+                                        </div>
+                                      
+                                    </div>
+                                </div>
+                                <div class="profile-body">
+                                     @if (queryDers.UserID==WebSecurity.CurrentUserId || takipEdiyor)
+                                        { 
+                                    <div class="col-lg-12">
+                                       
+                                        <div class="tab-content tabs-flat">
+                                       
+                                        <ul class="nav nav-pills">
+                                            <li role="presentation" @if (liste=="aktivite") {<text>class="active"</text>} ><a href="@Href("~/Ders/?DersID=")@DersID&Liste=aktivite"><i class="fa fa-home"></i> @Resources.Resource.lblAnasayfa</a></li>
+                                            <li role="presentation" @if (liste=="dosya") {<text>class="active"</text>}><a href="@Href("~/Ders/?DersID=")@DersID&Liste=dosya"><i class="fa fa-folder"></i> @Resources.Resource.lblDosyalar</a></li>
+                                            <li role="presentation" @if (liste=="odev") {<text>class="active"</text>}><a href="@Href("~/Ders/?DersID=")@DersID&Liste=odev"><i class="fa fa-clock-o"></i> @Resources.Resource.lblOdevler</a></li>
+                                            <li role="presentation" @if (liste=="pano") {<text>class="active"</text>}><a href="@Href("~/Ders/?DersID=")@DersID&Liste=pano"><i class="fa fa-clipboard"></i> @Resources.Resource.lblDersPanosu</a></li>
+                                            <li role="presentation"><a href="#"><i class="fa fa-comment"></i> @Resources.Resource.lblMesajlasma</a></li>
+                                            <li role="presentation" @if (liste=="takipci") {<text>class="active"</text>}><a href="@Href("~/Ders/?DersID=")@DersID&Liste=takipci"><i class="fa fa-user"></i> @Resources.Resource.lblOgrenciler</a></li>
+                                        </ul>
+                                       
+                                       <hr>
+                                      
+
+           @if (liste=="aktivite")
+             {
        
-     </div>
-     <hr>
- </div>
-                    
-</div>
-
-<div class="row">
-   <div class="col-lg-12">
-
-      <ul class="nav nav-pills">
-  
-           @if (queryDers.UserID==WebSecurity.CurrentUserId || takipEdiyor || admin)
-           {     
-              <li role="presentation"><a href="@Href("~/Ders/?DersID=")@DersID&Liste=aktivite" class="text-center"><i class="fa fa-home fa-2x"></i><br> @Resources.Resource.lblAnasayfa</a></li>
-              <li role="presentation"><a href="@Href("~/Ders/?DersID=")@DersID&Liste=dosya" class="text-center"><i class="fa fa-folder fa-2x"></i><br> @Resources.Resource.lblDosyalar</a></li>
-              <li role="presentation"><a href="@Href("~/Ders/?DersID=")@DersID&Liste=odev" class="text-center"><i class="fa fa-clock-o fa-2x"></i><br> @Resources.Resource.lblOdevler</a></li>
-              <li role="presentation"><a href="@Href("~/Ders/?DersID=")@DersID&Liste=pano" class="text-center"><i class="fa fa-clipboard fa-2x"></i><br> @Resources.Resource.lblDersPanosu</a></li>
-              <li role="presentation"><a href="http://meet.jit.si/@jitsiKanal" class="text-center" target="_blank"><i class="fa fa-comment fa-2x"></i><br> @Resources.Resource.lblCanliDers</a></li>
-             <li role="presentation"><a href="@Href("~/Ders/?DersID=")@DersID&Liste=takipci" class="text-center"><i class="fa fa-user  fa-2x"></i><br> @Resources.Resource.lblOgrenciler</a></li>
-          
-            }
-
-          @if (queryDers.UserID==WebSecurity.CurrentUserId)
-          {
-              <li role="presentation"><a href="@Href("~/Ders/?DersID=")@DersID&Liste=onaybekleyen" class="text-center"><i class="fa fa-warning  fa-2x"></i><br> @Resources.Resource.lblOnayBekleyenOgrenciler</a></li>
-              <li role="presentation"><a href="@Href("~/Ders/Ayarlar?DersID=")@DersID" class="text-center"><i class="fa fa-cog  fa-2x"></i><br> @Resources.Resource.lblAyarlar</a></li>
-
-          }
-
-          @if (takipEdiyor)
-          {
-              <li role="presentation"><a href="#" class="text-center text-danger btnDersTakibiBirak" data-DersID="@DersID"><i class="fa fa-remove  fa-2x"></i><br> @Resources.Resource.lblTakibiBirak</a></li>
-          }
- 
-        </ul>
-
-    </div>
-</div>
-
- @if (queryDers.UserID==WebSecurity.CurrentUserId || takipEdiyor)
-           {   
-<div class="row">
-   
-   <div class="col-lg-12">
-      
-       @if (liste=="aktivite")
-       {
-          
-            <h3>@Resources.Resource.lblAnasayfa</h3>
             <table id="lstAktiviteler" class="table table-hover">
         <thead>
             <tr>
@@ -204,11 +214,10 @@
          </tbody>
     </table>
        
-        }
+            }
         else if (liste=="takipci")
         {
-            <h3>@Resources.Resource.lblOgrenciler<br></h3>
-
+         
             <div> 
             @if (queryDers.Arsivlendi==0 && dersSahibi)
                 {
@@ -224,29 +233,27 @@
         }
         else if (liste=="onaybekleyen")
         {
-            <h3>@Resources.Resource.lblOnayBekleyenOgrenciler</h3>
-            @HelperDersTakip.DerseGoreKullanicilar(DersID.AsInt(),1)
+              @HelperDersTakip.DerseGoreKullanicilar(DersID.AsInt(),1)
         }
 
       
         else if (liste=="dosya")
         {
-            <h3>@Resources.Resource.lblDosyalar</h3>
-            <br>
-             if (dersSahibi)
+            
+            if (dersSahibi)
                    {
-       
-                    <button type="button" class="btn btn-primary btn-lg" id="btnCokluSil" disabled>
+                        
+                    <button type="button" class="btn btn-primary btn-sm" id="btnCokluSil" disabled>
                         <i class="fa fa-times"></i> Sil
                     </button>
    
-                    <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalDersSec" disabled="true" id="btnDerstePaylas">
+                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalDersSec" disabled="true" id="btnDerstePaylas">
                         <i class="fa fa-share"></i>Başka Bir Derste Paylaş
                     </button>
 
                     <br>
                     <br>
-
+                
                    }
 
            
@@ -324,9 +331,7 @@
         {
            
             <div>
-                <h3>@Resources.Resource.lblDersPanosu</h3>
-                  <br>
-                @if (queryDers.Arsivlendi==0)
+              @if (queryDers.Arsivlendi==0)
                 {
                 <textarea class="form-control" placeholder="@Resources.Resource.msgPanoyaEklemekIstediginMesajiYaz" id="txtPanoMesaji"></textarea>
                 <br>
@@ -362,9 +367,7 @@
         {
          
             <div>
-                <h3>@Resources.Resource.lblOdevler</h3>
-               <br>
-                        <table id="lstOdevler" class="table table-hover">
+                   <table id="lstOdevler" class="table table-hover">
         <thead>
             <tr>
                 <th>@Resources.Resource.lblOdevBasligi</th>
@@ -447,13 +450,17 @@
     </table>
                 </div>
         }
-
-        
+                                       
        </div>
-       
+
+      
+      </div>
+                                        }
+     </div>
+     </div>    </div> 
 </div>
- <p><br><br></p>
-   }
+
+
 
 @if (dersSahibi && liste=="dosya")
 {
