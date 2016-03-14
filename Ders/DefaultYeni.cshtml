@@ -110,11 +110,16 @@
                                     </div>
                                     <div class="col-lg-5 col-md-8 col-sm-12 profile-info">
                                         <div class="header-fullname">@queryDers.DersAdi</div>
+                                         @if (takipEdiyor){
                                         <a href="#" class="btn btn-palegreen btn-sm  btn-follow">
                                             <i class="fa fa-check"></i>
-                                            Following
+                                            @Resources.Resource.msgBuDersiTakipEdiyorsunuz
                                         </a>
-                                        
+                                        }
+                                        else if (takipEdiyor==false && Roles.IsUserInRole("Ogrenci"))
+                                        {
+                                          <button class="btn btn-primary btnDersiTakipEt btn-sm btn-follow" data-DersID="@queryDers.DersID"><i class="fa fa-plus"></i> @Resources.Resource.lblDersiTakipEt</button>  
+                                        }
                                         <div class="header-information">
                                             @queryDers.Aciklama
                                         </div>
@@ -139,28 +144,7 @@
                                                 <div class="stats-title">Duyuru</div>
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 inlinestats-col">
-                                                
-                                            </div>
-                                            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 inlinestats-col">
-                                                
-                                            </div>
-                                            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 inlinestats-col">
-                                                          @if (queryDers.UserID==WebSecurity.CurrentUserId)
-                                                            {
-                                                <a href="@Href("~/Ders/?DersID=")@DersID&Liste=onaybekleyen" class="text-center"><i class="fa fa-warning fa-2x"></i></a>
-              
-
-                                                }
-                                            </div>
-                                             <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 inlinestats-col">
-                                                 @if (queryDers.UserID==WebSecurity.CurrentUserId)
-                                                     {
-                                                    <a href="@Href("~/Ders/Ayarlar?DersID=")@DersID"><i class="fa fa-cog fa-2x"></i></a>
-                                                    }
-                                            </div>
-                                        </div>
+                                      
                                     </div>
                                 </div>
                                 <div class="profile-body">
@@ -214,20 +198,7 @@
 </div>
 
 <div class="row" >
- <div class="col-lg-12">
-       
-      @if (takipEdiyor)
-        {
-         <small class="pull-right"><small class="alert alert-success">@Resources.Resource.msgBuDersiTakipEdiyorsunuz</small></small> 
-        }
-        else if (takipEdiyor==false && Roles.IsUserInRole("Ogrenci"))
-        {
-           <small class="pull-right"><button class="btn btn-success btnDersiTakipEt" data-DersID="@queryDers.DersID"><i class="fa fa-plus"></i> @Resources.Resource.lblDersiTakipEt</button></small> 
-        }</h1>
-        <br>
-       
-     
- </div>
+ 
                     
 </div>
 
