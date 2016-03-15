@@ -19,5 +19,7 @@ var mesajlar = {
    dosyabasariylaeklendi:'The file was added successfully',
    dosyaeklenirkenhata:'An error occurred while adding file',
    dersiolusturuldu:' was created',
-   dersadibos:'Error: Course name is null'
+   dersadibos:'Error: Course name is null',
+   erisimkodugirilmedi:'Enter access code',
+   dersekatilimbasarisizoldu:'Joining the course is fail. Please check your access code'
 };

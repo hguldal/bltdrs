@@ -19,5 +19,8 @@ var mesajlar = {
    dosyaeklenirkenhata:'Dosya eklenirken bir hata oluştu.',
 
    dersiolusturuldu:' dersi oluşturuldu',
-   dersadibos:'Hata: Ders adı boş bırakılamaz'
+   dersadibos:'Hata: Ders adı boş bırakılamaz',
+
+   erisimkodugirilmedi:'Erişim kodunu girmedin',
+   dersekatilimbasarisizoldu:'Derse katılımın başarısız oldu. Lütfen erişim kodunu kontrol et.'
 };

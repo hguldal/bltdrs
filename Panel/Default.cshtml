@@ -1,18 +1,13 @@
 ﻿@{
-  
    if (!WebSecurity.IsAuthenticated)
     {
         Response.Redirect("~/Hesap/Giris?returnUrl=Panel");
-    }
-
-   
+    }
     if (Roles.IsUserInRole("Admin"))
     {
         Response.Redirect("~/Admin");
     }
-
     Layout = "~/Shared/_LayoutYeni.cshtml";
-
     var db=Database.Open("fb1ae");
     var queryKullanici=db.QuerySingle("SELECT * FROM Profiles WHERE userID=@0",WebSecurity.CurrentUserId);
     var dil=queryKullanici.Dil;
@@ -20,7 +15,6 @@
        {
            Culture=UICulture="tr-TR";
        }
-    
     var roller=Roles.GetRolesForUser(WebSecurity.CurrentUserName);
     var sonAktiviteID="";
     List<Aktivite> listeAktiviteler=new List<Aktivite>();
@@ -96,13 +90,14 @@
 }
 
 <div class="row"> 
-    <div class="col-lg-12">                     @if (roller.Contains("Ogretici"))                   {
+    <div class="col-lg-12">                  @if (roller.Contains("Ogretici"))                   {
                        <button class="btn btn-azure shiny btn-lg" data-toggle="modal" data-target="#modalDosyaEkle" title="Dosya Paylaş" data-toggle="tooltip" data-placement="top"><i class="fa fa-file fa-fw"></i> Dosya Paylaş </button>
                        <button class="btn btn-info btn-lg shiny" data-toggle="modal" data-target="#modalDuyuruYap"><i class="fa fa-clipboard fa-fw"></i> Duyuru Ekle </button>
                        <button class="btn btn-warning btn-lg shiny" data-toggle="modal" data-target="#modalYeniOdevVer"><i class="fa fa-tasks fa-fw"></i> Ödev Ver </button>
                        <button class="btn btn-palegreen btn-lg shiny" data-toggle="modal" data-target="#modalDersEkle"><i class="fa fa-book fa-fw"></i> Ders Sayfası Oluştur </button>
                      
-                   }                   <br><br>
+                   }        @if (roller.Contains("Ogrenci")) {                       <button class="btn btn-warning shiny btn-lg" data-toggle="modal" data-target="#modalDerseKatil" title="Erişim Kodu Kullanarak Bir Ders Sayfasını Takip Et" data-toggle="tooltip" data-placement="top"><i class="fa fa-plus-circle"></i> Erişim Kodu Kullanarak Bir Ders Sayfasını Takip Et </button>
+                       <button class="btn btn-info btn-lg shiny" id="btnDerseKatilDersAra"><i class="fa fa-search"></i> Ders Sayfası Ara </button>            }                   <br><br>
     <div class="widget">
                <div class="widget-header bordered-top bordered-blueberry">
                                             
@@ -360,7 +355,33 @@
       </div>
     </div>
   </div>
-</div>}
+</div>}
+@if (roller.Contains("Ogrenci")) {
+ <div class="modal" id="modalDerseKatil"  role="dialog" aria-labelledby="DerseKatilmyModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="DerseKatilmyModalLabel">@Resources.Resource.lblErisimKoduKullanarakDerseKatil</h4>
+      </div>
+      <div class="modal-body">
+                <label>@Resources.Resource.lblErisimKodu</label>
+          <input type="text" class="form-control" id="txtDerseKatilErisimKodu" required  placeholder="@Resources.Resource.lblErisimKodu" autofocus="true">
+         
+            <br>
+            
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="btnDerseKatilDerseKatil">@Resources.Resource.lblTamam</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">@Resources.Resource.lblIptal</button>
+        
+      </div>
+    </div>
+  </div>
+</div>   
+}
+
+
 @section js
 {
    <script src="@Href(string.Format("~/Panel/Js/Panel.Labels.{0}.js",dil))"></script>
