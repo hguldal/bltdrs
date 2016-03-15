@@ -29,7 +29,7 @@
     var odevSayisi=db.QueryValue("SELECT count(*) FROM Odev INNER JOIN Ders ON Odev.DersID=Ders.DersID WHERE Odev.Silindi=0 AND Ders.DersID=@0 AND Ders.Arsivlendi=0 AND Ders.Silindi=0",DersID);
     var dosyaSayisi=db.QueryValue("SELECT count(*) FROM DersDosyalari INNER JOIN Dosya ON DersDosyalari.DosyaID=Dosya.DosyaID WHERE DersDosyalari.DersID=@0 AND Dosya.Silindi=0 AND Dosya.YuklenmeTuru<>2",DersID);
     var duyuruSayisi=db.QueryValue("SELECT count(*) FROM DersPano WHERE DersID=@0 AND Silindi=0",DersID);
-    
+    var queryDersAdresKodu=db.QueryValue("SELECT Kod FROM Yonlendir WHERE Url=@0","~/Ders/?DersID=" + DersID);
     var dil=queryKullanici.Dil;   
 
     if (dil=="tr")
@@ -115,7 +115,11 @@
                                         <img src="http://bulutders.blob.core.windows.net/profilresimleri/@queryDersSahibi.Avatar" alt="" class="header-avatar" />
                                     </div>
                                     <div class="col-lg-5 col-md-8 col-sm-12 profile-info">
-                                        <div class="header-fullname">@queryDers.DersAdi</div>
+                                        <div class="header-fullname">
+                                              @queryDers.DersAdi
+                                            <br>
+                                            <small class="text-palegreen"><a href="@Request.Url.GetLeftPart(UriPartial.Authority)/@queryDersAdresKodu">@Request.Url.GetLeftPart(UriPartial.Authority)/@queryDersAdresKodu</a> </small>
+                                        </div>
 
                                         <div class="header-information">
                                             @queryDers.Aciklama
