@@ -16,5 +16,8 @@ var mesajlar = {
    dosyaicinyetersizalan:'Bu dosyayı yükleyebilmek için yeterli depolama alanı yok. Depolama alanınızı arttırmak için lütfen hesap türünüzü yükseltin.',
    dosyasecilmedi:'Dosya seçmediniz.',
    dosyabasariylaeklendi:'Dosyayı başarıyla ekledin',
-   dosyaeklenirkenhata:'Dosya eklenirken bir hata oluştu.'
+   dosyaeklenirkenhata:'Dosya eklenirken bir hata oluştu.',
+
+   dersiolusturuldu:' dersi oluşturuldu',
+   dersadibos:'Hata: Ders adı boş bırakılamaz'
 };

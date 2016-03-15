@@ -53,11 +53,6 @@
    
    <div class="col-lg-12">
        @if (roller.Contains("Ogretici")) {
-           <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalDersEkle">
-            <i class="fa fa-plus-circle"></i>  @Resources.Resource.lblYeniBirDersOlustur
-            </button> 
-       <br>
-        <br>
         <label>
            <input type="checkbox" class="colored-primary" id="chkArsivdekiDersleriGoster" @if(arsivdekileriGoster=="1") {<text>checked</text>}>
            
@@ -155,48 +150,6 @@
   
     </div>
 
-
-
-@if (roller.Contains("Ogretici")) {
-<div class="modal" id="modalDersEkle"  role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">@Resources.Resource.lblYeniBirDersOlustur</h4>
-      </div>
-      <div class="modal-body">
-                <label>@Resources.Resource.lblDersinAdi</label>
-          <input type="text" class="form-control" id="txtDersAdi" required  placeholder="Dersin Adını Girin...">
-          
-          <label>@Resources.Resource.lblAciklama</label>
-          <textarea class="form-control" id="txtDersAciklama"></textarea>
-
-          <label>@Resources.Resource.lblDerseKabulSekli</label>
-          <select id="cmbKabulSekli" class="form-control">
-                        <option value="1">@Resources.Resource.lblHerkeseAcik</option>
-                        <option value="2" selected>@Resources.Resource.lblDersSorumlusuOnayi</option>
-                       
-                    </select>
-
-          <label>@Resources.Resource.lblAramalardaGorunsun</label>
-          <select id="cmbAramalardaGoster" class="form-control">
-                       
-                        <option value="1" selected>@Resources.Resource.lblEvet</option>
-                        <option value="0">@Resources.Resource.lblHayir</option>
-                    </select>
-            <br>
-            
-      </div>
-      <div class="modal-footer">
-          <button type="button" class="btn btn-primary" id="btnDersEkle">@Resources.Resource.lblTamam</button>
-        <button type="button" class="btn btn-default" data-dismiss="modal">@Resources.Resource.lblIptal</button>
-        
-      </div>
-    </div>
-  </div>
-</div>
-}
 @if (roller.Contains("Ogrenci")) {
  <div class="modal" id="modalDerseKatil"  role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog">

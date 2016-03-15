@@ -97,9 +97,10 @@
 
 <div class="row"> 
     <div class="col-lg-12">                     @if (roller.Contains("Ogretici"))                   {
-                       <button class="btn btn-primary shiny btn-lg" data-toggle="modal" data-target="#modalDosyaEkle" title="Dosya Paylaş" data-toggle="tooltip" data-placement="top"><i class="fa fa-file fa-fw"></i> </button>
-                       <button class="btn btn-info btn-lg shiny" data-toggle="modal" data-target="#modalDuyuruYap"><i class="fa fa-clipboard fa-fw"></i> </button>
-                       <button class="btn btn-warning btn-lg shiny" data-toggle="modal" data-target="#modalYeniOdevVer"><i class="fa fa-tasks fa-fw"></i> </button>
+                       <button class="btn btn-azure shiny btn-lg" data-toggle="modal" data-target="#modalDosyaEkle" title="Dosya Paylaş" data-toggle="tooltip" data-placement="top"><i class="fa fa-file fa-fw"></i> Dosya Paylaş </button>
+                       <button class="btn btn-info btn-lg shiny" data-toggle="modal" data-target="#modalDuyuruYap"><i class="fa fa-clipboard fa-fw"></i> Duyuru Ekle </button>
+                       <button class="btn btn-warning btn-lg shiny" data-toggle="modal" data-target="#modalYeniOdevVer"><i class="fa fa-tasks fa-fw"></i> Ödev Ver </button>
+                       <button class="btn btn-palegreen btn-lg shiny" data-toggle="modal" data-target="#modalDersEkle"><i class="fa fa-book fa-fw"></i> Ders Sayfası Oluştur </button>
                      
                    }                   <br><br>
     <div class="widget">
@@ -322,7 +323,44 @@
       </div>
     </div>
   </div>
-</div>}
+</div><div class="modal" id="modalDersEkle"  role="dialog" aria-labelledby="DersEkleMyModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="DersEkleMyModalLabel">@Resources.Resource.lblYeniBirDersOlustur</h4>
+      </div>
+      <div class="modal-body">
+                <label>@Resources.Resource.lblDersinAdi</label>
+          <input type="text" class="form-control" id="txtDersEkleDersAdi" required  placeholder="Dersin Adını Girin...">
+          
+          <label>@Resources.Resource.lblAciklama</label>
+          <textarea class="form-control" id="txtDersEkleDersAciklama"></textarea>
+
+          <label>@Resources.Resource.lblDerseKabulSekli</label>
+          <select id="cmbDersEkleKabulSekli" class="form-control">
+                        <option value="1">@Resources.Resource.lblHerkeseAcik</option>
+                        <option value="2" selected>@Resources.Resource.lblDersSorumlusuOnayi</option>
+                       
+                    </select>
+
+          <label>@Resources.Resource.lblAramalardaGorunsun</label>
+          <select id="cmbDersEkleAramalardaGoster" class="form-control">
+                       
+                        <option value="1" selected>@Resources.Resource.lblEvet</option>
+                        <option value="0">@Resources.Resource.lblHayir</option>
+                    </select>
+            <br>
+            
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="btnDersEkleDersEkle">@Resources.Resource.lblTamam</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">@Resources.Resource.lblIptal</button>
+        
+      </div>
+    </div>
+  </div>
+</div>}
 @section js
 {
    <script src="@Href(string.Format("~/Panel/Js/Panel.Labels.{0}.js",dil))"></script>

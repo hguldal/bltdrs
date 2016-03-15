@@ -17,5 +17,7 @@ var mesajlar = {
    dosyaicinyetersizalan:'Your storage space is not enough. Please upgrade you account type',
    dosyasecilmedi:'No file selected',
    dosyabasariylaeklendi:'The file was added successfully',
-   dosyaeklenirkenhata:'An error occurred while adding file'
+   dosyaeklenirkenhata:'An error occurred while adding file',
+   dersiolusturuldu:' was created',
+   dersadibos:'Error: Course name is null'
 };
