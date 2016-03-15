@@ -1,4 +1,5 @@
-﻿@{
+﻿
+@{
   
   // Bu prosedür sisteme yeni bir ders ekler.
   // Bu prosedürü sadece oturumu açmış ve Öğretici rolünde olan bir kullanıcı çalıştırabilir.
@@ -50,8 +51,6 @@
 
       // Dersi veritabanına ekle
       db.Execute("INSERT INTO Ders(DersID,DersAdi,Aciklama,UserID,KabulSekli,AramalardaGoster,KabulKodu) VALUES(@0,@1,@2,@3,@4,@5,@6)",yeniDersID,dersAdi,aciklama,WebSecurity.CurrentUserId,kabulSekli,aramalardaGoster,kabulKodu);
-      
-    
       // Ders için bir yönlendirme adresi ekle ilk eklenen dersler için Yönlendirme adresleri, "http://sistemadres/dDersID" formatındadır Örnek olarak http://sistemadres/d34245
       db.Execute("INSERT INTO Yonlendir(Kod,Url) VALUES (@0,@1)",kabulKodu,"~/Ders/?DersID=" + yeniDersID.ToString());
       var queryEklenenDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0",yeniDersID);
