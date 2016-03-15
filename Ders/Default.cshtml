@@ -120,7 +120,7 @@
                                         <div class="header-information">
                                             @queryDers.Aciklama
                                             <br><br>
-                                                                                     @if (takipEdiyor){
+                                        @if (takipEdiyor){
                                         <a href="#" class="btn btn-palegreen btn-sm">
                                             <i class="fa fa-check"></i>
                                             @Resources.Resource.msgBuDersiTakipEdiyorsunuz
@@ -165,10 +165,14 @@
                                         <ul class="nav nav-pills">
                                             <li role="presentation" @if (liste=="aktivite") {<text>class="active"</text>} ><a href="@Href("~/Ders/?DersID=")@DersID&Liste=aktivite"><i class="fa fa-home"></i> @Resources.Resource.lblAnasayfa</a></li>
                                             <li role="presentation" @if (liste=="dosya") {<text>class="active"</text>}><a href="@Href("~/Ders/?DersID=")@DersID&Liste=dosya"><i class="fa fa-folder"></i> @Resources.Resource.lblDosyalar</a></li>
-                                            <li role="presentation" @if (liste=="odev") {<text>class="active"</text>}><a href="@Href("~/Ders/?DersID=")@DersID&Liste=odev"><i class="fa fa-clock-o"></i> @Resources.Resource.lblOdevler</a></li>
+                                            <li role="presentation" @if (liste=="odev") {<text>class="active"</text>}><a href="@Href("~/Ders/?DersID=")@DersID&Liste=odev"><i class="fa fa-tasks"></i> @Resources.Resource.lblOdevler</a></li>
                                             <li role="presentation" @if (liste=="pano") {<text>class="active"</text>}><a href="@Href("~/Ders/?DersID=")@DersID&Liste=pano"><i class="fa fa-clipboard"></i> @Resources.Resource.lblDersPanosu</a></li>
                                             <li role="presentation"><a href="#"><i class="fa fa-comment"></i> @Resources.Resource.lblMesajlasma</a></li>
                                             <li role="presentation" @if (liste=="takipci") {<text>class="active"</text>}><a href="@Href("~/Ders/?DersID=")@DersID&Liste=takipci"><i class="fa fa-user"></i> @Resources.Resource.lblOgrenciler</a></li>
+                                        @if (queryDers.UserID==WebSecurity.CurrentUserId)
+                                        {
+                                            <li role="presentation" @if (liste=="onaybekleyen") {<text>class="active"</text>}><a href="@Href("~/Ders/?DersID=")@DersID&Liste=onaybekleyen"><i class="fa fa-clock-o"></i> @Resources.Resource.lblOnayBekleyenOgrenciler</a></li>
+                                        }
                                         </ul>
                                        
                                        <hr>
@@ -391,7 +395,7 @@
             @foreach (var odev in queryOdevler)
             {
                 <tr>
-                    <td><a href="@Href("~/Odev/Goster?OdevID=")@odev.OdevID" title="Gözat"><i class="fa fa-clock-o fa-2x text-success"></i> @odev.Baslik </a></td>
+                    <td><a href="@Href("~/Odev/Goster?OdevID=")@odev.OdevID" title="Gözat"><i class="fa fa-tasks fa-2x text-success"></i> @odev.Baslik </a></td>
                    
                        <td> 
                             <div class="dropdown">
