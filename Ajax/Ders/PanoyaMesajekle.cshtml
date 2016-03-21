@@ -34,40 +34,21 @@
 
      var db=Database.Open("fb1ae");
  
-     // Ders bilgilerini veritabanından oku
-     var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0 AND Silindi=0 AND Arsivlendi=0",DersID);
-     
-     if (queryDers==null)
-     {
-       db.Close();
-       Response.StatusCode=500;
-       Response.End();  
-     }
+       var queryIslem=db.QueryValue("exec dbo.Ders_PanoyaMesajEkle @0,@1,@2,@3",WebSecurity.CurrentUserId,DersID,mesajMetni);
 
-     
-     // İşlemi yapan kullanıcı dersi takip ediyor mu kontrol et.
-     var takipci=(db.QueryValue("SELECT COUNT(*) FROM DersTakip WHERE UserID=@0 AND DersID=@1 AND Durum=2",WebSecurity.CurrentUserId,DersID)>0);
-
-     // İşlemi yapan kullanıcı ya takipçi ya da dersin sahibi olmalı bunu kontrol et. Eğer öyleyse mesajı panoya ekle
-    if (WebSecurity.CurrentUserId==queryDers.UserID || takipci==true)
+    if (queryIslem>0)
     {
-        /**************/
-        db.Execute("INSERT INTO DersPano(DersID,PaylasanUserID,Metin) VALUES(@0,@1,@2)",DersID,WebSecurity.CurrentUserId,mesajMetni);
-        var panoOgesiID=db.GetLastInsertId();
-        db.Execute("INSERT INTO Aktivite(UserID,DersID,Renk,Ikon,URL,IlaveMetin,IliskiliOge,EylemID) VALUES(@0,@1,@2,@3,@4,@5,@6,@7)",WebSecurity.CurrentUserId,queryDers.DersID,"info","fa-clipboard",Href("~/Ders/?DersID=" + queryDers.DersID + "&Liste=pano"),mesajMetni,"drspno" + panoOgesiID.ToString(),2);
-        db.Execute("INSERT INTO Bildirim(Url,EylemiYapanUserID,IliskiliOge,EylemID,DersID) VALUES(@0,@1,@2,@3,@4)","~/Ders/?DersID=" + DersID + "&Liste=pano",WebSecurity.CurrentUserId,"drspno" + panoOgesiID.ToString(),4,queryDers.DersID);
-        var eklenenBildirimID=db.GetLastInsertId();
-        db.Execute("INSERT INTO BildirimOkunmasiGereken(UserID,BildirimID) (SELECT UserID,@0 FROM DersTakip WHERE DersID=@1 AND Durum=2 UNION SELECT UserID,@0 FROM Ders WHERE DersID=@1)",eklenenBildirimID,DersID);
-        /**************/
         db.Close();
-        Response.Write(panoOgesiID);
-        Response.End();
+        Response.Write(queryIslem);
+        Response.End();    
     }
-    else // işlemi yapan kullanıcı ders sahibi veya dersin takipçisi değilse hata kodu döndür.
+    else
     {
-        Response.StatusCode=400;
+        db.Close();
+        Response.StatusCode=501;
         Response.End();
     }
+   
     
 }
 
