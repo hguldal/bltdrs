@@ -6,7 +6,7 @@
             Response.End();
         }  
 
-    // Gelen değerleri oku (Gelen değerler: Veritabanı tablosundaki alanın adı,değeri ve değiştirelecek olan satırın ID si)
+   
     var DersID=Request["DersID"];
   
     if (string.IsNullOrEmpty(DersID))
@@ -17,26 +17,22 @@
      }
 
     var db=Database.Open("fb1ae");
- 
-    // Ders bilgilerini veritabanından oku.
-    var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0 AND UserID=@1",DersID,WebSecurity.CurrentUserId);
+  
+    var querySilinme=db.QueryValue("exec dbo.Ders_Sil @0,@1",WebSecurity.CurrentUserId,DersID);
 
-    // Eğer kullanıcı dersin sahibi değilse bu işlemi yapmaya izni yok hata kodu döndür.
-    if (WebSecurity.CurrentUserId!=queryDers.UserID)
+    if (querySilinme=="OK")
     {
         db.Close();
-        Response.StatusCode=400;
+        Response.Write("OK");
+        Response.End();    
+    }
+    else
+    {
+        db.Close();
+        Response.StatusCode=501;
         Response.End();
-    }  
-
-    db.Execute("UPDATE Ders SET Silindi=1 WHERE DersID=@0",DersID);
-    db.Execute("UPDATE Aktivite SET Silindi=1 WHERE DersID=@0",DersID);
-    db.Execute("UPDATE Bildirim SET Silindi=1 WHERE DersID=@0",DersID);
-    db.Execute("UPDATE Odev SET Silindi=1 WHERE DersID=@0",DersID);
-    db.Execute("UPDATE DersPano SET Silindi=1 WHERE DersID=@0",DersID);
+    }
     
-    db.Close();
-    Response.Write("OK");
-    Response.End();
+    
 }
 
