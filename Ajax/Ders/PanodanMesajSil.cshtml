@@ -15,7 +15,7 @@
     // Mesaj ID sini oku
     var ID=Request["ID"];
     
-    // MesajID boşsa hta kodu döndür.
+    // MesajID boşsa hata kodu döndür.
     if (string.IsNullOrEmpty(ID))
      {
     
@@ -26,25 +26,18 @@
 
      var db=Database.Open("fb1ae");
 
-     //Mesaj bilgilerini veritabanından oku
-     var queryPanoOgesi=db.QuerySingle("SELECT * FROM DersPano WHERE ID=@0",ID);
-     // Ders bilgilerini veritabanından oku
-     var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0",queryPanoOgesi.DersID);
-   
-    // İşlemi yapan kullanıcı dersin sahibi veya mesajın sahibi mi kontrol et eğer öyleyse mesajı veritabanından sil.
-    if (WebSecurity.CurrentUserId==queryDers.UserID || WebSecurity.CurrentUserId==queryPanoOgesi.PaylasanUserID)
+      var queryIslem=db.QueryValue("exec dbo.Ders_PanodanMesajSil @0,@1",WebSecurity.CurrentUserId,ID);
+
+    if (queryIslem=="OK")
     {
-        db.Execute("UPDATE DersPano SET Silindi=1 WHERE ID=@0",ID);
-        db.Execute("UPDATE Bildirim SET Silindi=1 WHERE IliskiliOge=@0","drspno" + ID.ToString());
-        db.Execute("UPDATE Aktivite SET Silindi=1 WHERE IliskiliOge=@0","drspno" + ID.ToString());
-        
         db.Close();
         Response.Write("OK");
-        Response.End();
+        Response.End();    
     }
     else
     {
-        Response.StatusCode=400;
+        db.Close();
+        Response.StatusCode=501;
         Response.End();
     }
     

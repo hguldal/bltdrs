@@ -32,9 +32,9 @@
      }
 
 
-     var db=Database.Open("fb1ae");
+    var db=Database.Open("fb1ae");
  
-       var queryIslem=db.QueryValue("exec dbo.Ders_PanoyaMesajEkle @0,@1,@2,@3",WebSecurity.CurrentUserId,DersID,mesajMetni);
+    var queryIslem=db.QueryValue("exec dbo.Ders_PanoyaMesajEkle @0,@1,@2,@3",WebSecurity.CurrentUserId,DersID,mesajMetni);
 
     if (queryIslem>0)
     {
