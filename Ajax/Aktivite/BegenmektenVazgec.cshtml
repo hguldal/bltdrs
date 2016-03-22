@@ -18,18 +18,22 @@
        Response.End();
      }
 
-     var db=Database.Open("fb1ae");
-     var queryAktivite=db.QuerySingle("SELECT * FROM Aktivite WHERE AktiviteID=@0",aktiviteID);
- 
-     if (db.QueryValue("SELECT COUNT(*) FROM AktiviteBegeni WHERE UserID=@0 AND AktiviteID=@1",WebSecurity.CurrentUserId,aktiviteID)>0)
-        {
-            // Beğeniyi sil
-            db.Execute("DELETE FROM AktiviteBegeni WHERE AktiviteID=@0 AND UserID=@1",aktiviteID,WebSecurity.CurrentUserId);
-            db.Execute("update Bildirim set silindi=1 WHERE IliskiliOge=@0","aktbgn" + aktiviteID.ToString());
-        }
-     db.Close();
-     Response.Write("OK");
-     Response.End();
+    var db=Database.Open("fb1ae");
+    
+    var queryIslem=db.QueryValue("exec dbo.Aktivite_BegenmektenVazgec @0,@1",WebSecurity.CurrentUserId,aktiviteID);
+
+    if (queryIslem=="OK")
+    {
+        db.Close();
+        Response.Write("OK");
+        Response.End();    
+    }
+    else
+    {
+        db.Close();
+        Response.StatusCode=501;
+        Response.End();
+    }
    
 }
 
