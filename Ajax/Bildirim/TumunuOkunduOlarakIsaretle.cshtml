@@ -6,8 +6,18 @@
         
     }
  var db=Database.Open("fb1ae");
-  db.Execute("DELETE FROM BildirimOkunmasiGereken WHERE UserID=@0",WebSecurity.CurrentUserId);
-  db.Close();
-  Response.Write("OK");
-  Response.End();
+ var queryIslem=db.QueryValue("exec dbo.Bildirim_TumunuOkunduOlarakIsaretle @0",WebSecurity.CurrentUserId);
+
+    if (queryIslem=="OK")
+    {
+        db.Close();
+        Response.Write("OK");
+        Response.End();    
+    }
+    else
+    {
+        db.Close();
+        Response.StatusCode=501;
+        Response.End();
+    }
 }
