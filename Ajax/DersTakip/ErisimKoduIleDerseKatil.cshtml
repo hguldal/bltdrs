@@ -1,49 +1,37 @@
 ﻿@{
   
-     
-    
-     var erisimKodu=Request["ErisimKodu"];
-    
      if (WebSecurity.IsAuthenticated==false || Roles.IsUserInRole("Ogrenci")==false)
      {
         
         Response.StatusCode=401;
         Response.End(); 
      }
-
-     if (string.IsNullOrEmpty(erisimKodu))
+    var erisimKodu=Request["ErisimKodu"].ToLower();
+    
+   if (string.IsNullOrEmpty(erisimKodu))
      {
       
        Response.StatusCode=500;
        Response.End();
      }
      
-       var db=Database.Open("fb1ae");
-      
-       var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE KabulKodu=@0 AND Arsivlendi=0 AND Silindi=0",erisimKodu);
-       
-       if (queryDers==null)
-           {
-               db.Close();
-               Response.StatusCode=502;
-               Response.End();
-           }
+   var db=Database.Open("fb1ae");
+   
+   var queryIslem=db.QueryValue("exec dbo.DersTakip_ErisimKoduIleDerseKatil @0,@1",WebSecurity.CurrentUserId,erisimKodu);
 
-
-           db.Execute("DELETE FROM DersTakip WHERE DersID=@0 AND UserID=@1",queryDers.DersID,WebSecurity.CurrentUserId);
-           
-           db.Execute("INSERT INTO DersTakip(DersID,UserID,Durum,OnayTarihi) VALUES(@0,@1,@2,@3)",queryDers.DersID,WebSecurity.CurrentUserId,2,DateTime.Now);
-
-           var queryOgrenci=db.QuerySingle("SELECT * FROM Profiles WHERE UserID=@0",WebSecurity.CurrentUserId);
-           
-           
-           db.Execute("INSERT INTO Bildirim(Url,EylemiYapanUserID,EylemID,DersID) VALUES(@0,@1,@2,@3)","~/Ders/?DersID=" + queryDers.DersID + "&Liste=onaybekleyen",WebSecurity.CurrentUserId,3,queryDers.DersID);
-           var eklenenBildirimID=db.GetLastInsertId();
-           db.Execute("INSERT INTO BildirimOkunmasiGereken(UserID,BildirimID) VALUES(@0,@1)",queryDers.UserID,eklenenBildirimID); 
-  
-           db.Close();   
-           Response.Write(queryDers.DersID);
-           Response.End();
+    if (queryIslem>0)
+    {
+        db.Close();
+        Response.Write(queryIslem);
+        Response.End();    
+    }
+    else
+    {
+        db.Close();
+        Response.StatusCode=501;
+        Response.End();
+    }   
+ 
        
 }
 
