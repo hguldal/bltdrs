@@ -6,7 +6,7 @@
 
 @{
      
-      if (WebSecurity.IsAuthenticated==false || Roles.IsUserInRole("Admin")==false)
+   if (WebSecurity.IsAuthenticated==false)
      {
         Response.StatusCode=400;
         Response.End();
@@ -18,11 +18,9 @@
     var connString=string.Format("DefaultEndpointsProtocol=http;AccountName={0};AccountKey={1};",azureStorageHesapAdi,azureStorageHesapAnahtari);
     CloudStorageAccount storageHesap = CloudStorageAccount.Parse(connString);		
  
-    var blobClient = storageHesap.CreateCloudBlobClient();
-           
+    var blobClient = storageHesap.CreateCloudBlobClient();      
     
     ServiceProperties blobServiceProperties = blobClient.GetServiceProperties();
-
     
     blobServiceProperties.Cors = new CorsProperties();
 
@@ -35,8 +33,7 @@
                 MaxAgeInSeconds = 1800 
             });
 
-            blobClient.SetServiceProperties(blobServiceProperties);
-            
+    blobClient.SetServiceProperties(blobServiceProperties);          
     
     Response.Write("");
     Response.End();
