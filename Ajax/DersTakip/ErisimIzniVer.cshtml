@@ -1,14 +1,13 @@
 ﻿@{
   
-     
      var DersID=Request["DersID"];   
      var UserID=Request["UserID"];   
     
      if (WebSecurity.IsAuthenticated==false || Roles.IsUserInRole("Ogretici")==false)
      {
         
-        Response.StatusCode=401;
-        Response.End(); 
+       Response.StatusCode=401;
+       Response.End(); 
      }
 
      if (string.IsNullOrEmpty(DersID))
@@ -26,30 +25,24 @@
      }
 
      
-       var db=Database.Open("fb1ae");
-       using (db)
-       {
-
-           //aktif kullanici dersin sahibi mi ?
-           if (db.QueryValue("SELECT COUNT(*) FROM Ders WHERE DersID=@0 AND UserID=@1",DersID,WebSecurity.CurrentUserId)<1)
-           {
-               db.Close();
-               Response.StatusCode=500;
-               Response.End();
-           }
-
-           db.Execute("INSERT INTO DersTakip(DersID,UserID,IstekTarihi,OnayTarihi,Durum) VALUES(@0,@1,@2,@3,@4)",DersID,UserID,DateTime.Now,DateTime.Now,2);
-
-           var queryOgrenci=db.QuerySingle("SELECT * FROM Profiles WHERE UserID=@0",UserID);
+     var db=Database.Open("fb1ae");
+      
+     var queryOgrenci=db.QuerySingle("exec dbo.DersTakip_ErisimIzniVer @0,@1,@2",WebSecurity.CurrentUserId,UserID,DersID);
           
-           Json.Write(queryOgrenci, Response.Output);
+     if (queryOgrenci==null)
+      {
+         db.Close();   
+         Response.StatusCode=501;
+         Response.End();
+      }
+        else
+      {
+         db.Close();   
+         Json.Write(queryOgrenci, Response.Output);
+         Response.ContentType = "application/json";
+         Response.End();
            
-           Response.ContentType = "application/json";
-           db.Close();   
-          
-           Response.End();
-
-
-       }
+      }      
 }
+
 
