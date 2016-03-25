@@ -26,26 +26,21 @@
      }
 
      
-       var db=Database.Open("fb1ae");
-       using (db)
-       {
+    var db=Database.Open("fb1ae");
+    var queryIslem=db.QueryValue("exec dbo.DersTakip_Reddet @0,@1,@2",WebSecurity.CurrentUserId,UserID,DersID);
 
-           //aktif kullanici dersin sahibi mi ?
-           if (db.QueryValue("SELECT COUNT(*) FROM Ders WHERE DersID=@0 AND UserID=@1",DersID,WebSecurity.CurrentUserId)<1)
-           {
-               db.Close();
-               Response.StatusCode=500;
-               Response.End();
-           }
-
-           db.Execute("DELETE FROM DersTakip WHERE DersID=@0 AND UserID=@1",DersID,UserID);
-           db.Execute("UPDATE Bildirim SET Silindi=1 WHERE IliskiliOge=@0","drsistg" + UserID.ToString() + DersID.ToString());
-          
-           db.Close();   
-           Response.Write("OK");
-           Response.End();
-
-
-       }
+    if (queryIslem=="OK")
+    {
+        db.Close();
+        Response.Write("OK");
+        Response.End();    
+    }
+    else
+    {
+        db.Close();
+        Response.StatusCode=501;
+        Response.End();
+    }
 }
+
 
