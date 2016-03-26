@@ -25,10 +25,7 @@
     foreach (var silinecekOge in silinecekOgeler)
     {
       
-      var ogeTur=silinecekOge.Substring(0,2);
-    
-    if (ogeTur=="d_")
-     {
+         var ogeTur=silinecekOge.Substring(0,2);
          var tmpSilinecekOge=silinecekOge.Replace("d_",""); 
          var queryDosya=db.QuerySingle("SELECT * FROM Dosya WHERE DosyaID=@0 AND UserID=@1",tmpSilinecekOge,WebSecurity.CurrentUserId);
          if (queryDosya==null)
@@ -36,30 +33,21 @@
             continue;
          }
 
-         db.Execute("UPDATE Dosya SET Silindi=1 WHERE DosyaID=@0 AND UserID=@1",tmpSilinecekOge,WebSecurity.CurrentUserId);
+         var queryIslem=db.QueryValue("exec dbo.Dosya_Sil @0,@1",WebSecurity.CurrentUserId,tmpSilinecekOge);
+         if (queryIslem!="OK")
+         {
+             db.Close();
+             Response.StatusCode=501;
+             Response.End();
+         }
          var azureStorageHesapAdi=System.Configuration.ConfigurationManager.AppSettings["AzureStorageHesapAdi"];	
          var azureStorageHesapAnahtari=System.Configuration.ConfigurationManager.AppSettings["AzureStorageHesapAnahtari"];
-  
          var connString=string.Format("DefaultEndpointsProtocol=http;AccountName={0};AccountKey={1};",azureStorageHesapAdi,azureStorageHesapAnahtari);
          CloudStorageAccount storageHesap = CloudStorageAccount.Parse(connString);		
          var blobIstemci = storageHesap.CreateCloudBlobClient();
          var container = blobIstemci.GetContainerReference("dosyalar");
          CloudBlockBlob blockBlob = container.GetBlockBlobReference(queryDosya.KayitAdi);
          blockBlob.Delete();
-         
-     }
-     else if (ogeTur=="k_")
-     {
-        var tmpSilinecekOge=silinecekOge.Replace("k_",""); 
-         var queryKlasor=db.QuerySingle("SELECT * FROM Klasor WHERE KlasorID=@0 AND UserID=@1",tmpSilinecekOge,WebSecurity.CurrentUserId);
-         if (queryKlasor==null)
-         {
-            continue;
-         }
-
-         db.Execute("UPDATE Klasor SET Silindi=1 WHERE KlasorID=@0 AND UserID=@1",tmpSilinecekOge,WebSecurity.CurrentUserId);
-     }
-        
     }
 
      
