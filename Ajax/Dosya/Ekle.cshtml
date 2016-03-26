@@ -7,12 +7,6 @@
         Response.End(); 
      }
 
- if (IsPost)
-   {
-   
-    
-    var db=Database.Open("fb1ae");
-
     var azureDosyaAdi=Request["AzureDosyaAdi"];
     var aciklama=Request["Aciklama"];
     var boyut=Request["DosyaBoyut"];
@@ -20,39 +14,41 @@
     var dosyaTuru=Request["DosyaTuru"];
     var konum=Request["Konum"];
     var DersID=Request["DersID"];
+
     if (string.IsNullOrEmpty(aciklama))
     {
         aciklama=dosyaAdi;
     }
 
-    if (string.IsNullOrEmpty(konum))
+    if (string.IsNullOrEmpty(dosyaAdi))
     {
-        konum="-1";
-    }
-
-
-        Random r=new Random();
-     
-        var yeniDosyaID=r.Next(1000,1000000);
-
-        while (db.QueryValue("SELECT COUNT(*) FROM Dosya WHERE DosyaID=@0",yeniDosyaID)>0)
-          {
-             yeniDosyaID=r.Next(1000,1000000);
-          }
-    
-        db.Execute("INSERT INTO Dosya(DosyaID,UserID,Aciklama,Boyut,Uzanti,Tur,DosyaAdi,KayitAdi,Konum,YukleyenUserID) VALUES(@0,@1,@2,@3,@4,@5,@6,@7,@8,@9)",yeniDosyaID,WebSecurity.CurrentUserId,aciklama,boyut,"",dosyaTuru,dosyaAdi,azureDosyaAdi,konum,WebSecurity.CurrentUserId);
-
-        var queryEklenenDosya=db.QuerySingle("SELECT * FROM Dosya WHERE DosyaID=@0",yeniDosyaID);
-        db.Close();   
-    
-        Json.Write(queryEklenenDosya, Response.Output);
-        Response.ContentType = "application/json";
+        Response.StatusCode=501;
         Response.End();
     }
+
+    if (string.IsNullOrEmpty(azureDosyaAdi))
+    {
+        Response.StatusCode=501;
+        Response.End();
+    }
+
+    var db=Database.Open("fb1ae");
+
+    var queryEklenenDosya=db.QuerySingle("exec dbo.Dosya_Ekle @0,@1,@2,@3,@4,@5,@6,@7",azureDosyaAdi, aciklama,boyut,dosyaAdi,dosyaTuru,konum,DersID,WebSecurity.CurrentUserId);
+    
+    
+    if (queryEklenenDosya==null)
+      {
+        db.Close();
+        Response.StatusCode=501;
+        Response.End();   
+      }
     else
     {
-        Response.StatusCode=500;
-        Response.End();
+      db.Close();   
+      Json.Write(queryEklenenDosya, Response.Output);
+      Response.ContentType = "application/json";
+      Response.End();         
     }
    
 }
