@@ -19,52 +19,38 @@
      }
     string[] izinVerilecekDersler = DersID.Split(',');
     string[] izinVerilecekDosyalar = DosyaID.Split(',');
-    
+    bool islemGerceklesti=false;
     var db=Database.Open("fb1ae");
  
     foreach (var izinVerilecekDosya in izinVerilecekDosyalar)
     {
         var tmpizinVerilecekDosya=izinVerilecekDosya.Replace("d_","");
-        var queryDosya=db.QuerySingle("SELECT * FROM Dosya WHERE DosyaID=@0 AND UserID=@1",tmpizinVerilecekDosya,WebSecurity.CurrentUserId);
-
-        if (WebSecurity.CurrentUserId!=queryDosya.UserID)
-        {
-            continue;
-        }
-
-        foreach (var izinVerilecekDers in izinVerilecekDersler)
-        {
-           
-            var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0 AND UserID=@1 AND Silindi=0 AND Arsivlendi=0",izinVerilecekDers,WebSecurity.CurrentUserId);
-
-            if (queryDers==null)
-            {
-                continue;
-            }
-
-            if (db.QueryValue("SELECT COUNT(*) FROM DosyaIzinDers WHERE DosyaID=@0 AND DersID=@1",tmpizinVerilecekDosya,izinVerilecekDers)>0)
-              {
-                     continue;
-              }
-                 db.Execute("INSERT INTO DosyaIzinDers(DosyaID,DersID) VALUES(@0,@1)",tmpizinVerilecekDosya,izinVerilecekDers);
-                 db.Execute("INSERT INTO DersDosyalari(DosyaID,DersID) VALUES(@0,@1)",tmpizinVerilecekDosya,izinVerilecekDers);
-
-                // Derse dosya eklenmiş olması yeni bir aktivite anlamına geliyor. Yeni bir aktivite oluştur.
-                var queryEklenenDosya=db.QuerySingle("SELECT * FROM Dosya WHERE DosyaID=@0",tmpizinVerilecekDosya);
-                db.Execute("INSERT INTO Aktivite(UserID,DersID,Renk,Ikon,URL,IlaveMetin,IliskiliOge,EylemID) VALUES(@0,@1,@2,@3,@4,@5,@6,@7)",WebSecurity.CurrentUserId,izinVerilecekDers,"success","fa-file-text-o",Href("~/Dosya/Indir?DosyaID=" + tmpizinVerilecekDosya.ToString()),queryEklenenDosya.Aciklama,"drsdsy" + tmpizinVerilecekDosya.ToString(),1);
    
-                // Yeni bir aktivite oluşturulması dersi takip edenlere yeni bir bildirim oluşturulmasını gerektiriyor. Yeni bir bildirim oluştur.
-                db.Execute("INSERT INTO Bildirim(Url,EylemiYapanUserID,IliskiliOge,EylemID,DersID) VALUES(@0,@1,@2,@3,@4)","~/Ders/?DersID=" + izinVerilecekDers + "&Liste=dosya",WebSecurity.CurrentUserId,"drsdsy" + tmpizinVerilecekDosya.ToString(),2,izinVerilecekDers);
-                var eklenenBildirimID=db.GetLastInsertId();
-
-                // Bu bildirimi öğrencilerin okuması gerekiyor. 
-                db.Execute("INSERT INTO BildirimOkunmasiGereken(UserID,BildirimID) SELECT UserID,@0 FROM DersTakip WHERE DersID=@1 AND Durum=2",eklenenBildirimID,izinVerilecekDers);
+       foreach (var izinVerilecekDers in izinVerilecekDersler)
+        {
+           var queryIslem=db.QueryValue("exec dbo.Dosya_ErisimIzniniVerDers @0,@1,@2",WebSecurity.CurrentUserId,izinVerilecekDers,tmpizinVerilecekDosya);
+           if (queryIslem=="OK")
+                  {
+                       islemGerceklesti=true;
+                  }
+                  else
+                  {
+                     continue;
+                  }
         }
     }
-
-     db.Close();
-     Response.Write("OK");
-     Response.End();
-     
+    db.Close();
     
-     }
+    if (islemGerceklesti)
+    {
+        Response.Write("OK");
+        Response.End();    
+    }
+    else
+    {
+        Response.StatusCode=501;
+        Response.End();
+    }
+
+    
+}
