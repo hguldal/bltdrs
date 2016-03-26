@@ -20,27 +20,19 @@
 
      var db=Database.Open("fb1ae");
  
-    
-     
-     var queryDosya=db.QuerySingle("SELECT * FROM Dosya WHERE DosyaID=@0 AND UserID=@1 AND Silindi=0",DosyaID,WebSecurity.CurrentUserId);
+     var queryIslem=db.QueryValue("exec dbo.Dosya_AyarKaydet @0,@1,@2,@3",WebSecurity.CurrentUserId,DosyaID,alan,deger);
 
-     if (queryDosya==null)
-      {
-        db.Close();
-        Response.StatusCode=500;
-        Response.End();  
-      }
-
-    if (WebSecurity.CurrentUserId!=queryDosya.UserID)
+    if (queryIslem=="OK")
     {
-        Response.StatusCode=400;
+        db.Close();
+        Response.Write("OK");
+        Response.End();    
+    }
+    else
+    {
+        db.Close();
+        Response.StatusCode=501;
         Response.End();
     }
-
-     db.Execute("UPDATE Dosya SET " + alan  +"=@0 WHERE DosyaID=@1",deger,DosyaID);
-     
-     Response.Write("OK");
-     Response.End();
-     
-     db.Close();
+ 
      }
