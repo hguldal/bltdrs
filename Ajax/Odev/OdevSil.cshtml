@@ -20,34 +20,20 @@
 
      var db=Database.Open("fb1ae");
  
-     var queryOdev=db.QuerySingle("SELECT * FROM Odev WHERE OdevID=@0",OdevID);
-     var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0 AND Silindi=0",queryOdev.DersID);
-    
-    if (queryDers==null)
-     {
-       db.Close();
-       Response.StatusCode=500;
-       Response.End();  
-     }
+      var queryIslem=db.QueryValue("exec dbo.Odev_Sil @0,@1",WebSecurity.CurrentUserId,OdevID);
 
-    if (WebSecurity.CurrentUserId==queryDers.UserID)
+    if (queryIslem=="OK")
     {
-       
-        db.Execute("UPDATE Odev SET Silindi=1 WHERE OdevID=@0",OdevID);
-        db.Execute("UPDATE OdevGonderisi SET Silindi=1 WHERE OdevID=@0",OdevID);
-        db.Execute("UPDATE Dosya SET Silindi=1 WHERE DosyaID IN (SELECT DosyaID FROM OdevGonderisi WHERE OdevID=@0)",OdevID);
-        db.Execute("UPDATE Aktivite SET Silindi=1 WHERE IliskiliOge=@0","odvver" + OdevID.ToString());
-        db.Execute("UPDATE Bildirim SET Silindi=1 WHERE IliskiliOge=@0","odvver" + OdevID.ToString());
         db.Close();
         Response.Write("OK");
-        Response.End();
+        Response.End();    
     }
     else
     {
-        Response.StatusCode=400;
+        db.Close();
+        Response.StatusCode=501;
         Response.End();
     }
-    
 }
 
 
