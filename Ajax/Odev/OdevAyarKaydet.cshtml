@@ -21,30 +21,6 @@
 
      var db=Database.Open("fb1ae");
  
-     
-     var queryOdev=db.QuerySingle("SELECT * FROM Odev WHERE OdevID=@0 AND Silindi=0",OdevID);
-
-     if (queryOdev==null)
-     {
-        Response.StatusCode=400;
-        Response.End();
-     }
-
-     var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0 AND UserID=@1 AND Silindi=0",queryOdev.DersID,WebSecurity.CurrentUserId);
-
-    if (queryDers==null)
-     {
-       db.Close();
-       Response.StatusCode=500;
-       Response.End();  
-     }
-    
-    if (WebSecurity.CurrentUserId!=queryDers.UserID)
-    {
-        Response.StatusCode=400;
-        Response.End();
-    }
-
     if (alan=="SonTeslimTarihi")
     {
       
@@ -58,10 +34,20 @@
        
     }
 
-     db.Execute("UPDATE Odev SET " + alan  +"=@0 WHERE OdevID=@1",deger,OdevID);
-     
-     Response.Write("OK");
-     Response.End();
-     
-     db.Close();
+   var queryIslem=db.QueryValue("exec dbo.Odev_AyarKaydet @0,@1,@2,@3",WebSecurity.CurrentUserId,OdevID,alan,deger);
+
+    if (queryIslem=="OK")
+    {
+        db.Close();
+        Response.Write("OK");
+        Response.End();    
+    }
+    else
+    {
+        db.Close();
+        Response.StatusCode=501;
+        Response.End();
+    }
+
+ 
      }
