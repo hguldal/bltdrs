@@ -6,28 +6,15 @@
         Response.End(); 
      }
    
-   if (IsPost)
-   {
-   
     var OdevID=Request["OdevID"];
     var Aciklama=Request["Aciklama"];
     var boyut=Request["DosyaBoyut"];
     var dosyaAdi=Request["DosyaAdi"];
     var dosyaTuru=Request["DosyaTuru"];
     var azureDosyaAdi=Request["AzureDosyaAdi"];
-
     
     var db=Database.Open("fb1ae");
-    var queryOdev=db.QuerySingle("SELECT * FROM Odev WHERE OdevID=@0 AND Silindi=0",OdevID);
-    var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0 AND Silindi=0 AND Arsivlendi=0",queryOdev.DersID);
-
-    if (queryDers==null)
-     {
-       db.Close();
-       Response.StatusCode=500;
-       Response.End();  
-     }
-    
+  
     if (string.IsNullOrEmpty(azureDosyaAdi))
     {
         Response.StatusCode=502;
@@ -40,92 +27,24 @@
         Response.End();
     }
 
-    //kişi dersi takip ediyor mu
-    var takipci=(db.QueryValue("SELECT COUNT(*) FROM DersTakip WHERE DersID=@0 AND UserID=@1 AND Durum=2",queryOdev.DersID,WebSecurity.CurrentUserId)>0);
 
-    if (!takipci)
-    {
-      Response.StatusCode=400;
-      Response.End();    
-    }
+    var queryGonderilenOdev=db.QuerySingle("exec dbo.Odev_Gonder @0,@1,@2,@3,@4,@5,@6",WebSecurity.CurrentUserId, OdevID,boyut,dosyaAdi,dosyaTuru,azureDosyaAdi,Aciklama);
     
-    //ödevin gönderim süresi dolmuş mu
-    TimeSpan aralik=DateTime.Now-queryOdev.SonTeslimTarihi;
-    var odevGonderimSuresiDoldu= (aralik.TotalMinutes>0);
-    var gonderimAcik=false;
-
-     if (queryOdev.OdevGonderimi==1)
-          {
-              gonderimAcik=true;
-          }
-
-          else if (queryOdev.OdevGonderimi==2)
-          {
-              gonderimAcik=false;
-          }
-          else if (queryOdev.OdevGonderimi==3)
-          {
-              if (odevGonderimSuresiDoldu)
-              {
-                  gonderimAcik=false;
-              }
-          }
-
-
-    if (!gonderimAcik)
-    {
-        
+    
+    if (queryGonderilenOdev==null)
+      {
+        db.Close();
         Response.StatusCode=501;
-        Response.End();
+        Response.End();   
+      }
+    else
+    {
+      db.Close();   
+      Json.Write(queryGonderilenOdev, Response.Output);
+      Response.ContentType = "application/json";
+      Response.End();         
     }
-    
- 
-     if (db.QueryValue("SELECT COUNT(*) FROM OdevGonderisi WHERE UserID=@0 AND OdevID=@1",WebSecurity.CurrentUserId,queryOdev.OdevID)>0)
-     {
-         Response.StatusCode=503;
-         Response.End(); 
-     }
-   
-     Random r=new Random();
-                
-     var yeniDosyaID=r.Next(1000,1000000);
 
-     while (db.QueryValue("SELECT COUNT(*) FROM Dosya WHERE DosyaID=@0",yeniDosyaID)>0)
-         {
-           yeniDosyaID=r.Next(1000,1000000);
-         }
-
-      //dosyayı ekle
-     db.Execute("INSERT INTO Dosya(DosyaID,UserID,Aciklama,Boyut,Uzanti,Tur,DosyaAdi,KayitAdi,YuklenmeTuru,YukleyenUserID) VALUES(@0,@1,@2,@3,@4,@5,@6,@7,@8,@9)",yeniDosyaID,queryDers.UserID,queryOdev.Baslik + " ödevinin dosyası",boyut,"",dosyaTuru,dosyaAdi,azureDosyaAdi,2,WebSecurity.CurrentUserId);
-             
-             
-     //ödevi gönderen öğrenciye erişim izni ver
-     db.Execute("INSERT INTO DosyaIzinKisi(DosyaID,UserID) VALUES(@0,@1)",yeniDosyaID,WebSecurity.CurrentUserId);
-             
-     Random r2=new Random();
-     var yeniOdevGonderiID=r2.Next(1000,1000000);
-
-     while (db.QueryValue("SELECT COUNT(*) FROM OdevGonderisi WHERE OdevGonderiID=@0",yeniOdevGonderiID)>0)
-          {
-            yeniOdevGonderiID=r2.Next(1000,1000000);
-          }
-             
-     db.Execute("INSERT INTO OdevGonderisi(OdevID,UserID,Aciklama,DosyaID,OdevGonderiID) VALUES(@0,@1,@2,@3,@4)",OdevID,WebSecurity.CurrentUserId,Aciklama,yeniDosyaID,yeniOdevGonderiID);
-                
-     var queryOdevGonderisi=db.QuerySingle("SELECT * FROM OdevGonderisi WHERE OdevGonderiID=@0",yeniOdevGonderiID);
-
-     db.Execute("INSERT INTO Bildirim(Url,EylemiYapanUserID,EylemID,DersID) VALUES(@0,@1,@2,@3)","~/Odev/OdevGonderisi?OdevGonderiID=" + yeniOdevGonderiID,WebSecurity.CurrentUserId,10,queryDers.DersID);
-     var eklenenBildirimID=db.GetLastInsertId();
-
-     db.Execute("INSERT INTO BildirimOkunmasiGereken(UserID,BildirimID) VALUES (@0,@1)",queryDers.UserID,eklenenBildirimID);
-  
-     db.Close(); 
-    
-     Json.Write(queryOdevGonderisi, Response.Output);  
-     Response.ContentType = "application/json";
-     Response.End();
-   
-    }
 }
 
  
