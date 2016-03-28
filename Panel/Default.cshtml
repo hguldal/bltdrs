@@ -162,9 +162,9 @@
                         <a href="@item.URL">@Genel.AktiviteEylemindenMetne(item.EylemID,dil) </a>  		
                         <a href="@item.URL">in @item.UI_DersAdi </a>		
                        }		
-                        <br>		
+                        <br>		                        <br>
                         @if (item.IlaveMetin!=null) {		
-                            <em><br>@Html.Raw(item.IlaveMetin.ParseURL().ParseHashtag().ParseUsername())</em>		
+                            @Html.Raw(item.IlaveMetin)		
                         }		
                         		
                         <br><br>		
@@ -246,6 +246,7 @@
                         <input type="text" id="odevVertxtOdevBaslik" class="form-control" name="Baslik">
                         
                         <label>@Resources.Resource.lblOdevMetni</label>
+                        
                         <textarea name="Aciklama" class="form-control" rows="10" id="odevVertxtAciklama"></textarea>
                         
                </div>
@@ -393,6 +394,14 @@
 
 @section js
 {
+
+    <script src="@Href("~/Shared/TemaBeyond/assets/js/editors/summernote/summernote.js")"></script>
+    <script>
+        $('#odevVertxtAciklama').summernote({ 
+        height: 150
+        });
+    </script>
+
    <script src="@Href(string.Format("~/Panel/Js/Panel.Labels.{0}.js",dil))"></script>
    <script src="@Href("~/Panel/Js/Default.min.js")"></script>
 }

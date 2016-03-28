@@ -15,7 +15,7 @@
 
     DateTime bitis=new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,0,0,0);
 
-   var queryBildirimler=db.Query("SELECT * FROM BildirimOkunmasiGereken INNER JOIN Bildirim ON Bildirim.BildirimID=BildirimOkunmasiGereken.BildirimID INNER JOIN Profiles ON Bildirim.EylemiYapanUserID=Profiles.userID WHERE BildirimOkunmasiGereken.UserID=@0 AND Bildirim.Silindi=0 ORDER BY BildirimOkunmasiGereken.BildirimID DESC",WebSecurity.CurrentUserId);
+   var queryBildirimler=db.Query("exec dbo.Bildirim_KullaniciyaGoreBildirimler @0",WebSecurity.CurrentUserId);
 
     List<Bildirim> listeBildirimler=new List<Bildirim>();
 
