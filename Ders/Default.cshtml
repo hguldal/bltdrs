@@ -25,11 +25,13 @@
     var queryKullanici=db.QuerySingle("SELECT * FROM Profiles WHERE UserID=@0",WebSecurity.CurrentUserId);
     var queryDersSahibi=db.QuerySingle("SELECT * FROM Profiles WHERE userID=@0",queryDers.UserID);
     
-    var ogrenciSayisi=db.QueryValue("SELECT COUNT(*) FROM DersTakip WHERE DersID=@0 AND Durum=2",DersID);
-    var odevSayisi=db.QueryValue("SELECT count(*) FROM Odev INNER JOIN Ders ON Odev.DersID=Ders.DersID WHERE Odev.Silindi=0 AND Ders.DersID=@0 AND Ders.Arsivlendi=0 AND Ders.Silindi=0",DersID);
-    var dosyaSayisi=db.QueryValue("SELECT count(*) FROM DersDosyalari INNER JOIN Dosya ON DersDosyalari.DosyaID=Dosya.DosyaID WHERE DersDosyalari.DersID=@0 AND Dosya.Silindi=0 AND Dosya.YuklenmeTuru<>2",DersID);
-    var duyuruSayisi=db.QueryValue("SELECT count(*) FROM DersPano WHERE DersID=@0 AND Silindi=0",DersID);
-    var queryDersAdresKodu=db.QueryValue("SELECT Kod FROM Yonlendir WHERE Url=@0","~/Ders/?DersID=" + DersID);
+    var queryDersSayisalDegerler=db.QuerySingle("exec dbo.Ders_SayisalDegerler @0",DersID);
+
+    var ogrenciSayisi=queryDersSayisalDegerler.OgrenciSayisi;
+    var odevSayisi=queryDersSayisalDegerler.OdevSayisi;
+    var dosyaSayisi=queryDersSayisalDegerler.DosyaSayisi;
+    var duyuruSayisi=queryDersSayisalDegerler.DuyuruSayisi;
+    var queryDersAdresKodu=queryDersSayisalDegerler.DersAdresKodu;
     var dil=queryKullanici.Dil;   
 
     if (dil=="tr")
