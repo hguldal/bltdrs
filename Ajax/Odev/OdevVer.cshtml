@@ -8,7 +8,7 @@
 
     var DersID=Request["DersID"];
     var Baslik=Request["Baslik"];
-    var Aciklama=Request["Aciklama"];
+    var Aciklama=Request.Unvalidated("Aciklama");// Request["Aciklama"];
     var OdevGonderimi=Request["OdevGonderimi"];
 
    if (string.IsNullOrEmpty(Aciklama))
