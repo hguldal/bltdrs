@@ -32,6 +32,7 @@
     //Eklenen ders bilgilerini JSON formatında arayüze geri döndür.
       if (queryEklenenDers==null)
       {
+        db.Close();
         Response.StatusCode=501;
         Response.End();   
       }
