@@ -22,7 +22,7 @@
     
     if (roller.Contains("Ogretici"))
      {
-        queryAktiviteler=db.Query("SELECT top 25 * FROM Aktivite WHERE Aktivite.DersID NOT IN (SELECT DersID FROM Ders WHERE Arsivlendi=1 OR Ders.Silindi=1) AND Silindi=0 AND UserID=@0 ORDER BY AktiviteID DESC",WebSecurity.CurrentUserId);        queryDerslerim=db.Query("SELECT  * FROM Ders WHERE Silindi=0 AND userID=@0 AND Arsivlendi=0",WebSecurity.CurrentUserId);   
+        queryAktiviteler=db.Query("SELECT top 25 * FROM Aktivite WHERE Aktivite.DersID IN (SELECT DersID FROM Ders WHERE Arsivlendi=0 AND Ders.Silindi=0 AND Ders.UserID=@0) AND Silindi=0 ORDER BY AktiviteID DESC",WebSecurity.CurrentUserId);        queryDerslerim=db.Query("SELECT  * FROM Ders WHERE Silindi=0 AND userID=@0 AND Arsivlendi=0",WebSecurity.CurrentUserId);   
      }
     else if (roller.Contains("Ogrenci"))
     {
@@ -52,7 +52,7 @@
        a.UI_AktiviteOkundu=db.QueryValue("SELECT count(*) FROM AktiviteOkunan WHERE AktiviteID=@0",aktivite.AktiviteID);
        a.UI_GorunenTarih=Genel.DateLabel(aktivite.Tarih,dil);
        var queryAktiviteUser=db.QuerySingle("SELECT * FROM Profiles INNER JOIN Unvan ON Profiles.UnvanID=Unvan.UnvanID  WHERE userID=@0",aktivite.UserID);
-       if (aktivite.UserID==WebSecurity.CurrentUserId)
+       if (aktivite.UserID==WebSecurity.CurrentUserId || roller.Contains("Ogretici"))
        {
            a.UI_SilmeDugmesi=1;
        }
@@ -297,7 +297,7 @@
     </div>
   </div>
 </div><div class="modal" id="modalDuyuruYap" tabindex="-1" role="dialog" aria-labelledby="duyuruYapmyModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -332,7 +332,7 @@
     </div>
   </div>
 </div><div class="modal" id="modalDersEkle"  role="dialog" aria-labelledby="DersEkleMyModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>

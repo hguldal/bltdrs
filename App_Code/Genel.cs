@@ -135,7 +135,7 @@ public static string BildirimEylemindenMetne(int EylemID,string dil)
            }
            else if (EylemID==4)
            {
-               returnString=" dersinde bir yazı paylaştı";
+               returnString=" bir yazı paylaştı";
            }
           
            else if (EylemID==5)
@@ -164,7 +164,7 @@ public static string BildirimEylemindenMetne(int EylemID,string dil)
                }
           else if (EylemID==11)
                {
-                   returnString=" dersinde yeni bir ödev verdi";
+                   returnString=" yeni bir ödev verdi";
                }
 
 
@@ -234,7 +234,7 @@ public static string AktiviteEylemindenMetne(int EylemID,string dil)
            }
            else if (EylemID==2)
            {
-               returnString=" dersinde bir yazı paylaştı";
+               returnString=" bir yazı paylaştı";
            }
            else if (EylemID==3)
            {
