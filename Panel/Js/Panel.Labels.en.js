@@ -12,7 +12,7 @@ var mesajlar = {
    odevbasariylaeklendi:'Assigment was added successfully',
    verilmesirasindabirhataolustu:'An error occured when assigment adding',    
    islemsirasindabirhataolustu:'Unexpected error',
-
+   odevinaciklamasicokbuyuk:'Assigment description too big (max length 100KB)',
    dosyaboyutubuyuk:'The file size is too big',
    dosyaicinyetersizalan:'Your storage space is not enough. Please upgrade you account type',
    dosyasecilmedi:'No file selected',
