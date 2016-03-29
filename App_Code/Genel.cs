@@ -135,7 +135,7 @@ public static string BildirimEylemindenMetne(int EylemID,string dil)
            }
            else if (EylemID==4)
            {
-               returnString=" dersinin mesaj panosuna bir yazı ekledi";
+               returnString=" dersinde bir yazı paylaştı";
            }
           
            else if (EylemID==5)
@@ -186,7 +186,7 @@ public static string BildirimEylemindenMetne(int EylemID,string dil)
            }
            else if (EylemID==4)
            {
-               returnString=" add a text course board:";
+               returnString=" share a text in the course page";
            }
           
            else if (EylemID==5)
@@ -230,11 +230,11 @@ public static string AktiviteEylemindenMetne(int EylemID,string dil)
        {
            if (EylemID==1)
            {
-               returnString=" bir dosya ekledi";
+               returnString=" bir dosya paylaştı";
            }
            else if (EylemID==2)
            {
-               returnString=" duyuru panosuna bir duyuru ekledi";
+               returnString=" dersinde bir yazı paylaştı";
            }
            else if (EylemID==3)
            {
@@ -250,7 +250,7 @@ public static string AktiviteEylemindenMetne(int EylemID,string dil)
            }
            else if (EylemID==2)
            {
-               returnString=" added a announcement in course notice board";
+               returnString=" shared a text in the course page";
            }
            else if (EylemID==3)
            {
