@@ -32,7 +32,6 @@
             Response.End();
         }  
   
-      var queryDosyaIzinKisi=db.Query("SELECT * FROM DosyaIzinKisi WHERE DosyaID=@0",DosyaID);
       var queryDosyaIzinDers=db.Query("SELECT * FROM DersDosyalari INNER JOIN Ders ON DersDosyalari.DersID=Ders.DersID WHERE DosyaID=@0",DosyaID);
     db.Close();
 }
