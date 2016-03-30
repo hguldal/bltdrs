@@ -79,7 +79,7 @@
              <label for="cmbUnvanlar" class="col-sm-3 control-label">Ünvan</label>
                  <div class="col-sm-3">
                         <select id="cmbUnvanlar" data-ilkdeger="@queryUser.UnvanID">
-                           <option value="10"> </option>
+                           <option value="-1"> </option>
                         @foreach (var unvan in queryUnvanlar)
                         {
                             <option value="@unvan.UnvanID">@unvan.Unvan</option>

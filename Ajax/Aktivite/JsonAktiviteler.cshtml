@@ -57,7 +57,7 @@
        a.UI_AktiviteOkundu=db.QueryValue("SELECT count(*) FROM AktiviteOkunan WHERE AktiviteID=@0",aktivite.AktiviteID);
        a.UI_GorunenTarih=Genel.DateLabel(aktivite.Tarih,dil);
        
-       var queryAktiviteUser=db.QuerySingle("SELECT * FROM Profiles INNER JOIN Unvan ON Profiles.UnvanID=Unvan.UnvanID  WHERE userID=@0",aktivite.UserID);
+       var queryAktiviteUser=db.QuerySingle("SELECT * FROM Profiles LEFT JOIN Unvan ON Profiles.UnvanID=Unvan.UnvanID  WHERE userID=@0",aktivite.UserID);
        a.UI_KisiUnvan=queryAktiviteUser.Unvan;
        a.UI_KisiAd=queryAktiviteUser.Ad;
        a.UI_KisiAvatar=queryAktiviteUser.Avatar;

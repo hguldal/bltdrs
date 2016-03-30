@@ -49,7 +49,7 @@
 
     }
 
-    var queryKullanici=db.QuerySingle("SELECT * FROM Profiles INNER JOIN Unvan ON Profiles.UnvanID=Unvan.UnvanID WHERE userID=@0",WebSecurity.CurrentUserId);
+    var queryKullanici=db.QuerySingle("SELECT * FROM Profiles LEFT JOIN Unvan ON Profiles.UnvanID=Unvan.UnvanID WHERE userID=@0",WebSecurity.CurrentUserId);
 
    
 
