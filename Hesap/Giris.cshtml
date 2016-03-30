@@ -35,8 +35,6 @@ if (WebSecurity.IsAuthenticated)
        if (db.QueryValue("SELECT count(*) FROM Profiles WHERE ePosta=@0 AND Aktif=0",ePosta)>0)
        {
            mesajHesapPasif="Bu kullanıcı hesabı sistem yöneticisi tarafından askıya alındı.";
-          
-          
        }
 
        else
@@ -44,15 +42,12 @@ if (WebSecurity.IsAuthenticated)
             if (WebSecurity.Login(ePosta.Trim(),parola.Trim(),true))
             {
                 db.Execute("INSERT INTO Ziyaret(UserID,IP) VALUES(@0,@1)",WebSecurity.GetUserId(ePosta.Trim()),Request.UserHostAddress);
-                        
-
                if (string.IsNullOrEmpty(returnUrl))
                {
                    Response.Redirect("~/Panel");
                }
                else
                {
-              
                    Response.Redirect("~/" + returnUrl);
                }
             }
