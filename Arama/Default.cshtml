@@ -111,7 +111,7 @@
                 <tr>
                     <td><h4><a href="@Href("~/Ders/?DersID=")@ders.DersID"> @ders.DersAdi</a></h4></td>                    <td><h2>@if (ders.KabulSekli==1){<i class="icon fa fa-globe" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.lblHerkeseAcik"></i>} else {<i class="icon fa fa-lock" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.msgBuDersiTakipEtmekIcinOnayGerekiyor"></i>}</h2></td>
                     <td>
-                       @HelperProfil.KucukKunye(ders.UserID)
+                       @HelperProfil.KucukKunye(ders.UserID,dil)
                     </td>                    
                     <td>                        @if (roller.Contains("Ogrenci"))                          {
                               <button class="btn btn-success btnDersiTakipEt" data-DersID="@ders.DersID"><i class="fa fa-plus"></i> @Resources.Resource.lblDersiTakipEt</button>
@@ -134,7 +134,7 @@
             foreach (var kisi in queryKisiler) {
                 
                 <tr>
-                    <td><h4>@HelperProfil.KucukKunye(kisi.userID)</h4></td>
+                    <td><h4>@HelperProfil.KucukKunye(kisi.userID,dil)</h4></td>
                     <td>
                        <a href="@Href("~/Hesap/Profil?UserID=")@kisi.userID" class="btn btn-primary"> @Resources.Resource.lblKisiSayfasinaGozat</a>
                     </td>

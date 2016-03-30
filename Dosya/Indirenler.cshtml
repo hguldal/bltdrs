@@ -52,7 +52,7 @@
                   @foreach (var kisi in queryIndirenler)
                    {
                       <tr>
-                          <td>@HelperProfil.KucukKunye(kisi.UserID)</td>
+                          <td>@HelperProfil.KucukKunye(kisi.UserID,dil)</td>
                           <td>@kisi.InAdet</td>
                       </tr>
                    }

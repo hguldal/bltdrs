@@ -15,11 +15,11 @@ if (!WebSecurity.IsAuthenticated)
         
              if (string.IsNullOrEmpty(q))
              {
-                 sorguIfadesi="SELECT Profiles.UserID as userID,(Unvan.Unvan + ' ' + Profiles.ad + ' ' + Profiles.soyad) as adsoyad,Avatar FROM Profiles LEFT JOIN Unvan ON Profiles.UnvanID=Unvan.UnvanID WHERE Profiles.Aktif=1";
+                 sorguIfadesi="SELECT Profiles.UserID as userID,(Profiles.ad + ' ' + Profiles.soyad) as adsoyad,Avatar FROM Profiles WHERE Profiles.Aktif=1";
              }
              else
              {
-                  sorguIfadesi="SELECT Profiles.UserID as userID,(Unvan.Unvan + ' ' + Profiles.ad + ' ' + Profiles.soyad) as adsoyad,Avatar FROM Profiles LEFT JOIN Unvan ON Profiles.UnvanID=Unvan.UnvanID WHERE Profiles.Aktif=1 AND (Profiles.Ad + ' ' + Profiles.Soyad LIKE N'" + q + "%')";
+                  sorguIfadesi="SELECT Profiles.UserID as userID,(Profiles.ad + ' ' + Profiles.soyad) as adsoyad,Avatar FROM Profiles WHERE Profiles.Aktif=1 AND (Profiles.Ad + ' ' + Profiles.Soyad LIKE N'" + q + "%')";
              }
          
         var sonuclar=db.Query(sorguIfadesi);

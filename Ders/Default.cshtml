@@ -357,7 +357,7 @@
             {
                 <tr>
                     
-                    <td>@HelperProfil.KucukKunye(item.PaylasanUserID)</td>
+                    <td>@HelperProfil.KucukKunye(item.PaylasanUserID,dil)</td>
                     <td>@item.Metin</td>
                     <td class="text-right">@Genel.DateLabel(item.Tarih,dil)</td>
                     @if (queryDers.UserID==WebSecurity.CurrentUserId || item.PaylasanUserID==WebSecurity.CurrentUserId)

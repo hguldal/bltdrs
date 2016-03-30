@@ -165,7 +165,7 @@
 
     <div id="divAktifKullaniciKucukKunye" class="hide" data-UserID="@WebSecurity.CurrentUserId">
 
-      @HelperProfil.KucukKunye(WebSecurity.CurrentUserId)
+      @HelperProfil.KucukKunye(WebSecurity.CurrentUserId,dil)
 
      </div>
 
@@ -389,9 +389,14 @@
                                     </div>
 
                                     <section>
-
-                                        <h2><span class="profile"><span>@queryKullanici.Unvan @queryKullanici.Ad @queryKullanici.Soyad</span></span></h2>
-
+                                        @if (dil=="tr")
+                                        {
+                                            <h2><span class="profile"><span>@queryKullanici.Unvantr @queryKullanici.Ad @queryKullanici.Soyad</span></span></h2>
+                                        }
+                                        else
+                                        {
+                                            <h2><span class="profile"><span>@queryKullanici.Unvanen @queryKullanici.Ad @queryKullanici.Soyad</span></span></h2>
+                                        }
                                     </section>
 
                                 </a>

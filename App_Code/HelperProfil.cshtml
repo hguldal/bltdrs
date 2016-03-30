@@ -1,24 +1,35 @@
-﻿@helper KucukKunye(int UserID)
+﻿@helper KucukKunye(int UserID,string dil="tr")
  {
 
    var db=Database.Open("fb1ae");
 
    var queryKisi=db.QuerySingle("SELECT * FROM Profiles LEFT JOIN Unvan ON Profiles.UnvanID=Unvan.UnvanID WHERE Profiles.UserID=@0",UserID);
 
+   var gorunecekUnvan=queryKisi.Unvantr;
+   if (dil=="en")
+   {
+       gorunecekUnvan=queryKisi.Unvanen;
+   }
    db.Close();
-       <span><img src="http://bulutders.blob.core.windows.net/profilresimleri/@queryKisi.Avatar" class="img-rounded" style="width:48px;height: 48px"> <a href="@Href("~/Hesap/Profil?UserID=")@UserID"> @queryKisi.Unvan @queryKisi.Ad @queryKisi.Soyad @if (queryKisi.Onayli==1){ <i class="fa fa-check-circle" title="@Resources.Resource.lblKimligiDogrulanmisKullanici"></i>}</a></span>
+       <span><img src="http://bulutders.blob.core.windows.net/profilresimleri/@queryKisi.Avatar" class="img-rounded" style="width:48px;height: 48px"> <a href="@Href("~/Hesap/Profil?UserID=")@UserID"> @gorunecekUnvan @queryKisi.Ad @queryKisi.Soyad @if (queryKisi.Onayli==1){ <i class="fa fa-check-circle" title="@Resources.Resource.lblKimligiDogrulanmisKullanici"></i>}</a></span>
         
  } 
  
 
-@helper YaziliKunye(int UserID)
+@helper YaziliKunye(int UserID,string dil="tr")
  {
 
    var db=Database.Open("fb1ae");
 
    var queryKisi=db.QuerySingle("SELECT * FROM Profiles LEFT JOIN Unvan ON Profiles.UnvanID=Unvan.UnvanID WHERE Profiles.UserID=@0",UserID);
 
-   <span><a href="@Href("~/Hesap/Profil?UserID=")@UserID"> @queryKisi.Unvan @queryKisi.Ad @queryKisi.Soyad @if (queryKisi.Onayli==1){ <i class="fa fa-check-circle" title="@Resources.Resource.lblKimligiDogrulanmisKullanici"></i>}</a></span>
+   var gorunecekUnvan=queryKisi.Unvantr;
+   if (dil=="en")
+   {
+       gorunecekUnvan=queryKisi.Unvanen;
+   }
+
+   <span><a href="@Href("~/Hesap/Profil?UserID=")@UserID"> @gorunecekUnvan @queryKisi.Ad @queryKisi.Soyad @if (queryKisi.Onayli==1){ <i class="fa fa-check-circle" title="@Resources.Resource.lblKimligiDogrulanmisKullanici"></i>}</a></span>
    
    db.Close();
 

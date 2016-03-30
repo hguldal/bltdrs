@@ -169,7 +169,7 @@
                                             @foreach (var odevgonderisi in queryOdevGonderileri)
                                             {
                                                 <tr>
-                                                    <td>@HelperProfil.KucukKunye(odevgonderisi.UserID)</td>
+                                                    <td>@HelperProfil.KucukKunye(odevgonderisi.UserID,dil)</td>
                                                     <td>  
                                                        <a href="@Href("~/Odev/OdevGonderisi?OdevGonderiID=" + odevgonderisi.OdevGonderiID)" class="btn btn-xs btn-info" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.lblDetaylar"><i class="fa fa-search-plus"></i></a>
                                                        <button class="btn btn-xs btn-primary btnOdevGonderisiIncelendi" data-OdevGonderiID="@odevgonderisi.OdevGonderiID" data-toggle="tooltip" data-placement="top" title="@Resources.Resource.lblIncelendi"><i class="fa fa-check-square-o"></i></button>
