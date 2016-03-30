@@ -18,7 +18,7 @@
        }
     var queryUser=db.QuerySingle("select * from Profiles INNER JOIN UyelikTurleri ON Profiles.UyelikTuru=UyelikTurleri.UyelikID WHERE Profiles.userID=@0",WebSecurity.CurrentUserId);
     var queryKurumlar=db.Query("SELECT * FROM Kurum");
-    var queryUnvanlar=db.Query("SELECT * FROM Unvan WHERE Dil=@0 AND UnvanID<>10 AND UnvanID<>11",dil);
+    var queryUnvanlar=db.Query("SELECT * FROM Unvan");
     var roller=Roles.GetRolesForUser(WebSecurity.CurrentUserName);
     var toplamDosyaAlani= Convert.ToDouble(db.QueryValue("SELECT ISNULL(SUM(Boyut),0) as Toplam FROM Dosya WHERE UserID=@0 AND Silindi=0",WebSecurity.CurrentUserId));
     double yuzdeDosyaAlani= 100-Math.Round(toplamDosyaAlani*100/ queryUser.EgitmenDepolamaAlani);
@@ -82,7 +82,14 @@
                            <option value="-1"> </option>
                         @foreach (var unvan in queryUnvanlar)
                         {
-                            <option value="@unvan.UnvanID">@unvan.Unvan</option>
+                            if (dil=="tr")
+                            {
+                                <option value="@unvan.UnvanID">@unvan.Unvantr</option>
+                            }
+                            else
+                            {
+                                <option value="@unvan.UnvanID">@unvan.Unvanen</option>
+                            }
                         }
                     </select>
                  </div>
