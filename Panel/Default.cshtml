@@ -48,7 +48,7 @@
        a.Silindi=aktivite.Silindi;
        a.Tarih=aktivite.Tarih;
        a.URL=aktivite.URL;
-       a.UI_BegeniSayisi=db.QueryValue("SELECT count(*) FROM AktiviteBegeni WHERE Silindi=0 AND AktiviteID=@0",aktivite.AktiviteID);
+       a.UI_BegeniSayisi=db.QueryValue("SELECT count(*) FROM AktiviteBegeni WHERE AktiviteID=@0",aktivite.AktiviteID);
        a.UI_AktiviteOkundu=db.QueryValue("SELECT count(*) FROM AktiviteOkunan WHERE AktiviteID=@0",aktivite.AktiviteID);
        a.UI_GorunenTarih=Genel.DateLabel(aktivite.Tarih,dil);
        var queryAktiviteUser=db.QuerySingle("SELECT * FROM Profiles INNER JOIN Unvan ON Profiles.UnvanID=Unvan.UnvanID  WHERE userID=@0",aktivite.UserID);
@@ -65,7 +65,7 @@
          a.UI_DersAdi=db.QueryValue("SELECT DersAdi FROM Ders WHERE DersID=@0",aktivite.DersID);
        }
 
-       if (db.QueryValue("SELECT COUNT(*) FROM AktiviteBegeni WHERE Silindi=0 AND AktiviteID=@0 AND UserID=@1",aktivite.AktiviteID,WebSecurity.CurrentUserId)==0)
+       if (db.QueryValue("SELECT COUNT(*) FROM AktiviteBegeni WHERE AktiviteID=@0 AND UserID=@1",aktivite.AktiviteID,WebSecurity.CurrentUserId)==0)
        {
            a.UI_AktiviteBegendi=0;
        }
