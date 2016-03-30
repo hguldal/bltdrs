@@ -27,31 +27,17 @@
         Response.End();
   }
 
-  if (queryDosya.UserID==WebSecurity.CurrentUserId)
-  {
-      erisimAcik=true;
-  }
+   if (queryDosya.UserID==WebSecurity.CurrentUserId || queryDosya.Erisim==1 || queryDosya.YukleyenUserID==WebSecurity.CurrentUserId)
+       {
+         erisimAcik=true;
+       }
   
-  if (queryDosya.Erisim==1)
-  {
-      erisimAcik=true;
-  }
-  
-  else if (queryDosya.Erisim==2)
-  {
-      if (queryDosya.UserID!=WebSecurity.CurrentUserId)
-      {
-          var kisiIzni=db.QueryValue("SELECT COUNT(*) FROM DosyaIzinKisi WHERE DosyaID=@0 AND UserID=@1",dosyaID,WebSecurity.CurrentUserId)>0;
-          if (kisiIzni)
-          {
-              erisimAcik=true;
-          }
-          else
-          {
-              erisimAcik=db.QueryValue("SELECT COUNT(*) FROM DosyaIzinDers WHERE DosyaID=@0 AND DersID IN (SELECT DersID FROM DersTakip WHERE UserID=@1 AND Durum=2) AND DersID NOT IN (select DersID from Ders WHERE Arsivlendi=1 OR Ders.Silindi=1)",dosyaID,WebSecurity.CurrentUserId)>0;
-          }
-      }
-  }
+   if (queryDosya.Erisim==2 && erisimAcik==false)
+        {
+
+         erisimAcik=db.QueryValue("SELECT COUNT(*) FROM DersDosyalari WHERE DosyaID=@0 AND DersID IN (SELECT DersID FROM DersTakip WHERE UserID=@1 AND Durum=2) AND DersID NOT IN (select DersID from Ders WHERE Arsivlendi=1 OR Ders.Silindi=1)",dosyaID,WebSecurity.CurrentUserId)>0;
+          
+        }
   
   db.Close();
  
