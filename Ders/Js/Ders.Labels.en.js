@@ -35,7 +35,11 @@ var mesajlar = {
     odevinigonderenler:'Sender of Assignment',
     odevbasariylaolusturuldu:'Assignment was created successfully ',
     odeveklenirkenhata:'An error occurred while adding assignment',
-    odevsilinecek:'Assignment will be deleted. Are you sure ?'
+    odevsilinecek:'Assignment will be deleted. Are you sure ?',
+    aktivitesilinecek:'Activity will be delete. Are you sure ?',
+    begenmektenvazgec:'Cancel Like',
+    begen:'Like',
+    begenisayisi:'Likes'
 };
 
 var ayarlar = {

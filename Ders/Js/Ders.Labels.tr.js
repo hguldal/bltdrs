@@ -38,7 +38,11 @@ var mesajlar = {
     dersekatilimbasarisizoldu:'Derse katılımın başarısız oldu. Lütfen erişim kodunu kontrol et.',
     azonce:'Az Önce',
     mesajpaylasilirkenhata:'Mesaj panoda paylaşılırken bir hata meydana geldi',
-    mesajsilinecek:'Mesaj silinecek. Emin misin ?'
+    mesajsilinecek:'Mesaj silinecek. Emin misin ?',
+    aktivitesilinecek:'Aktivite silinecek emin misin ?',
+    begenmektenvazgec:'Beğenmekten vazgeç',
+    begen:'Beğen',
+    begenisayisi:'Beğeni sayısı'
    
 
 };
