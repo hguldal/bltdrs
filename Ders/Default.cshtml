@@ -225,7 +225,6 @@
                                             <li role="presentation" @if (liste=="aktivite") {<text>class="active"</text>}><a href="@Href("~/Ders/?DersID=")@DersID&Liste=aktivite"><i class="fa fa-home"></i> @Resources.Resource.lblAnasayfa</a></li>
                                             <li role="presentation" @if (liste=="dosya") {<text>class="active"</text>}><a href="@Href("~/Ders/?DersID=")@DersID&Liste=dosya"><i class="fa fa-folder"></i> @Resources.Resource.lblDosyalar</a></li>
                                             <li role="presentation" @if (liste=="odev") {<text>class="active"</text>}><a href="@Href("~/Ders/?DersID=")@DersID&Liste=odev"><i class="fa fa-tasks"></i> @Resources.Resource.lblOdevler</a></li>
-                                            <li role="presentation" @if (liste=="pano") {<text>class="active"</text>}><a href="@Href("~/Ders/?DersID=")@DersID&Liste=pano"><i class="fa fa-clipboard"></i> @Resources.Resource.lblDersPanosu</a></li>
                                             <li role="presentation"><a href="#"><i class="fa fa-comment"></i> @Resources.Resource.lblMesajlasma</a></li>
                                             <li role="presentation" @if (liste=="takipci") {<text>class="active"</text>}><a href="@Href("~/Ders/?DersID=")@DersID&Liste=takipci"><i class="fa fa-user"></i> @Resources.Resource.lblOgrenciler</a></li>
                                         @if (queryDers.UserID==WebSecurity.CurrentUserId)
