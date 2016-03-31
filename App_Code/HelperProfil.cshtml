@@ -11,7 +11,7 @@
        gorunecekUnvan=queryKisi.Unvanen;
    }
    db.Close();
-       <span><img src="http://bulutders.blob.core.windows.net/profilresimleri/@queryKisi.Avatar" class="img-rounded" style="width:48px;height: 48px"> <a href="@Href("~/Hesap/Profil?UserID=")@UserID"> @gorunecekUnvan @queryKisi.Ad @queryKisi.Soyad @if (queryKisi.Onayli==1){ <i class="fa fa-check-circle" title="@Resources.Resource.lblKimligiDogrulanmisKullanici"></i>}</a></span>
+       <span><img src="http://bulutders.blob.core.windows.net/profilresimleri/@queryKisi.Avatar"  style="width:48px;height: 48px"> <a href="@Href("~/Hesap/Profil?UserID=")@UserID"> @gorunecekUnvan @queryKisi.Ad @queryKisi.Soyad @if (queryKisi.Onayli==1){ <i class="fa fa-check-circle" title="@Resources.Resource.lblKimligiDogrulanmisKullanici"></i>}</a></span>
         
  } 
  
