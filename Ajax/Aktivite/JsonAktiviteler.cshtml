@@ -58,7 +58,14 @@
        a.UI_GorunenTarih=Genel.DateLabel(aktivite.Tarih,dil);
        
        var queryAktiviteUser=db.QuerySingle("SELECT * FROM Profiles LEFT JOIN Unvan ON Profiles.UnvanID=Unvan.UnvanID  WHERE userID=@0",aktivite.UserID);
-       a.UI_KisiUnvan=queryAktiviteUser.Unvan;
+       if (dil=="tr")
+       {
+        a.UI_KisiUnvan=queryAktiviteUser.Unvantr;
+       }
+       else
+       {
+        a.UI_KisiUnvan=queryAktiviteUser.Unvanen;   
+       }
        a.UI_KisiAd=queryAktiviteUser.Ad;
        a.UI_KisiAvatar=queryAktiviteUser.Avatar;
        a.UI_KisiSoyad=queryAktiviteUser.Soyad;
