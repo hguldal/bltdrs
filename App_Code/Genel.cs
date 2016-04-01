@@ -135,7 +135,7 @@ public static string BildirimEylemindenMetne(int EylemID,string dil)
            }
            else if (EylemID==4)
            {
-               returnString=" bir yazı paylaştı";
+               returnString=" bir içerik paylaştı";
            }
           
            else if (EylemID==5)
@@ -234,7 +234,7 @@ public static string AktiviteEylemindenMetne(int EylemID,string dil)
            }
            else if (EylemID==2)
            {
-               returnString=" bir yazı paylaştı";
+               returnString=" bir içerik paylaştı";
            }
            else if (EylemID==3)
            {

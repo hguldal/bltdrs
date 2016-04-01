@@ -17,7 +17,7 @@ var mesajlar = {
    dosyasecilmedi:'Dosya seçmediniz.',
    dosyabasariylaeklendi:'Dosyayı başarıyla ekledin',
    dosyaeklenirkenhata:'Dosya eklenirken bir hata oluştu.',
-   odevinaciklamasicokbuyuk:'Ödevin açıklamasının boyutu 100KB tan büyük olamaz',
+   odevinaciklamasicokbuyuk:'Açıklama veya içeriğin boyutu 100KB tan büyük olamaz',
    dersiolusturuldu:' dersi oluşturuldu',
    dersadibos:'Hata: Ders adı boş bırakılamaz',
 
