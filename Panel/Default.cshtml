@@ -27,7 +27,7 @@
     else if (roller.Contains("Ogrenci"))
     {
         
-      queryAktiviteler=db.Query("SELECT top 25 * FROM Aktivite WHERE Silindi=0 AND Aktivite.DersID IN (SELECT DersID FROM DersTakip WHERE UserID=@0 AND Durum=2) AND Aktivite.DersID NOT IN (SELECT DersID FROM Ders WHERE Arsivlendi=1 OR Ders.Silindi=1) ORDER BY AktiviteID DESC",WebSecurity.CurrentUserId);  
+      queryAktiviteler=db.Query("SELECT top 25 * FROM Aktivite WHERE Silindi=0 AND Aktivite.DersID IN (SELECT DersID FROM DersTakip WHERE UserID=@0 AND Durum=2) AND Aktivite.DersID NOT IN (SELECT DersID FROM Ders WHERE Arsivlendi=1 OR Ders.Silindi=1) ORDER BY AktiviteID DESC",WebSecurity.CurrentUserId);        queryDerslerim=db.Query("SELECT  * FROM Ders WHERE Silindi=0 AND Arsivlendi=0 AND DersID IN (SELECT DersID FROM DersTakip WHERE UserID=@0 AND Durum=2)",WebSecurity.CurrentUserId);
   
     }
   
@@ -103,13 +103,13 @@
                                   </button>
                                                     @if (roller.Contains("Ogretici"))                       {
                        
-                               <ul class="dropdown-menu" aria-labelledby="dLabel">                                          <li><a href="#" data-toggle="modal" data-target="#modalDosyaEkle" title="Dosya Paylaş" data-toggle="tooltip" data-placement="top"><i class="fa fa-file fa-fw"></i> Dosya Ekle </a></li>                                         <li><a href="#" data-toggle="modal" data-target="#modalYeniOdevVer"><i class="fa fa-tasks fa-fw"></i> Ödev Ver </a></li>                                          <li><a href="#" data-toggle="modal" data-target="#modalDersEkle"><i class="fa fa-book fa-fw"></i> Ders Sayfası Oluştur </a></li>                                          </ul>   
+                               <ul class="dropdown-menu" aria-labelledby="dLabel">                                                                             <li><a href="#" data-toggle="modal" data-target="#modalDosyaEkle" title="Dosya Paylaş" data-toggle="tooltip" data-placement="top"><i class="fa fa-file fa-fw"></i> Dosya Ekle </a></li>                                          <li><a href="#" data-toggle="modal" data-target="#modalYeniOdevVer"><i class="fa fa-tasks fa-fw"></i> Ödev Ver </a></li>                                          <li><a href="#" data-toggle="modal" data-target="#modalYaziEkle"><i class="fa fa-tasks fa-fw"></i> Yazı Paylaş </a></li>                                                                             <li><a href="#" data-toggle="modal" data-target="#modalDersEkle"><i class="fa fa-book fa-fw"></i> Ders Sayfası Oluştur </a></li>                                          </ul>   
                        
                        
                      
                        }
-                      @if (roller.Contains("Ogrenci"))                             {                            <ul class="dropdown-menu" aria-labelledby="dLabel">                                 <li><a href="#" data-toggle="modal" data-target="#modalDerseKatil" title="Erişim Kodu Kullanarak Bir Ders Sayfasını Takip Et" data-toggle="tooltip" data-placement="top"><i class="fa fa-plus-circle"></i> Erişim Kodu Kullanarak Bir Ders Sayfasını Takip Et </a></li>
-                                 <li><a href="#" id="btnDerseKatilDersAra"><i class="fa fa-search"></i> Ders Sayfası Ara </a></li>                            </ul>                            }                    </div>                       <br><br>                    <div id="lstAktiviteler">
+                      @if (roller.Contains("Ogrenci"))                             {                            <ul class="dropdown-menu" aria-labelledby="dLabel">                                      <li><a href="#" data-toggle="modal" data-target="#modalDerseKatil" title="Erişim Kodu Kullanarak Bir Ders Sayfasını Takip Et" data-toggle="tooltip" data-placement="top"><i class="fa fa-plus-circle"></i> Erişim Kodu Kullanarak Bir Ders Sayfasını Takip Et </a></li>
+                                 <li><a href="#" id="btnDerseKatilDersAra"><i class="fa fa-search"></i> Ders Sayfası Ara </a></li>                                                                <li><a href="#" data-toggle="modal" data-target="#modalYaziEkle"><i class="fa fa-tasks fa-fw"></i> Yazı Paylaş </a></li>                                                                                             </ul>                            }                    </div>                       <br><br>                    <div id="lstAktiviteler">
                     @foreach (var item in listeAktiviteler)		
                         {		                            <div class="widget bordered-top bordered-blue" id="awdgt_@item.AktiviteID">                                        
                                        <div class="widget-body">
@@ -194,6 +194,41 @@
       </div>
     </div>
   </div>
+</div><div class="modal" id="modalYaziEkle" tabindex="-1" role="dialog" aria-labelledby="modalYaziEkleLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="modalYaziEkleLabel"> Yazı Paylaş</h4>
+      </div>
+      <div class="modal-body">
+     
+             <div class="row">
+                    <div class="col-lg-12">
+                        <label>@Resources.Resource.lblDers</label>
+                        <select name="DersID" id="yaziEklecmbDersID" class="form-control">
+                            <option value=""></option>
+                         @foreach(var ders in queryDerslerim)
+                         {
+                             <option value="@ders.DersID">@ders.DersAdi</option>
+                         }
+                        </select>
+                       
+                        <label>Yazı</label>
+                        <div id="yaziEkleYazi"></div>
+                        
+                    </div>
+
+           
+            </div>
+      
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="yaziEkleTamam">@Resources.Resource.lblTamam</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">@Resources.Resource.lblIptal</button>       
+      </div>
+    </div>
+  </div>
 </div> @if (roller.Contains("Ogretici")) {
 <div class="modal" id="modalYeniOdevVer" tabindex="-1" role="dialog" aria-labelledby="odevVermyModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
@@ -266,42 +301,7 @@
       </div>
     </div>
   </div>
-</div><div class="modal" id="modalDuyuruYap" tabindex="-1" role="dialog" aria-labelledby="duyuruYapmyModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="duyuruYapmyModalLabel"> Yazı Paylaş</h4>
-      </div>
-      <div class="modal-body">
-     
-             <div class="row">
-                    <div class="col-lg-12">
-                        <label>@Resources.Resource.lblDers</label>
-                        <select name="DersID" id="duyuruYapcmbDersID" class="form-control">
-                            <option value=""></option>
-                         @foreach(var ders in queryDerslerim)
-                         {
-                             <option value="@ders.DersID">@ders.DersAdi</option>
-                         }
-                        </select>
-                       
-                        <label>Yazı</label>
-                        <textarea name="MesajMetni" class="form-control" rows="8" id="duyuruYapMesajMetni"></textarea>
-                        
-                    </div>
-
-           
-            </div>
-      
-      </div>
-      <div class="modal-footer">
-          <button type="button" class="btn btn-primary" id="duyuruYapbtnDuyuruYap">@Resources.Resource.lblTamam</button>
-          <button type="button" class="btn btn-default" data-dismiss="modal">@Resources.Resource.lblIptal</button>       
-      </div>
-    </div>
-  </div>
-</div><div class="modal" id="modalDersEkle"  role="dialog" aria-labelledby="DersEkleMyModalLabel" aria-hidden="true">
+</div><div class="modal" id="modalDersEkle"  role="dialog" aria-labelledby="DersEkleMyModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">

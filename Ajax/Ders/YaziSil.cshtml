@@ -1,9 +1,5 @@
 ﻿@{
-    
-/*----------------------------------------------------------------------------------
-    Bu prosedür ders panosundan bir mesaj siler.
-    Bu prosedürü sadece dersin sahibi ve mesajın sahibi çalıştırabilir.
-  ---------------------------------------------------------------------------------*/
+ 
     if (!WebSecurity.IsAuthenticated)
    
         {
@@ -12,10 +8,9 @@
                    
         }  
 
-    // Mesaj ID sini oku
     var ID=Request["ID"];
     
-    // MesajID boşsa hata kodu döndür.
+    
     if (string.IsNullOrEmpty(ID))
      {
     
@@ -26,7 +21,7 @@
 
      var db=Database.Open("fb1ae");
 
-      var queryIslem=db.QueryValue("exec dbo.Ders_PanodanMesajSil @0,@1",WebSecurity.CurrentUserId,ID);
+      var queryIslem=db.QueryValue("exec dbo.Ders_YaziSil @0,@1",WebSecurity.CurrentUserId,ID);
 
     if (queryIslem=="OK")
     {

@@ -1,19 +1,14 @@
 ﻿@{
-    
-/*----------------------------------------------------------------------------------
-    Bu prosedür ders panosuna bir mesaj ekler.
-    Bu prosedürü sadece dersin sahibi ve dersin takipçisi çalıştırabilir.
-  ---------------------------------------------------------------------------------*/
-    if (!WebSecurity.IsAuthenticated)
+        if (!WebSecurity.IsAuthenticated)
    
         {
             Response.StatusCode=401;
             Response.End();
                    
         }  
-   // DersID ve mesaj metnini oku
+   
     var DersID=Request["DersID"];
-    var mesajMetni=Request["MesajMetni"];
+    var yazi=Request.Unvalidated("Yazi");
 
     // DersID boş olamaz. Eğer boşsa hata kodu döndür.
     if (string.IsNullOrEmpty(DersID))
@@ -23,8 +18,8 @@
        Response.End();
      }
 
-     // Mesaj metni de boş olamaz. Eğer boşsa hata kodu döndür.
-     if (string.IsNullOrEmpty(mesajMetni))
+   
+     if (string.IsNullOrEmpty(yazi))
      {
     
        Response.StatusCode=500;
@@ -34,7 +29,7 @@
 
     var db=Database.Open("fb1ae");
  
-    var queryIslem=db.QueryValue("exec dbo.Ders_PanoyaMesajEkle @0,@1,@2,@3",WebSecurity.CurrentUserId,DersID,mesajMetni);
+    var queryIslem=db.QueryValue("exec dbo.Ders_YaziEkle @0,@1,@2",WebSecurity.CurrentUserId,DersID,yazi);
 
     if (queryIslem>0)
     {
