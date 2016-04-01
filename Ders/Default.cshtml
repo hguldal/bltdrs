@@ -17,7 +17,7 @@
         Response.End();
     }
 
-   if (string.IsNullOrEmpty(liste))
+   if (string.IsNullOrEmpty(liste) || liste=="pano")
     {
         liste="aktivite";
     }
@@ -297,9 +297,10 @@
                              </div><!--Widget-->
                         }
                         <br><br>
-                        <button id="btnOncekiaktiviteler" class="btn btn-primary" data-SonAktiviteID="@sonAktiviteID" >@Resources.Resource.lblDahaOncekiAktiviteleriGor</button>
+                        
          
                </div>
+                <div><button id="btnOncekiaktiviteler" class="btn btn-primary" data-SonAktiviteID="@sonAktiviteID" >@Resources.Resource.lblDahaOncekiAktiviteleriGor</button></div>
             }
         else if (liste=="takipci")
         {
@@ -541,12 +542,33 @@
            
       
       </div>
-                                        }
+     }
      </div>
      </div>    </div> 
 </div>
 
-
+@if (liste=="aktivite")
+{
+    <div class="modal" id="modalKisiDetaylari" data-tip="-1" data-AktiviteID="-1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">@Resources.Resource.lblDetaylar</h4>
+      </div>
+      <div class="modal-body" style="overflow:auto;height: 300px">
+        <table id="tableKisiListesi" class="table table-hover">
+        
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">@Resources.Resource.lblKapat</button>
+        
+      </div>
+    </div>
+  </div>
+</div>
+}
 
 @if (dersSahibi && liste=="dosya")
 {
