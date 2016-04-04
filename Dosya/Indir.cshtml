@@ -43,7 +43,8 @@
  
  if (erisimAcik)
  {
-   var bantGenisligiKota=db.QueryValue("SELECT UyelikTurleri.BantGenisligi FROM Profiles INNER JOIN UyelikTurleri ON Profiles.UyelikTuru=UyelikTurleri.UyelikID WHERE Profiles.userID=@0",queryDosya.UserID);
+
+   var bantGenisligiKota=db.QueryValue("SELECT BantGenisligi FROM Abone INNER JOIN UyelikPaketleri ON Abone.PaketID=UyelikPaketleri.PaketID WHERE Abone.UserID=@0 AND Durum=1",queryDosya.UserID);
    var kullanilanKota=db.QueryValue("SELECT ISNULL(SUM(Dosya.Boyut),0) FROM Dosya INNER JOIN DosyaIndirilen ON Dosya.DosyaID=DosyaIndirilen.DosyaID WHERE Dosya.UserID=@0 AND month(DosyaIndirilen.Tarih)=@1",queryDosya.UserID,DateTime.Now.Month);
    
    if (kullanilanKota+queryDosya.Boyut>bantGenisligiKota)

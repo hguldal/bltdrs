@@ -20,8 +20,7 @@
     
     double kullanilanDepolamaAlani=0;
     double kullanilanDepolamaAlaniYuzde=0;
-    double kullanilanOdevDepolamaAlani=0;
-    double kullanilanOdevDepolamaAlaniYuzde=0;
+  
     double kullanilanBantGenisligi=0;
 
     var queryUser=db.QuerySingle("select * from Profiles WHERE Profiles.userID=@0",WebSecurity.CurrentUserId);
@@ -37,8 +36,6 @@
         queryAbonelikler=db.Query("SELECT * FROM Abone INNER JOIN UyelikPaketleri ON UyelikPaketleri.PaketID=Abone.PaketID WHERE UserID=@0",WebSecurity.CurrentUserId);
         kullanilanDepolamaAlani= Convert.ToDouble(db.QueryValue("SELECT ISNULL(SUM(Boyut),0) as Toplam FROM Dosya WHERE UserID=@0 AND Silindi=0",WebSecurity.CurrentUserId));
         kullanilanDepolamaAlaniYuzde= 100-Math.Round(kullanilanDepolamaAlani*100/queryAbonelik.DepolamaAlani);
-        kullanilanOdevDepolamaAlani= Convert.ToDouble(db.QueryValue("SELECT ISNULL(SUM(Boyut),0) as Toplam FROM Dosya WHERE UserID=@0 AND Silindi=0 AND Dosya.YuklenmeTuru=2",WebSecurity.CurrentUserId));
-        kullanilanOdevDepolamaAlaniYuzde= 100-Math.Round(kullanilanOdevDepolamaAlani*100/ queryAbonelik.OdevDepolamaAlani);
         kullanilanBantGenisligi=db.QueryValue("SELECT ISNULL(SUM(Dosya.Boyut),0) FROM Dosya INNER JOIN DosyaIndirilen ON Dosya.DosyaID=DosyaIndirilen.DosyaID WHERE Dosya.UserID=@0 AND month(DosyaIndirilen.Tarih)=@1",WebSecurity.CurrentUserId,DateTime.Now.Month);
     }
     db.Close();
@@ -169,7 +166,6 @@
          <table class="table table-striped">
          <tr><td></td><td></td><td><strong>@Resources.Resource.lblKullanilan</strong></td><td><strong>@Resources.Resource.lblKota</strong></td></tr>
          <tr><td>@Resources.Resource.lblDepolamaAlani</td><td></td><td><h2>@Genel.StorageLabel(kullanilanDepolamaAlani)</h2></td><td><h2>@Genel.StorageLabel(queryAbonelik.DepolamaAlani)</h2></td></tr>
-         <tr><td>@Resources.Resource.lblOdevleriçinDepolamaAlani</td><td></td><td><h2>@Genel.StorageLabel(kullanilanOdevDepolamaAlani)</h2></td><td><h2>@Genel.StorageLabel(queryAbonelik.OdevDepolamaAlani)</h2></td></tr>
          <tr><td>@Resources.Resource.lblDosyaIndirmeKotasi</td><td></td><td><h2>@Genel.StorageLabel(kullanilanBantGenisligi)</h2></td><td><h2>@Genel.StorageLabel(queryAbonelik.OdevDepolamaAlani) / Ay</h2></td></tr>
              
          
