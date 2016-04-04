@@ -4,6 +4,7 @@
     {
         Response.Redirect("~/Hesap/Giris?returnUrl=Hesap/Ayarlar");
     }
+
     Layout = Href("~/Shared/_LayoutYeni.cshtml");
  
     var db=Database.Open("fb1ae");
@@ -16,18 +17,30 @@
        {
            Culture=UICulture="tr-TR";
        }
-    var queryUser=db.QuerySingle("select * from Profiles INNER JOIN UyelikTurleri ON Profiles.UyelikTuru=UyelikTurleri.UyelikID WHERE Profiles.userID=@0",WebSecurity.CurrentUserId);
+    
+    double kullanilanDepolamaAlani=0;
+    double kullanilanDepolamaAlaniYuzde=0;
+    double kullanilanOdevDepolamaAlani=0;
+    double kullanilanOdevDepolamaAlaniYuzde=0;
+    double kullanilanBantGenisligi=0;
+
+    var queryUser=db.QuerySingle("select * from Profiles WHERE Profiles.userID=@0",WebSecurity.CurrentUserId);
     var queryKurumlar=db.Query("SELECT * FROM Kurum");
     var queryUnvanlar=db.Query("SELECT * FROM Unvan");
+    dynamic queryAbonelik=null;
+    IEnumerable<dynamic> queryAbonelikler=null;
     var roller=Roles.GetRolesForUser(WebSecurity.CurrentUserName);
-    var toplamDosyaAlani= Convert.ToDouble(db.QueryValue("SELECT ISNULL(SUM(Boyut),0) as Toplam FROM Dosya WHERE UserID=@0 AND Silindi=0",WebSecurity.CurrentUserId));
-    double yuzdeDosyaAlani= 100-Math.Round(toplamDosyaAlani*100/ queryUser.EgitmenDepolamaAlani);
-
-    var toplamOdevDosyaAlani= Convert.ToDouble(db.QueryValue("SELECT ISNULL(SUM(Boyut),0) as Toplam FROM Dosya WHERE UserID=@0 AND Silindi=0 AND Dosya.YuklenmeTuru=2",WebSecurity.CurrentUserId));
-    double yuzdeOdevDosyaAlani= 100-Math.Round(toplamOdevDosyaAlani*100/ queryUser.EgitmenOdevDepolamaAlani);
-
-    var kullanilanBantGenisligi=db.QueryValue("SELECT ISNULL(SUM(Dosya.Boyut),0) FROM Dosya INNER JOIN DosyaIndirilen ON Dosya.DosyaID=DosyaIndirilen.DosyaID WHERE Dosya.UserID=@0 AND month(DosyaIndirilen.Tarih)=@1",WebSecurity.CurrentUserId,DateTime.Now.Month);
-  
+    
+    if (roller.Contains("Ogretici"))
+    {
+        queryAbonelik=db.QuerySingle("SELECT * FROM Abone INNER JOIN UyelikPaketleri ON UyelikPaketleri.PaketID=Abone.PaketID WHERE UserID=@0 AND DATEADD(day,Sure,BaslangicTarihi)>Getdate()",WebSecurity.CurrentUserId);       
+        queryAbonelikler=db.Query("SELECT * FROM Abone INNER JOIN UyelikPaketleri ON UyelikPaketleri.PaketID=Abone.PaketID WHERE UserID=@0",WebSecurity.CurrentUserId);
+        kullanilanDepolamaAlani= Convert.ToDouble(db.QueryValue("SELECT ISNULL(SUM(Boyut),0) as Toplam FROM Dosya WHERE UserID=@0 AND Silindi=0",WebSecurity.CurrentUserId));
+        kullanilanDepolamaAlaniYuzde= 100-Math.Round(kullanilanDepolamaAlani*100/queryAbonelik.DepolamaAlani);
+        kullanilanOdevDepolamaAlani= Convert.ToDouble(db.QueryValue("SELECT ISNULL(SUM(Boyut),0) as Toplam FROM Dosya WHERE UserID=@0 AND Silindi=0 AND Dosya.YuklenmeTuru=2",WebSecurity.CurrentUserId));
+        kullanilanOdevDepolamaAlaniYuzde= 100-Math.Round(kullanilanOdevDepolamaAlani*100/ queryAbonelik.OdevDepolamaAlani);
+        kullanilanBantGenisligi=db.QueryValue("SELECT ISNULL(SUM(Dosya.Boyut),0) FROM Dosya INNER JOIN DosyaIndirilen ON Dosya.DosyaID=DosyaIndirilen.DosyaID WHERE Dosya.UserID=@0 AND month(DosyaIndirilen.Tarih)=@1",WebSecurity.CurrentUserId,DateTime.Now.Month);
+    }
     db.Close();
    
 }
@@ -56,7 +69,8 @@
     <li role="presentation"><a href="#paroladegistir" aria-controls="home" role="tab" data-toggle="tab"><i class="fa fa-key"></i> @Resources.Resource.lblGirisParolasiniDegistir</a></li>
      @if (roller.Contains("Ogretici"))
       {
-      <li role="presentation"><a href="#uyelikbilgileri" aria-controls="home" role="tab" data-toggle="tab"><i class="fa fa-info-circle"></i> @Resources.Resource.lblUyelikBilgileri</a></li>
+       <li role="presentation"><a href="#uyelikbilgileri" aria-controls="home" role="tab" data-toggle="tab"><i class="fa fa-info-circle"></i> Kullanım Bilgileri</a></li>
+       <li role="presentation"><a href="#abonelikler" aria-controls="home" role="tab" data-toggle="tab"><i class="fa fa-shopping-cart"></i> Abonelikler</a></li>
      }
   </ul>
 
@@ -151,18 +165,39 @@
       {
       
      <div role="tabpanel" class="tab-pane" id="uyelikbilgileri">
-         <p>@Resources.Resource.lblUyelikTuru</p> <h2>@queryUser.UyelikAdi</h2>
+         <p>Abonelik Türünüz</p> <h2>@queryAbonelik.PaketAdi</h2>
          <table class="table table-striped">
          <tr><td></td><td></td><td><strong>@Resources.Resource.lblKullanilan</strong></td><td><strong>@Resources.Resource.lblKota</strong></td></tr>
-         <tr><td>@Resources.Resource.lblDepolamaAlani</td><td></td><td><h2>@Genel.StorageLabel(toplamDosyaAlani)</h2></td><td><h2>@Genel.StorageLabel(queryUser.EgitmenDepolamaAlani)</h2></td></tr>
-         <tr><td>@Resources.Resource.lblOdevleriçinDepolamaAlani</td><td></td><td><h2>@Genel.StorageLabel(toplamOdevDosyaAlani)</h2></td><td><h2>@Genel.StorageLabel(queryUser.EgitmenOdevDepolamaAlani)</h2></td></tr>
-         <tr><td>@Resources.Resource.lblDosyaIndirmeKotasi</td><td></td><td><h2>@Genel.StorageLabel(kullanilanBantGenisligi)</h2></td><td><h2>@Genel.StorageLabel(queryUser.BantGenisligi) / Ay</h2></td></tr>
+         <tr><td>@Resources.Resource.lblDepolamaAlani</td><td></td><td><h2>@Genel.StorageLabel(kullanilanDepolamaAlani)</h2></td><td><h2>@Genel.StorageLabel(queryAbonelik.DepolamaAlani)</h2></td></tr>
+         <tr><td>@Resources.Resource.lblOdevleriçinDepolamaAlani</td><td></td><td><h2>@Genel.StorageLabel(kullanilanOdevDepolamaAlani)</h2></td><td><h2>@Genel.StorageLabel(queryAbonelik.OdevDepolamaAlani)</h2></td></tr>
+         <tr><td>@Resources.Resource.lblDosyaIndirmeKotasi</td><td></td><td><h2>@Genel.StorageLabel(kullanilanBantGenisligi)</h2></td><td><h2>@Genel.StorageLabel(queryAbonelik.OdevDepolamaAlani) / Ay</h2></td></tr>
              
          
          </table>
      </div>
+
+         <div role="tabpanel" class="tab-pane" id="abonelikler">
+          <h2>Abonelikler</h2>
+         <table class="table table-striped">
+            <tr><td>Abonelik Kodu</td><td>Paket Türü</td><td>Başlangıç Tarihi</td><td>Bitiş Tarihi</td><td>Kalan Süre</td></tr>
+             @foreach (var abonelik in queryAbonelikler)
+             {
+                 TimeSpan kalanSure=abonelik.BaslangicTarihi.AddDays(abonelik.Sure)-DateTime.Now;
+                 <tr>
+                     <td>@abonelik.DogrulamaKodu</td>
+                     <td>@abonelik.PaketAdi</td>
+                     <td>@abonelik.BaslangicTarihi.ToLongDateString()</td>
+                     <td>@abonelik.BaslangicTarihi.AddDays(abonelik.Sure).ToLongDateString()</td>
+                     <td>@kalanSure.Days gün</td>
+                 </tr>
+             }
+         </table>
+     </div>
+
      }
   </div>
+
+
 
 </div>
 
