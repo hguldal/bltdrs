@@ -15,7 +15,7 @@
        {
            Culture=UICulture="tr-TR";
        }
-    var roller=Roles.GetRolesForUser(WebSecurity.CurrentUserName);    var abonelikVar=(db.QueryValue("SELECT count(*) FROM Abone INNER JOIN UyelikPaketleri ON Abone.PaketID=UyelikPaketleri.PaketID WHERE Abone.UserID=@0 AND Durum=1",WebSecurity.CurrentUserId)>0);
+    var roller=Roles.GetRolesForUser(WebSecurity.CurrentUserName);    var abonelikVar=(db.QueryValue("exec dbo.Genel_AbonelikKontrol @0",WebSecurity.CurrentUserId)=="OK");
     var sonAktiviteID="";
     List<Aktivite> listeAktiviteler=new List<Aktivite>();
     IEnumerable<dynamic> queryAktiviteler=null;    IEnumerable<dynamic> queryDerslerim=null;
@@ -93,7 +93,7 @@
 }
 
 <div class="row"> 
-    <div class="col-lg-12">        
+    <div class="col-lg-12">        @if (!abonelikVar)        {            <p class="alert alert-danger">Aboneliğinizin Süresi Doldu</p>        }
                             <div class="dropdown">
 
                         

@@ -4,7 +4,7 @@
     {
         Response.Redirect("~/Hesap/Giris?returnUrl=Hesap/Ayarlar");
     }
-
+   
     Layout = Href("~/Shared/_LayoutYeni.cshtml");
  
     var db=Database.Open("fb1ae");
@@ -175,19 +175,40 @@
          <div role="tabpanel" class="tab-pane" id="abonelikler">
           <h2>Abonelikler</h2>
          <table class="table table-striped">
-            <tr><td>Abonelik Kodu</td><td>Paket Türü</td><td>Başlangıç Tarihi</td><td>Bitiş Tarihi</td><td>Kalan Süre</td></tr>
+            <tr><td>Abonelik Kodu</td><td>Paket Türü</td><td>Başlangıç Tarihi</td><td>Süre</td><td>Bitiş Tarihi</td><td>Durum</td></tr>
              @foreach (var abonelik in queryAbonelikler)
              {
-                 TimeSpan kalanSure=abonelik.BaslangicTarihi.AddDays(abonelik.Sure)-DateTime.Now;
-                 <tr>
+                 
+                 <tr @if (abonelik.Durum==1) {<text> class="success"</text>}>
                      <td>@abonelik.DogrulamaKodu</td>
                      <td>@abonelik.PaketAdi</td>
-                     <td>@abonelik.BaslangicTarihi.ToLongDateString()</td>
-                     <td>@abonelik.BaslangicTarihi.AddDays(abonelik.Sure).ToLongDateString()</td>
-                     <td>@kalanSure.Days gün</td>
+                     <td>
+                         @if (abonelik.Durum==0)
+                          {
+                              <span>Geçerli Aboneliğin Bittiği Tarih</span>
+                          }
+                          else {
+                        @abonelik.BaslangicTarihi
+                        }
+                     </td>
+                     <td>@abonelik.Sure Gün</td>
+
+                     <td>
+                          @if (abonelik.Durum==0)
+                          {
+                              <span>Geçerli Aboneliğin Bittiği Tarih + @abonelik.Sure Gün</span>
+                          }
+                          else {
+                            @abonelik.BaslangicTarihi.AddDays(abonelik.Sure)
+                        }
+                          
+                     </td>
+                     <td>@if (abonelik.Durum==1) {<i class="fa fa-check-circle-o fa-2x" title="Kullanılıyor"></i>} else if (abonelik.Durum==0) { <i class="fa fa-clock-o fa-2x" title="Henüz Kullanılmamış"></i>} else if (abonelik.Durum==2) { <i class="fa fa-times fa-2x" title="Kullanılmış"></i>}</td>
                  </tr>
              }
          </table>
+            <br>
+             <button id="btnAbonelikEkle" class="btn btn-primary">Abonelik Ekle</button>
      </div>
 
      }

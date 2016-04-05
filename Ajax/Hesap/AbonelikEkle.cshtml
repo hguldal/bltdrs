@@ -1,0 +1,42 @@
+﻿@{
+ 
+    if (!WebSecurity.IsAuthenticated)
+   
+        {
+            Response.StatusCode=401;
+            Response.End();
+                   
+        }  
+
+    var DogrulamaKodu=Request["DogrulamaKodu"];
+    
+    
+    if (string.IsNullOrEmpty(DogrulamaKodu))
+     {
+    
+       Response.StatusCode=500;
+       Response.End();
+     }
+
+
+     var db=Database.Open("fb1ae");
+
+      var queryIslem=db.QueryValue("exec dbo.Genel_AbonelikEkle @0,@1",WebSecurity.CurrentUserId,DogrulamaKodu);
+
+    if (queryIslem=="OK")
+    {
+        db.Close();
+        Response.Write("OK");
+        Response.End();    
+    }
+    else
+    {
+        db.Close();
+        Response.StatusCode=501;
+        Response.End();
+    }
+    
+}
+
+
+

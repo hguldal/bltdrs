@@ -16,8 +16,10 @@
     DateTime bitis=new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,0,0,0);
 
    var queryBildirimler=db.Query("exec dbo.Bildirim_KullaniciyaGoreBildirimler @0",WebSecurity.CurrentUserId);
-
-    List<Bildirim> listeBildirimler=new List<Bildirim>();
+   
+   db.Execute("UPDATE Abone SET Durum=2 WHERE DATEADD(day,Sure,BaslangicTarihi)< Getdate() AND Durum<>0");
+   
+   List<Bildirim> listeBildirimler=new List<Bildirim>();
 
     foreach(var bildirim in queryBildirimler)
 
