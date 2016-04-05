@@ -23,8 +23,7 @@
     }
     var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0 AND Silindi=0",DersID);
     var queryKullanici=db.QuerySingle("SELECT * FROM Profiles WHERE UserID=@0",WebSecurity.CurrentUserId);
-    var queryDersSahibi=db.QuerySingle("SELECT * FROM Profiles WHERE userID=@0",queryDers.UserID);
-    
+    var queryDersSahibi=db.QuerySingle("SELECT * FROM Profiles WHERE userID=@0",queryDers.UserID);    
     var queryDersSayisalDegerler=db.QuerySingle("exec dbo.Ders_SayisalDegerler @0",DersID);
 
     var ogrenciSayisi=queryDersSayisalDegerler.OgrenciSayisi;
