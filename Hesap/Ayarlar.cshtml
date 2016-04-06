@@ -32,10 +32,11 @@
     
     if (roller.Contains("Ogretici"))
     {
-        queryAbonelik=db.QuerySingle("SELECT * FROM Abone INNER JOIN UyelikPaketleri ON UyelikPaketleri.PaketID=Abone.PaketID WHERE UserID=@0 AND DATEADD(day,Sure,BaslangicTarihi)>Getdate()",WebSecurity.CurrentUserId);       
-        queryAbonelikler=db.Query("SELECT * FROM Abone INNER JOIN UyelikPaketleri ON UyelikPaketleri.PaketID=Abone.PaketID WHERE UserID=@0",WebSecurity.CurrentUserId);
+        queryAbonelik=db.QuerySingle("select top 1 * from Abonelik_SatinAlinan INNER JOIN Abonelik ON Abonelik_SatinAlinan.AbonelikID=Abonelik.AbonelikID INNER JOIN  UyelikPaketleri ON UyelikPaketleri.PaketID=Abonelik.PaketID  WHERE BaslangicTarihi<GETDATE() AND BitisTarihi>Getdate() AND Abonelik_SatinAlinan.UserID=@0",WebSecurity.CurrentUserId);
+        queryAbonelikler=db.Query("SELECT * FROM Abonelik_SatinAlinan INNER JOIN Abonelik ON Abonelik_SatinAlinan.AbonelikID=Abonelik.AbonelikID INNER JOIN  UyelikPaketleri ON UyelikPaketleri.PaketID=Abonelik.PaketID WHERE Abonelik_SatinAlinan.UserID=@0",WebSecurity.CurrentUserId);
         kullanilanDepolamaAlani= Convert.ToDouble(db.QueryValue("SELECT ISNULL(SUM(Boyut),0) as Toplam FROM Dosya WHERE UserID=@0 AND Silindi=0",WebSecurity.CurrentUserId));
-        kullanilanDepolamaAlaniYuzde= 100-Math.Round(kullanilanDepolamaAlani*100/queryAbonelik.DepolamaAlani);
+
+        kullanilanDepolamaAlaniYuzde=(queryAbonelik.DepolamaAlani==null) ? 0 : 100-Math.Round(kullanilanDepolamaAlani*100/queryAbonelik.DepolamaAlani);
         kullanilanBantGenisligi=db.QueryValue("SELECT ISNULL(SUM(Dosya.Boyut),0) FROM Dosya INNER JOIN DosyaIndirilen ON Dosya.DosyaID=DosyaIndirilen.DosyaID WHERE Dosya.UserID=@0 AND month(DosyaIndirilen.Tarih)=@1",WebSecurity.CurrentUserId,DateTime.Now.Month);
     }
     db.Close();
@@ -175,35 +176,14 @@
          <div role="tabpanel" class="tab-pane" id="abonelikler">
           <h2>Abonelikler</h2>
          <table class="table table-striped">
-            <tr><td>Abonelik Kodu</td><td>Paket Türü</td><td>Başlangıç Tarihi</td><td>Süre</td><td>Bitiş Tarihi</td><td>Durum</td></tr>
+            <tr><td>Abonelik Kodu</td><td>Paket Türü</td><td>Başlangıç Tarihi</td><td>Bitiş Tarihi</td></tr>
              @foreach (var abonelik in queryAbonelikler)
              {
-                 
-                 <tr @if (abonelik.Durum==1) {<text> class="success"</text>}>
+                 <tr>
                      <td>@abonelik.DogrulamaKodu</td>
                      <td>@abonelik.PaketAdi</td>
-                     <td>
-                         @if (abonelik.Durum==0)
-                          {
-                              <span>Geçerli Aboneliğin Bittiği Tarih</span>
-                          }
-                          else {
-                        @abonelik.BaslangicTarihi
-                        }
-                     </td>
-                     <td>@abonelik.Sure Gün</td>
-
-                     <td>
-                          @if (abonelik.Durum==0)
-                          {
-                              <span>Geçerli Aboneliğin Bittiği Tarih + @abonelik.Sure Gün</span>
-                          }
-                          else {
-                            @abonelik.BaslangicTarihi.AddDays(abonelik.Sure)
-                        }
-                          
-                     </td>
-                     <td>@if (abonelik.Durum==1) {<i class="fa fa-check-circle-o fa-2x" title="Kullanılıyor"></i>} else if (abonelik.Durum==0) { <i class="fa fa-clock-o fa-2x" title="Henüz Kullanılmamış"></i>} else if (abonelik.Durum==2) { <i class="fa fa-times fa-2x" title="Kullanılmış"></i>}</td>
+                     <td>@abonelik.BaslangicTarihi</td>
+                     <td>@abonelik.BitisTarihi</td>
                  </tr>
              }
          </table>
