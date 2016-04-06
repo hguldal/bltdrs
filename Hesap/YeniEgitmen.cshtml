@@ -4,12 +4,11 @@
     var soyad="";
     var ePosta="";     
     var parola="";   
-    var kayitKodu="";
+    var dogrulamaKodu="";
     
     bool hataVar=false;   
     var mesajEPostaKayitli="";
-    var mesajKayitKoduHatali="";
-    var mesajKayitKoduSureDolmus="";
+    var mesajDogrulamaKoduHatali="";
     var returnUrl=Request.QueryString["returnUrl"];
     var db=Database.Open("fb1ae");
    
@@ -33,7 +32,7 @@
         soyad=Request.Form["txtSoyad"];
         ePosta=Request.Form["txtEPosta"];
         parola=Request.Form["txtParola"];
-        kayitKodu=Request.Form["txtKayitKodu"];
+        dogrulamaKodu=Request.Form["txtDogrulamaKodu"];
         
         if (db.QueryValue("SELECT COUNT(*) FROM Profiles WHERE ePosta=@0",ePosta)!=0)
         {
@@ -41,32 +40,28 @@
           hataVar=true;
         }
 
-        var queryKayitKodu=db.QuerySingle("SELECT * FROM EgitmenKayitKodlari WHERE Kod=@0 AND Silindi=0",kayitKodu);
-        
-        if (queryKayitKodu==null)
-        {
-          mesajKayitKoduHatali=Resources.Resource.msgGirilenEgitmenKayitKoduGecersiz;
-          hataVar=true;
-        }
+      
         else
         {
-            if (queryKayitKodu.SonKullanimTarihi<DateTime.Now)
-            {
-                mesajKayitKoduSureDolmus=Resources.Resource.msgGirilenEgitmenKayitKoduSuresiDolmus;
-                hataVar=true;
-            }
+             var queryDogrulamaKodu=db.QueryValue("SELECT count(*) FROM Abonelik WHERE Abonelik.DogrulamaKodu=@DogrulamaKodu AND Kullanildi=0",dogrulamaKodu);
+             if (queryDogrulamaKodu==0)
+             {
+                 hataVar=true;
+                 mesajDogrulamaKoduHatali="Doğrulama Kodu Hatalı";
+             }
         }
 
         if (hataVar==false)
         {
             
-            db.Execute("INSERT INTO Profiles(ePosta,Ad,Soyad,UyelikTuru,Dil) VALUES (@0,@1,@2,@3,@4)",ePosta,ad,soyad,queryKayitKodu.UyelikTuru,dil);
+            db.Execute("INSERT INTO Profiles(ePosta,Ad,Soyad,Dil) VALUES (@0,@1,@2,@3)",ePosta,ad,soyad,dil);
        
             var token= WebSecurity.CreateAccount(ePosta,parola,false);
       
             Roles.AddUserToRole(ePosta,"Ogretici");
-         
-            db.Execute("UPDATE EgitmenKayitKodlari SET Silindi=1 WHERE Kod=@0",kayitKodu);
+
+            var queryIslem=db.QueryValue("exec dbo.Genel_AbonelikEkle @0,@1",WebSecurity.CurrentUserId,dogrulamaKodu);
+
             db.Close();
 
             WebSecurity.Login(ePosta,parola);
@@ -129,14 +124,9 @@
                 <p class="alert alert-danger">@mesajEPostaKayitli</p>
             }
 
-            @if (!string.IsNullOrEmpty(mesajKayitKoduHatali))
+            @if (!string.IsNullOrEmpty(mesajDogrulamaKoduHatali))
             {
-                <p class="alert alert-danger">@mesajKayitKoduHatali</p>
-            }
-
-            @if (!string.IsNullOrEmpty(mesajKayitKoduSureDolmus))
-            {
-                <p class="alert alert-danger">@mesajKayitKoduSureDolmus</p>
+                <p class="alert alert-danger">@mesajDogrulamaKoduHatali</p>
             }
 
         <div class="registerbox bg-white">
@@ -166,7 +156,7 @@
                 <input class="form-control" id="txtSoyad" name="txtSoyad" type="text" value="@soyad" placeholder="@Resources.Resource.lblSoyad"/>
             </div>
             <div class="registerbox-textbox">
-                <input class="form-control" id="txtKayitKodu" name="txtKayitKodu" type="text" value="@kayitKodu" placeholder="@Resources.Resource.lblEgitmenDogrulamaKodu"/>
+                <input class="form-control" id="txtDogrulamaKodu" name="txtDogrulamaKodu" type="text" value="@dogrulamaKodu" placeholder="Abonelik Kodu"/>
             </div>
             </form>
             <div class="registerbox-submit">
