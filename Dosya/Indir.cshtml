@@ -43,7 +43,7 @@
  
  if (erisimAcik)
  {
-    var bantGenisligiKota=db.QueryValue("select ISNULL(SUM(BantGenisligi),0) from Abonelik_SatinAlinan INNER JOIN Abonelik ON Abonelik_SatinAlinan.AbonelikID=Abonelik.AbonelikID INNER JOIN  UyelikPaketleri ON UyelikPaketleri.PaketID=Abonelik.PaketID  WHERE BaslangicTarihi<GETDATE() AND BitisTarihi>Getdate() AND Abonelik_SatinAlinan.UserID=@0",WebSecurity.CurrentUserId);
+    var bantGenisligiKota=db.QueryValue("select ISNULL(SUM(BantGenisligi),0) from Abonelik_SatinAlinan INNER JOIN Abonelik ON Abonelik_SatinAlinan.AbonelikID=Abonelik.AbonelikID INNER JOIN  UyelikPaketleri ON UyelikPaketleri.PaketID=Abonelik.PaketID  WHERE BaslangicTarihi<GETDATE() AND BitisTarihi>Getdate() AND Abonelik_SatinAlinan.UserID=@0",queryDosya.UserID);
    var kullanilanKota=db.QueryValue("SELECT ISNULL(SUM(Dosya.Boyut),0) FROM Dosya INNER JOIN DosyaIndirilen ON Dosya.DosyaID=DosyaIndirilen.DosyaID WHERE Dosya.UserID=@0 AND month(DosyaIndirilen.Tarih)=@1",queryDosya.UserID,DateTime.Now.Month);
  
    if (kullanilanKota+queryDosya.Boyut>bantGenisligiKota)
@@ -52,6 +52,7 @@
        Response.Redirect("~/Shared/Hata?Kod=bantgenisligiyetersiz");
        Response.End();
    }
+   
     db.Execute("INSERT INTO DosyaIndirilen(DosyaID,UserID) VALUES (@0,@1)",dosyaID,WebSecurity.CurrentUserId);
  
     var azureStorageHesapAdi=System.Configuration.ConfigurationManager.AppSettings["AzureStorageHesapAdi"];	

@@ -63,8 +63,7 @@
             WebSecurity.Login(ePosta,parola);
            
             var queryIslem=db.QueryValue("exec dbo.Genel_AbonelikEkle @0,@1",WebSecurity.CurrentUserId,dogrulamaKodu);
-             Response.Write(WebSecurity.CurrentUserId);
-            Response.End();
+         
 
             db.Close();
 
