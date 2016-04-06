@@ -8,10 +8,11 @@
    var db=Database.Open("fb1ae");
    var dosyaBoyut=Request["DosyaBoyut"];
    var toplamDosyaAlani= Convert.ToDouble(db.QueryValue("SELECT ISNULL(SUM(Boyut),0) as Toplam FROM Dosya WHERE UserID=@0 AND Silindi=0",WebSecurity.CurrentUserId)) + Convert.ToDouble(dosyaBoyut);
-   var queryAbonelik=db.QuerySingle("SELECT * FROM Abone INNER JOIN UyelikPaketleri ON Abone.PaketID=UyelikPaketleri.PaketID WHERE Abone.UserID=@0 AND Durum=1",WebSecurity.CurrentUserId);
+   var queryAbonelik=db.QuerySingle("select top 1 * from Abonelik_SatinAlinan INNER JOIN Abonelik ON Abonelik_SatinAlinan.AbonelikID=Abonelik.AbonelikID INNER JOIN  UyelikPaketleri ON UyelikPaketleri.PaketID=Abonelik.PaketID  WHERE BaslangicTarihi<GETDATE() AND BitisTarihi>Getdate() AND Abonelik_SatinAlinan.UserID=@0",WebSecurity.CurrentUserId);
+   var depolamaAlani=(queryAbonelik==null) ? 0 : queryAbonelik.DepolamaAlani;
    db.Close();
     
-    if (toplamDosyaAlani>Convert.ToDouble(queryAbonelik.DepolamaAlani))
+    if (toplamDosyaAlani>Convert.ToDouble(depolamaAlani))
      {
          Response.StatusCode=502;
          Response.End(); 
