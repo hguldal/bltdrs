@@ -1,0 +1,37 @@
+﻿@{
+   if (!WebSecurity.IsAuthenticated)
+     {
+        
+        Response.StatusCode=401;
+        Response.End(); 
+     }
+   var db=Database.Open("fb1ae");
+   var dosyaBoyut=Request["DosyaBoyut"];
+   var OdevID=Request["OdevID"];
+  
+   if (string.IsNullOrEmpty(OdevID))
+   {
+       Response.StatusCode=500;
+       Response.End();
+   }
+  
+   var queryOdev=db.QuerySingle("SELECT * FROM Odev WHERE OdevID=@0 AND Silindi=0",OdevID);
+   var toplamDosyaAlani= Convert.ToDouble(db.QueryValue("SELECT ISNULL(SUM(Boyut),0) as Toplam FROM Dosya WHERE UserID=@0 AND Silindi=0",queryOdev.UserID)) + Convert.ToDouble(dosyaBoyut);
+   var queryAbonelik=db.QuerySingle("select top 1 * from Abonelik_SatinAlinan INNER JOIN Abonelik ON Abonelik_SatinAlinan.AbonelikID=Abonelik.AbonelikID INNER JOIN  UyelikPaketleri ON UyelikPaketleri.PaketID=Abonelik.PaketID  WHERE BaslangicTarihi<GETDATE() AND BitisTarihi>Getdate() AND Abonelik_SatinAlinan.UserID=@0",queryOdev.UserID);
+   var depolamaAlani=(queryAbonelik==null) ? 0 : queryAbonelik.DepolamaAlani;
+   db.Close();
+    
+    if (toplamDosyaAlani>Convert.ToDouble(depolamaAlani))
+     {
+         Response.StatusCode=502;
+         Response.End(); 
+     }  
+     else
+     {
+         Response.Write("OK");
+         Response.End();
+     }
+     
+       
+}
+
