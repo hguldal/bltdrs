@@ -36,7 +36,7 @@
         queryAbonelikler=db.Query("SELECT * FROM Abonelik_SatinAlinan INNER JOIN Abonelik ON Abonelik_SatinAlinan.AbonelikID=Abonelik.AbonelikID INNER JOIN  UyelikPaketleri ON UyelikPaketleri.PaketID=Abonelik.PaketID WHERE Abonelik_SatinAlinan.UserID=@0",WebSecurity.CurrentUserId);
         kullanilanDepolamaAlani= Convert.ToDouble(db.QueryValue("SELECT ISNULL(SUM(Boyut),0) as Toplam FROM Dosya WHERE UserID=@0 AND Silindi=0",WebSecurity.CurrentUserId));
 
-        kullanilanDepolamaAlaniYuzde=(queryAbonelik.DepolamaAlani==null) ? 0 : 100-Math.Round(kullanilanDepolamaAlani*100/queryAbonelik.DepolamaAlani);
+        kullanilanDepolamaAlaniYuzde=(queryAbonelik==null) ? 0 : 100-Math.Round(kullanilanDepolamaAlani*100/queryAbonelik.DepolamaAlani);
         kullanilanBantGenisligi=db.QueryValue("SELECT ISNULL(SUM(Dosya.Boyut),0) FROM Dosya INNER JOIN DosyaIndirilen ON Dosya.DosyaID=DosyaIndirilen.DosyaID WHERE Dosya.UserID=@0 AND month(DosyaIndirilen.Tarih)=@1",WebSecurity.CurrentUserId,DateTime.Now.Month);
     }
     db.Close();
@@ -161,8 +161,14 @@
 
       @if (roller.Contains("Ogretici"))
       {
-      
+        
      <div role="tabpanel" class="tab-pane" id="uyelikbilgileri">
+         @if (queryAbonelik==null)
+         {
+            <p>Abonelik Türünüz</p> <h2>Abonelik Süreniz Dolmuş</h2>  
+         }
+         else
+         {
          <p>Abonelik Türünüz</p> <h2>@queryAbonelik.PaketAdi</h2>
          <table class="table table-striped">
          <tr><td></td><td></td><td><strong>@Resources.Resource.lblKullanilan</strong></td><td><strong>@Resources.Resource.lblKota</strong></td></tr>
@@ -171,6 +177,7 @@
              
          
          </table>
+            }
      </div>
 
          <div role="tabpanel" class="tab-pane" id="abonelikler">
@@ -192,6 +199,7 @@
      </div>
 
      }
+    
   </div>
 
 
