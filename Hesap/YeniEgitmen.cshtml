@@ -43,7 +43,7 @@
       
         else
         {
-             var queryDogrulamaKodu=db.QueryValue("SELECT count(*) FROM Abonelik WHERE Abonelik.DogrulamaKodu=@DogrulamaKodu AND Kullanildi=0",dogrulamaKodu);
+             var queryDogrulamaKodu=db.QueryValue("SELECT count(*) FROM Abonelik WHERE Abonelik.DogrulamaKodu=@0 AND Kullanildi=0",dogrulamaKodu);
              if (queryDogrulamaKodu==0)
              {
                  hataVar=true;
@@ -60,12 +60,13 @@
       
             Roles.AddUserToRole(ePosta,"Ogretici");
 
-            var queryIslem=db.QueryValue("exec dbo.Genel_AbonelikEkle @0,@1",WebSecurity.CurrentUserId,dogrulamaKodu);
-
-            db.Close();
-
             WebSecurity.Login(ePosta,parola);
            
+            var queryIslem=db.QueryValue("exec dbo.Genel_AbonelikEkle @0,@1",WebSecurity.CurrentUserId,dogrulamaKodu);
+             Response.Write(WebSecurity.CurrentUserId);
+            Response.End();
+
+            db.Close();
 
             if (string.IsNullOrEmpty(returnUrl))
             {
