@@ -74,7 +74,11 @@
                     </tr>
             
                     <tr>
-                        <td>@queryOdevGonderisi.Metin</td>
+                        <td>
+                             <div style="height: 150px;overflow: auto;">
+                                    @Html.Raw(queryOdevGonderisi.Metin)
+                             </div>
+                        </td>
                     </tr>
                 }
                 <tr>
