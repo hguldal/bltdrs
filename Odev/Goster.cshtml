@@ -22,6 +22,7 @@
         Response.End();
     }  
 
+     var roller=Roles.GetRolesForUser(WebSecurity.CurrentUserName);
      var queryOdev=db.QuerySingle("SELECT * FROM Odev WHERE OdevID=@0 AND Silindi=0",OdevID);
 
     if (queryOdev==null)
@@ -85,11 +86,10 @@
      
 }
 
-
- 
 @section css
 {
     <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+   <link rel="stylesheet" href="@Href("~/Shared/Plugins/summernote/summernote.css")">
 }
 
 @section Gezinti {
@@ -289,10 +289,10 @@
      </div>
     </div>
 </div>
-@if (gonderimAcik)
+@if (gonderimAcik && roller.Contains("Ogrenci"))
 {
  <div class="modal" id="modalOdevGonder" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -302,12 +302,12 @@
         <div class="row">
    
             <div class="col-lg-12">
-               
+                 
                   <input type="hidden" value="@queryOdev.OdevID" name="OdevID" id="txtOdevID">     
                        
                   <label>Ödev Metni:</label>
-                  <textarea class="form-control" name="txtMetin" id="txtMetin" placeholder="Ödevinizi Buraya Yazınız..."></textarea>
-  
+                  <div id="txtMetin"></div>
+                  
                   <label>@Resources.Resource.lblBilgisayardaDosyaSec</label>
                   <input type="file" class="form-control" id="txtDosya" name="file" placeholder="@Resources.Resource.lblDosyaSec">
    
@@ -318,8 +318,9 @@
          </div>
       </div>
    <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">@Resources.Resource.lblIptal</button>
         <button type="button" class="btn btn-primary" id="btnOdeviGonder">@Resources.Resource.lblGonder</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">@Resources.Resource.lblIptal</button>
+        
       </div>
     </div>
   </div>
@@ -328,13 +329,12 @@
 @section js
 {
    <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
-   
-    @if (gonderimAcik)
+ 
+   <script src="@Href("~/Shared/Plugins/summernote/summernote.min.js")"></script>
+    @if  (dil=="tr")
     {
-        <script src="@Href("~/Shared/Plugins/jquerycountdown/jquery.countdown.min.js")"></script>
-       
+    <script src="@Href("~/Shared/Plugins/summernote/lang/summernote-tr-TR.js")"></script>     
     }
-
     <script src="@Href(string.Format("~/Odev/Js/Odev.Labels.{0}.js",dil))"></script>
     <script src="@Href("~/Odev/Js/Goster.min.js")"></script>
 
