@@ -155,7 +155,12 @@
                 </tr>
             
                 <tr>
-                    <td>@queryOdev.Aciklama</td>
+                    <td>
+                        <div style="height: 150px;overflow: auto;">
+                                    @Html.Raw(queryOdev.Aciklama)
+                             </div>
+                        
+                    </td>
                 </tr>
            </table>
 
