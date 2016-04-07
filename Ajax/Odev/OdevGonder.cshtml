@@ -7,7 +7,7 @@
      }
    
     var OdevID=Request["OdevID"];
-    var Metin=Request["Metin"];
+    var Metin=Request.Unvalidated("Metin");
     var boyut=Request["DosyaBoyut"];
     var dosyaAdi=Request["DosyaAdi"];
     var dosyaTuru=Request["DosyaTuru"];
