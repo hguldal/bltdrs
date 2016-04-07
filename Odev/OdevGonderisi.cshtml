@@ -93,14 +93,14 @@
                     <td>@HelperProfil.KucukKunye(queryOdevGonderisi.UserID,dil) </td>
                 </tr>
 
-                 @if (queryOdevGonderisi.Aciklama!=null)
+                 @if (queryOdevGonderisi.Metin!=null)
                  {
                     <tr>
-                        <td><strong>@Resources.Resource.lblGonderenOgrencininMesaji</strong></td>
+                        <td><strong>Gönderilen Ödev Metni</strong></td>
                     </tr>
             
                     <tr>
-                        <td>@queryOdevGonderisi.Aciklama</td>
+                        <td>@queryOdevGonderisi.Metin</td>
                     </tr>
                 }
                 <tr>
