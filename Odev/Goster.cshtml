@@ -129,7 +129,11 @@
             </tr>
             
             <tr>
-                <td><a href="#" id="lnkAciklama">@queryOdev.Aciklama</a></td>
+                <td>
+                     <div style="height: 150px;overflow: auto;">
+                            @Html.Raw(queryOdev.Aciklama)
+                     </div>
+                </td>
             </tr>
 
             @if (queryOdev.DosyaID!=0 && queryOdev.DosyaID!=-1)
