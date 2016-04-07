@@ -7,7 +7,7 @@
      }
    
     var OdevID=Request["OdevID"];
-    var Aciklama=Request["Aciklama"];
+    var Metin=Request["Metin"];
     var boyut=Request["DosyaBoyut"];
     var dosyaAdi=Request["DosyaAdi"];
     var dosyaTuru=Request["DosyaTuru"];
@@ -28,7 +28,7 @@
     }
 
 
-    var queryGonderilenOdev=db.QuerySingle("exec dbo.Odev_Gonder @0,@1,@2,@3,@4,@5,@6",WebSecurity.CurrentUserId, OdevID,boyut,dosyaAdi,dosyaTuru,azureDosyaAdi,Aciklama);
+    var queryGonderilenOdev=db.QuerySingle("exec dbo.Odev_Gonder @0,@1,@2,@3,@4,@5,@6",WebSecurity.CurrentUserId, OdevID,boyut,dosyaAdi,dosyaTuru,azureDosyaAdi,Metin);
     
     
     if (queryGonderilenOdev==null)
