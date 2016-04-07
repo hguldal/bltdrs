@@ -17,14 +17,12 @@
   
     if (string.IsNullOrEmpty(azureDosyaAdi))
     {
-        Response.StatusCode=502;
-        Response.End();
+       azureDosyaAdi="null";
     }
 
     if (string.IsNullOrEmpty(dosyaAdi))
     {
-        Response.StatusCode=501;
-        Response.End();
+        dosyaAdi="null";
     }
 
 
