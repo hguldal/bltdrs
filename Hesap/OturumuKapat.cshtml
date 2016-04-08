@@ -11,13 +11,8 @@
     var dil=queryKullanici.Dil;
     db.Close();
     WebSecurity.Logout();
-    if (dil=="tr")
-    {
-    Response.Redirect("~/Web/");
+   
+    Response.Redirect("~/Hesap/Giris/");
 
-    }
-    else 
-    {
-       Response.Redirect("~/Web/en/"); 
-    }
+    
 }
