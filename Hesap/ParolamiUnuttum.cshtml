@@ -1,6 +1,6 @@
 ﻿@{
   
-    var dil="tr";
+   var dil="tr";
    
    if (Request.Url.GetLeftPart(UriPartial.Authority).Contains("azureboard.com"))
      {
@@ -11,77 +11,92 @@
          dil="tr";
          Culture=UICulture="tr-TR";
      }
-}
-<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-<!--Head-->
-<head>
-    <meta charset="utf-8" />
-    <title>@Resources.Resource.lblParolamiUnuttum</title>
-
-    <meta name="description" content="register page" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <link rel="shortcut icon" href="assets/img/favicon.png" type="image/x-icon">
-
-    <!--Basic Styles-->
-    <link href="@Href("~/Shared/TemaBeyond/assets/css/bootstrap.min.css")" rel="stylesheet" />
-    <link id="bootstrap-rtl-link" href="" rel="stylesheet" />
-    <link href="@Href("~/Shared/TemaBeyond/assets/css/font-awesome.min.css")" rel="stylesheet" />
-    <link href="@Href("~/Shared/TemaBeyond/assets/css/weather-icons.min.css")" rel="stylesheet" />
-
-    <!--Fonts-->
-    <link href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300"
-          rel="stylesheet" type="text/css">
-
-    <!--Beyond styles-->
-    <link id="beyond-link" href="@Href("~/Shared/TemaBeyond/assets/css/beyond.min.css")" rel="stylesheet" />
-    <link href="@Href("~/Shared/TemaBeyond/assets/css/demo.min.css")" rel="stylesheet" />
-    <link href="@Href("~/Shared/TemaBeyond/assets/css/typicons.min.css")" rel="stylesheet" />
-    <link href="@Href("~/Shared/TemaBeyond/assets/css/animate.min.css")" rel="stylesheet" />
-    <link id="skin-link" href="" rel="stylesheet" type="text/css" />
-    <link href="@Href("~/Shared/Plugins/jquery.growl/jquery.growl.css")" rel="stylesheet" type="text/css">
-    <script src="@Href("~/Shared/TemaBeyond/assets/js/skins.min.js")"></script>
-</head>
-<!--Head Ends-->
-<!--Body-->
-<body>
-    <div class="register-container animated fadeInDown">
-      
-        <div class="registerbox bg-white">
-            <div class="registerbox-title">@Resources.Resource.lblParolamiUnuttum</div>
-
-            <div class="registerbox-caption ">@Resources.Resource.msgEPostaGirGondereBas</div>
-            
-            <div class="registerbox-textbox">
-                <input class="form-control"  id="txtEposta" name="txtEposta" type="email" autofocus="true" />
-            </div>
-            
-            
-            <div class="registerbox-submit">
-                <button type="button" class="btn btn-primary pull-right" id="btnHesapOlustur" > @Resources.Resource.lblGonder</button>
-            </div>
-        </div>
-        
-    </div>
-
-     <!--Basic Scripts-->
-    <script src="@Href("~/Shared/TemaBeyond/assets/js/jquery.min.js")"></script>
-    <script src="@Href("~/Shared/TemaBeyond/assets/js/bootstrap.min.js")"></script>
-    <script src="@Href("~/Shared/TemaBeyond/assets/js/slimscroll/jquery.slimscroll.min.js")"></script>
-
-    <!--Beyond Scripts-->
-    <script src="@Href("~/Shared/TemaBeyond/assets/js/beyond.min.js")"></script>
-    <script src="@Href("~/Shared/Plugins/BlockUI/jquery.blockUI.js")"></script>
-    <script src="@Href("~/Shared/Plugins/jquery.growl/jquery.growl.js")"></script>
-    <script src="@Href(string.Format("~/Shared/Js/Global.Labels.{0}.js",dil))"></script>
-    <script src="@Href("~/Shared/Js/Global.min.js")"></script>
-    <script src="@Href(string.Format("~/Hesap/Js/Hesap.Labels.{0}.js",dil))"></script>
-    <script src="@Href("~/Hesap/Js/ParolamiUnuttum.min.js")"></script>
     
+    var ePosta="";
+    var hataVar=false;
+    var mesajEpostaKayitliDegil="";
+    var mesajEpostaBos="";
+    var islemTamam=false;
+    Layout = "~/Shared/_LayoutYeniMisafir.cshtml";
+   if (IsPost)
+     {
+                  
+      
+        var db=Database.Open("fb1ae");
+        
+        ePosta=Request.Form["txtEPosta"];
+       
 
-</body>
-<!--Body Ends-->
-</html>
+         if (string.IsNullOrEmpty(ePosta))
+        {
+            hataVar=true;
+            mesajEpostaBos="E-posta adresinizi girmediniz";
+        }
+       
+        if (db.QueryValue("SELECT COUNT(*) FROM Profiles WHERE ePosta=@0",ePosta)==0)
+        {
+            hataVar=true;
+            mesajEpostaBos="Girdiğiniz e-posta adresi sistemde kayıtlı değil";
+        }
+
+        if (hataVar==false)
+        {
+            var token=WebSecurity.GeneratePasswordResetToken(ePosta);
+
+            Random r=new Random();
+     
+            var geciciParola=r.Next(1000,1000000);
+       
+
+            WebMail.Send(ePosta,"BulutDers Geçici Parola","<strong>BulutDers Geçici Parolanız:</strong>" + geciciParola.ToString(),"BulutDers Destek <destek@bulutders.com>",isBodyHtml:true);
+            WebSecurity.ResetPassword(token,geciciParola.ToString());
+            islemTamam=true;
+
+        }
+     }
+}
+
+<div class="row">
+    <div class="col-lg-12 col-sm-12 col-xs-12">
+       
+             @if (!string.IsNullOrEmpty(mesajEpostaBos))
+        {
+             <p class="alert alert-danger">@mesajEpostaBos</p>
+        }
+
+        @if (!string.IsNullOrEmpty(mesajEpostaKayitliDegil))
+        {
+            <p class="alert alert-danger">@mesajEpostaKayitliDegil</p>
+        }
+        @if (islemTamam)
+          {
+             <p class="alert alert-success">Yeni parolanız girdiğiniz e-posta adresine başarıyla gönderildi</p>  
+          }
+         <div class="widget">
+                                                <div class="widget-header bordered-bottom bordered-blue">
+                                                    <span class="widget-caption"> <strong><i class="fa fa-lock"></i> @Resources.Resource.lblParolamiUnuttum</strong></span>
+                                                </div>
+                                                <div class="widget-body">
+                                                    <div id="registration-form">
+                                                        <form role="form" method="post" action="#">
+                                                            <div class="form-title">
+                                                               Oturum Açma Bilgileri
+                                                            </div>
+                                                           <div class="form-group">
+                                                               @Resources.Resource.msgEPostaGirGondereBas
+                                                               </div>
+                                                            <div class="form-group">
+                                                                <span class="input-icon icon-right">
+                                                                    <input class="form-control"  id="txtEposta" name="txtEposta" type="email" autofocus="true" required placeholder="E-posta..." value="@ePosta" />
+                                                                    <i class="fa fa-envelope-o circular"></i>
+                                                                </span>
+                                                            </div>
+                                                           
+                                                            <button type="submit" class="btn btn-primary btn-block">@Resources.Resource.lblGonder</button>
+                                                      </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+     </div>
+</div>
