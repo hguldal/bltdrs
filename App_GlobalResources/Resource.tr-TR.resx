@@ -688,10 +688,10 @@
 <value>Kota</value>
 </data>
 <data name="lblEgitmenKayit" xml:space="preserve">
-<value>Eğitmen Kayıt</value>
+<value>Eğitmen Hesabı Oluştur</value>
 </data>
 <data name="lblOgrenciKayit" xml:space="preserve">
-<value>Öğrenci Kayıt</value>
+<value>Öğrenci Hesabı Oluştur</value>
 </data>
 <data name="lblKalanSure" xml:space="preserve">
 <value>Kalan Süre</value>

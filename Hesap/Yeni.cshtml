@@ -21,6 +21,8 @@
          Culture=UICulture="tr-TR";
      }
 
+    Layout = "~/Shared/_LayoutYeniMisafir.cshtml";
+
     var db=Database.Open("fb1ae");
     
     
@@ -71,105 +73,7 @@
        
     db.Close();
 }
-<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-<!--Head-->
-<head>
-    <meta charset="utf-8" />
-    <title>@Resources.Resource.lblYeniHesap</title>
-
-    <meta name="description" content="register page" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <link rel="shortcut icon" href="assets/img/favicon.png" type="image/x-icon">
-
-    <!--Basic Styles-->
-    <link href="@Href("~/Shared/TemaBeyond/assets/css/bootstrap.min.css")" rel="stylesheet" />
-    <link id="bootstrap-rtl-link" href="" rel="stylesheet" />
-    <link href="@Href("~/Shared/TemaBeyond/assets/css/font-awesome.min.css")" rel="stylesheet" />
-    <link href="@Href("~/Shared/TemaBeyond/assets/css/weather-icons.min.css")" rel="stylesheet" />
-
-    <!--Fonts-->
-    <link href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300"
-          rel="stylesheet" type="text/css">
-
-    <!--Beyond styles-->
-    <link id="beyond-link" href="@Href("~/Shared/TemaBeyond/assets/css/beyond.min.css")" rel="stylesheet" />
-    <link href="@Href("~/Shared/TemaBeyond/assets/css/demo.min.css")" rel="stylesheet" />
-    <link href="@Href("~/Shared/TemaBeyond/assets/css/typicons.min.css")" rel="stylesheet" />
-    <link href="@Href("~/Shared/TemaBeyond/assets/css/animate.min.css")" rel="stylesheet" />
-    <link id="skin-link" href="" rel="stylesheet" type="text/css" />
-    <link href="@Href("~/Shared/Plugins/jquery.growl/jquery.growl.css")" rel="stylesheet" type="text/css">
-    <script src="@Href("~/Shared/TemaBeyond/assets/js/skins.min.js")"></script>
-</head>
-<!--Head Ends-->
-<!--Body-->
-<body>
-
-<div class="navbar">
-
-        <div class="navbar-inner">
-
-            <div class="navbar-container">
-
-                <!-- Navbar Barnd -->
-
-                <div class="navbar-header pull-left">
-
-                    @if (dil=="tr") {
-
-                    <a href="@Href("~/Panel")" class="navbar-brand">
-
-                    
-
-                            <img src="@Href(string.Format("~/Images/logo_{0}.png",dil))" style="height: 24px;margin-top: 5px;" alt="" />
-
-                        
-
-                    </a>
-
-                    }
-
-                    else
-
-                    {
-
-                     <a href="@Href("~/Panel")" class="navbar-brand">
-
-                    
-
-                            <img src="@Href(string.Format("~/Images/logo_{0}.png",dil))" style="height: 40px" alt="" />
-
-                        
-
-                    </a>   
-            
-
-
-                    }
-
-
-
-
-
-                </div>
-               
-               
-
-            </div>
-
-        </div>
-
-    </div>
-
-<div class="main-container container-fluid">
-
-        <!-- Page Container -->
-
-        <div class="page-container">
-             
 <div class="row">
     <div class="col-lg-12 col-sm-12 col-xs-12">
            @if (!string.IsNullOrEmpty(mesajEPostaKayitli))
@@ -183,11 +87,11 @@
             }
                                             <div class="widget">
                                                 <div class="widget-header bordered-bottom bordered-blue">
-                                                    <span class="widget-caption">Yeni Öğrenci Hesabı</span>
+                                                    <span class="widget-caption"><strong>Yeni Öğrenci Hesabı</strong></span>
                                                 </div>
                                                 <div class="widget-body">
                                                     <div id="registration-form">
-                                                        <form role="form">
+                                                        <form role="form" method="post" action="#">
                                                             <div class="form-title">
                                                                Kullanıcı Bilgileri
                                                             </div>
@@ -230,8 +134,7 @@
                                                                 </div>
                                                                 
                                                             </div>
-                                                            
-                                                            <hr class="wide" />
+                                                           
                                                             
                                                             <div class="form-group">
                                                                 @ReCaptcha.GetHtml("6LdM5hwTAAAAAG7LVuSifeauuY5FR3vOXrXtZcz9", theme: "white",language:"tr")
@@ -243,19 +146,3 @@
                                             </div>
                                         </div>
 </div>
-                 
-            </div>
-</div>
-
-     <!--Basic Scripts-->
-    <script src="@Href("~/Shared/TemaBeyond/assets/js/jquery.min.js")"></script>
-    <script src="@Href("~/Shared/TemaBeyond/assets/js/bootstrap.min.js")"></script>
-    <script src="@Href("~/Shared/TemaBeyond/assets/js/slimscroll/jquery.slimscroll.min.js")"></script>
-
-    <!--Beyond Scripts-->
-    <script src="@Href("~/Shared/TemaBeyond/assets/js/beyond.min.js")"></script>
- 
-
-</body>
-<!--Body Ends-->
-</html>
