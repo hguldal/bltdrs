@@ -9,6 +9,7 @@
     bool hataVar=false;   
     var mesajEPostaKayitli="";
     var mesajDogrulamaKoduHatali="";
+    var mesajGuvenlikKoduHatali="";
     var returnUrl=Request.QueryString["returnUrl"];
     var db=Database.Open("fb1ae");
    
@@ -23,7 +24,7 @@
          dil="tr";
          Culture=UICulture="tr-TR";
      }
-
+     Layout = "~/Shared/_LayoutYeniMisafir.cshtml";
 
     if (IsPost)
     {
@@ -41,15 +42,25 @@
         }
 
       
-        else
+        if (hataVar==false)
         {
-             var queryDogrulamaKodu=db.QueryValue("SELECT count(*) FROM Abonelik WHERE Abonelik.DogrulamaKodu=@0 AND Kullanildi=0",dogrulamaKodu);
-             if (queryDogrulamaKodu==0)
-             {
-                 hataVar=true;
-                 mesajDogrulamaKoduHatali="Hata: Lütfen Abonelik Kodunuzu Kontrol Ediniz.";
-             }
-        }
+            var queryDogrulamaKodu=db.QueryValue("SELECT count(*) FROM Abonelik WHERE Abonelik.DogrulamaKodu=@0 AND Kullanildi=0",dogrulamaKodu);
+            if (queryDogrulamaKodu==0)
+                 {
+                     hataVar=true;
+                     mesajDogrulamaKoduHatali="Hata: Lütfen Abonelik Kodunuzu Kontrol Ediniz.";
+                 }
+  
+         }
+
+         if (hataVar==false)
+         {
+              if (!ReCaptcha.Validate("6LdM5hwTAAAAAAAjS6NQWI7uVXlCddNNhSJ__Slu")) 
+                  {
+                    hataVar=true;
+                    mesajGuvenlikKoduHatali="Güvenlik kodu hatalı girildi";
+                  }
+         }
 
         if (hataVar==false)
         {
@@ -84,100 +95,89 @@
 }
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-<!--Head-->
-<head>
-    <meta charset="utf-8" />
-    <title>@Resources.Resource.lblYeniEgitmenHesabi</title>
+<div class="row">
+    <div class="col-lg-12 col-sm-12 col-xs-12">
+                   @if (!string.IsNullOrEmpty(mesajDogrulamaKoduHatali))
+                    {
+                        <p class="alert alert-danger">@mesajDogrulamaKoduHatali</p>
+                    }
+                   
+                    @if (!string.IsNullOrEmpty(mesajEPostaKayitli))
+                    {
+                        <p class="alert alert-danger">@mesajEPostaKayitli</p>
+                    }
 
-    <meta name="description" content="register page" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <link rel="shortcut icon" href="assets/img/favicon.png" type="image/x-icon">
+                    @if (!string.IsNullOrEmpty(mesajGuvenlikKoduHatali))
+                    {
+                        <p class="alert alert-danger">@mesajGuvenlikKoduHatali</p>
+                    }
 
-    <!--Basic Styles-->
-    <link href="@Href("~/Shared/TemaBeyond/assets/css/bootstrap.min.css")" rel="stylesheet" />
-    <link id="bootstrap-rtl-link" href="" rel="stylesheet" />
-    <link href="@Href("~/Shared/TemaBeyond/assets/css/font-awesome.min.css")" rel="stylesheet" />
-    <link href="@Href("~/Shared/TemaBeyond/assets/css/weather-icons.min.css")" rel="stylesheet" />
 
-    <!--Fonts-->
-    <link href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300"
-          rel="stylesheet" type="text/css">
+                    <div class="widget">
+                                                <div class="widget-header bordered-bottom bordered-blue">
+                                                    <span class="widget-caption"><strong>@Resources.Resource.lblYeniEgitmenHesabi</strong></span>
+                                                </div>
+                                                <div class="widget-body">
+                                                    <div id="registration-form">
+                                                        <form role="form" method="post" action="#">
+                                                            <div class="form-title">
+                                                               Kullanıcı Bilgileri
+                                                            </div>
+                                                           
+                                                            <div class="form-group">
+                                                                <span class="input-icon icon-right">
+                                                                    <input class="form-control"  id="txtEposta" name="txtEposta" type="email" required autofocus="true" value="@ePosta" placeholder="@Resources.Resource.lblEposta" />
+                                                                    <i class="fa fa-envelope-o circular"></i>
+                                                                </span>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <span class="input-icon icon-right">
+                                                                    <input class="form-control" id="txtParola" name="txtParola" type="password" placeholder="@Resources.Resource.lblParola" required />
+                                                                    <i class="fa fa-lock circular"></i>
+                                                                </span>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <span class="input-icon icon-right">
+                                                                    <input class="form-control" id="txtReParola" name="txtReParola" type="password" placeholder="@Resources.Resource.lblParolaTekrar" required/>
+                                                                    <i class="fa fa-lock circular"></i>
+                                                                </span>
+                                                            </div>
+                                                            <div class="form-title">
+                                                                Kişisel Bilgiler
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-12">
+                                                                    <div class="form-group">
+                                                                        <span class="input-icon icon-right">
+                                                                            <input class="form-control" id="txtAd" name="txtAd" type="text" value="@ad" placeholder="@Resources.Resource.lblAd" required />
+                                                                            <i class="fa fa-user"></i>
+                                                                        </span>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <span class="input-icon icon-right">
+                                                                            <input class="form-control" id="txtSoyad" name="txtSoyad" type="text" value="@soyad" placeholder="@Resources.Resource.lblSoyad" required/>
+                                                                            <i class="fa fa-user"></i>
+                                                                        </span>
+                                                                    </div>
 
-    <!--Beyond styles-->
-    <link id="beyond-link" href="@Href("~/Shared/TemaBeyond/assets/css/beyond.min.css")" rel="stylesheet" />
-    <link href="@Href("~/Shared/TemaBeyond/assets/css/demo.min.css")" rel="stylesheet" />
-    <link href="@Href("~/Shared/TemaBeyond/assets/css/typicons.min.css")" rel="stylesheet" />
-    <link href="@Href("~/Shared/TemaBeyond/assets/css/animate.min.css")" rel="stylesheet" />
-    <link id="skin-link" href="" rel="stylesheet" type="text/css" />
-    <script src="@Href("~/Shared/TemaBeyond/assets/js/skins.min.js")"></script>
-</head>
-<!--Head Ends-->
-<!--Body-->
-<body>
-    <div class="register-container animated fadeInDown">
-            @if (!string.IsNullOrEmpty(mesajEPostaKayitli))
-            {
-                <p class="alert alert-danger">@mesajEPostaKayitli</p>
-            }
-
-            @if (!string.IsNullOrEmpty(mesajDogrulamaKoduHatali))
-            {
-                <p class="alert alert-danger">@mesajDogrulamaKoduHatali</p>
-            }
-
-        <div class="registerbox bg-white">
-            <div class="registerbox-title">@Resources.Resource.lblYeniEgitmenHesabi</div>
-
-            <div class="registerbox-caption ">@Resources.Resource.msgLutfenAsagidakiAlanlariDoldur</div>
-            <form method="post" action="#" id="frmYeniKayit">
-            <div class="registerbox-textbox">
-                <input class="form-control"  id="txtEposta" name="txtEposta" type="email" required autofocus="true" value="@ePosta" placeholder="@Resources.Resource.lblEposta" />
-            </div>
-            
-            <div class="registerbox-textbox">
-                <input class="form-control" id="txtParola" name="txtParola" type="password" placeholder="@Resources.Resource.lblParola" required />
-            </div>
-
-            <div class="registerbox-textbox">
-                <input class="form-control" id="txtReParola" name="txtReParola" type="password" placeholder="@Resources.Resource.lblParolaTekrar" required/>
-            </div>
-                
-            <hr class="wide" />
-                
-            <div class="registerbox-textbox">
-                <input class="form-control" id="txtAd" name="txtAd" type="text" value="@ad" placeholder="@Resources.Resource.lblAd" required />
-                
-            </div>
-            <div class="registerbox-textbox">
-                <input class="form-control" id="txtSoyad" name="txtSoyad" type="text" value="@soyad" placeholder="@Resources.Resource.lblSoyad" required/>
-            </div>
-            <div class="registerbox-textbox">
-                <input class="form-control" id="txtDogrulamaKodu" name="txtDogrulamaKodu" type="text" value="@dogrulamaKodu" placeholder="Abonelik Kodu" required/>
-            </div>
-
-            <div class="registerbox-submit">
-                <button type="submit" class="btn btn-primary pull-right" id="btnHesapOlustur" >@Resources.Resource.lblHesabiOlustur</button>
-            </div>
-
-            </form>
-            
-        </div>
-        
-    </div>
-
-     <!--Basic Scripts-->
-    <script src="@Href("~/Shared/TemaBeyond/assets/js/jquery.min.js")"></script>
-    <script src="@Href("~/Shared/TemaBeyond/assets/js/bootstrap.min.js")"></script>
-    <script src="@Href("~/Shared/TemaBeyond/assets/js/slimscroll/jquery.slimscroll.min.js")"></script>
-
-    <!--Beyond Scripts-->
-    <script src="@Href("~/Shared/TemaBeyond/assets/js/beyond.min.js")"></script>
-    
- 
-
-</body>
-<!--Body Ends-->
-</html>
+                                                                    <div class="form-group">
+                                                                        <span class="input-icon icon-right">
+                                                                            <input class="form-control" id="txtDogrulamaKodu" name="txtDogrulamaKodu" type="text" value="@dogrulamaKodu" placeholder="Abonelik Kodu" required/>
+                                                                            <i class="fa fa-key"></i>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                                
+                                                            </div>
+                                                           
+                                                            
+                                                            <div class="form-group">
+                                                                @ReCaptcha.GetHtml("6LdM5hwTAAAAAG7LVuSifeauuY5FR3vOXrXtZcz9", theme: "white",language:"tr")
+                                                            </div>
+                                                            <button type="submit" class="btn btn-primary" id="btnHesapOlustur" >@Resources.Resource.lblHesabiOlustur</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+        </div>
+</div>
