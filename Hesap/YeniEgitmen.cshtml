@@ -112,7 +112,6 @@
     <link href="@Href("~/Shared/TemaBeyond/assets/css/typicons.min.css")" rel="stylesheet" />
     <link href="@Href("~/Shared/TemaBeyond/assets/css/animate.min.css")" rel="stylesheet" />
     <link id="skin-link" href="" rel="stylesheet" type="text/css" />
-    <link href="@Href("~/Shared/Plugins/jquery.growl/jquery.growl.css")" rel="stylesheet" type="text/css">
     <script src="@Href("~/Shared/TemaBeyond/assets/js/skins.min.js")"></script>
 </head>
 <!--Head Ends-->
@@ -135,33 +134,36 @@
             <div class="registerbox-caption ">@Resources.Resource.msgLutfenAsagidakiAlanlariDoldur</div>
             <form method="post" action="#" id="frmYeniKayit">
             <div class="registerbox-textbox">
-                <input class="form-control"  id="txtEposta" name="txtEposta" type="email" autofocus="true" value="@ePosta" placeholder="@Resources.Resource.lblEposta" />
+                <input class="form-control"  id="txtEposta" name="txtEposta" type="email" required autofocus="true" value="@ePosta" placeholder="@Resources.Resource.lblEposta" />
             </div>
             
             <div class="registerbox-textbox">
-                <input class="form-control" id="txtParola" name="txtParola" type="password" placeholder="@Resources.Resource.lblParola" />
+                <input class="form-control" id="txtParola" name="txtParola" type="password" placeholder="@Resources.Resource.lblParola" required />
             </div>
 
             <div class="registerbox-textbox">
-                <input class="form-control" id="txtReParola" name="txtReParola" type="password" placeholder="@Resources.Resource.lblParolaTekrar" />
+                <input class="form-control" id="txtReParola" name="txtReParola" type="password" placeholder="@Resources.Resource.lblParolaTekrar" required/>
             </div>
                 
             <hr class="wide" />
                 
             <div class="registerbox-textbox">
-                <input class="form-control" id="txtAd" name="txtAd" type="text" value="@ad" placeholder="@Resources.Resource.lblAd" />
+                <input class="form-control" id="txtAd" name="txtAd" type="text" value="@ad" placeholder="@Resources.Resource.lblAd" required />
                 
             </div>
             <div class="registerbox-textbox">
-                <input class="form-control" id="txtSoyad" name="txtSoyad" type="text" value="@soyad" placeholder="@Resources.Resource.lblSoyad"/>
+                <input class="form-control" id="txtSoyad" name="txtSoyad" type="text" value="@soyad" placeholder="@Resources.Resource.lblSoyad" required/>
             </div>
             <div class="registerbox-textbox">
-                <input class="form-control" id="txtDogrulamaKodu" name="txtDogrulamaKodu" type="text" value="@dogrulamaKodu" placeholder="Abonelik Kodu"/>
+                <input class="form-control" id="txtDogrulamaKodu" name="txtDogrulamaKodu" type="text" value="@dogrulamaKodu" placeholder="Abonelik Kodu" required/>
             </div>
-            </form>
+
             <div class="registerbox-submit">
-                <button type="button" class="btn btn-primary pull-right" id="btnHesapOlustur" >@Resources.Resource.lblHesabiOlustur</button>
+                <button type="submit" class="btn btn-primary pull-right" id="btnHesapOlustur" >@Resources.Resource.lblHesabiOlustur</button>
             </div>
+
+            </form>
+            
         </div>
         
     </div>
@@ -173,12 +175,8 @@
 
     <!--Beyond Scripts-->
     <script src="@Href("~/Shared/TemaBeyond/assets/js/beyond.min.js")"></script>
-    <script src="@Href("~/Shared/Plugins/BlockUI/jquery.blockUI.js")"></script>
-    <script src="@Href("~/Shared/Plugins/jquery.growl/jquery.growl.js")"></script>
-    <script src="@Href(string.Format("~/Shared/Js/Global.Labels.{0}.js",dil))"></script>
-    <script src="@Href("~/Shared/Js/Global.min.js")"></script>
-    <script src="@Href(string.Format("~/Hesap/Js/Hesap.Labels.{0}.js",dil))"></script>
-    <script src="@Href("~/Hesap/Js/YeniEgitmen.min.js")"></script>
+    
+ 
 
 </body>
 <!--Body Ends-->

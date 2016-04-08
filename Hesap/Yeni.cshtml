@@ -6,6 +6,7 @@
     var parola="";   
     bool hataVar=false;   
     var mesajEPostaKayitli="";
+    var mesajGuvenlikKoduHatasi="";
     var returnUrl=Request.QueryString["returnUrl"];
     
    var dil="tr";
@@ -36,6 +37,12 @@
           mesajEPostaKayitli= Resources.Resource.msgGirilenEpostaDahaOnceKayitEdilmis;
           hataVar=true;
         }
+
+        if (!ReCaptcha.Validate("6LdM5hwTAAAAAAAjS6NQWI7uVXlCddNNhSJ__Slu")) {
+            hataVar=true;
+            mesajGuvenlikKoduHatasi="Güvenlik kodu hatalı girildi";
+
+         }
 
         if (hataVar==false)
         {
@@ -100,44 +107,145 @@
 <!--Head Ends-->
 <!--Body-->
 <body>
-    <div class="register-container animated fadeInDown">
-        @if (!string.IsNullOrEmpty(mesajEPostaKayitli))
+
+<div class="navbar">
+
+        <div class="navbar-inner">
+
+            <div class="navbar-container">
+
+                <!-- Navbar Barnd -->
+
+                <div class="navbar-header pull-left">
+
+                    @if (dil=="tr") {
+
+                    <a href="@Href("~/Panel")" class="navbar-brand">
+
+                    
+
+                            <img src="@Href(string.Format("~/Images/logo_{0}.png",dil))" style="height: 24px;margin-top: 5px;" alt="" />
+
+                        
+
+                    </a>
+
+                    }
+
+                    else
+
+                    {
+
+                     <a href="@Href("~/Panel")" class="navbar-brand">
+
+                    
+
+                            <img src="@Href(string.Format("~/Images/logo_{0}.png",dil))" style="height: 40px" alt="" />
+
+                        
+
+                    </a>   
+            
+
+
+                    }
+
+
+
+
+
+                </div>
+               
+               
+
+            </div>
+
+        </div>
+
+    </div>
+
+<div class="main-container container-fluid">
+
+        <!-- Page Container -->
+
+        <div class="page-container">
+             
+<div class="row">
+    <div class="col-lg-12 col-sm-12 col-xs-12">
+           @if (!string.IsNullOrEmpty(mesajEPostaKayitli))
             {
                 <p class="alert alert-danger">@mesajEPostaKayitli</p>
             }
 
-        <div class="registerbox bg-white">
-            <div class="registerbox-title">@Resources.Resource.lblYeniOgrenciHesabi</div>
-
-            <div class="registerbox-caption ">@Resources.Resource.msgLutfenAsagidakiAlanlariDoldur</div>
-            <form method="post" action="#" id="frmYeniKayit">
-            <div class="registerbox-textbox">
-                <input class="form-control"  id="txtEposta" name="txtEposta" type="email" autofocus="true" value="@ePosta" placeholder="@Resources.Resource.lblEposta" />
+         @if (!string.IsNullOrEmpty(mesajGuvenlikKoduHatasi))
+            {
+                <p class="alert alert-danger">@mesajGuvenlikKoduHatasi</p>
+            }
+                                            <div class="widget">
+                                                <div class="widget-header bordered-bottom bordered-blue">
+                                                    <span class="widget-caption">Yeni Öğrenci Hesabı</span>
+                                                </div>
+                                                <div class="widget-body">
+                                                    <div id="registration-form">
+                                                        <form role="form">
+                                                            <div class="form-title">
+                                                               Kullanıcı Bilgileri
+                                                            </div>
+                                                           
+                                                            <div class="form-group">
+                                                                <span class="input-icon icon-right">
+                                                                    <input type="text" class="form-control" id="txtEposta" name="txtEposta" value="@ePosta" placeholder="E-Posta Adresi" required autofocus="true">
+                                                                    <i class="fa fa-envelope-o circular"></i>
+                                                                </span>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <span class="input-icon icon-right">
+                                                                    <input class="form-control" id="txtParola" name="txtParola" type="password" required placeholder="@Resources.Resource.lblParola" />
+                                                                    <i class="fa fa-lock circular"></i>
+                                                                </span>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <span class="input-icon icon-right">
+                                                                    <input class="form-control" id="txtReParola" name="txtReParola" type="password" required placeholder="@Resources.Resource.lblParolaTekrar" />
+                                                                    <i class="fa fa-lock circular"></i>
+                                                                </span>
+                                                            </div>
+                                                            <div class="form-title">
+                                                                Kişisel Bilgiler
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-12">
+                                                                    <div class="form-group">
+                                                                        <span class="input-icon icon-right">
+                                                                            <input class="form-control" id="txtAd" name="txtAd" type="text" value="@ad" required placeholder="@Resources.Resource.lblAd" />
+                                                                            <i class="fa fa-user"></i>
+                                                                        </span>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <span class="input-icon icon-right">
+                                                                            <input class="form-control" id="txtSoyad" name="txtSoyad" type="text" value="@soyad" required placeholder="@Resources.Resource.lblSoyad"/>
+                                                                            <i class="fa fa-user"></i>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                                
+                                                            </div>
+                                                            
+                                                            <hr class="wide" />
+                                                            
+                                                            <div class="form-group">
+                                                                @ReCaptcha.GetHtml("6LdM5hwTAAAAAG7LVuSifeauuY5FR3vOXrXtZcz9", theme: "white",language:"tr")
+                                                            </div>
+                                                            <button type="submit" class="btn btn-blue">Hesabı Oluştur</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+</div>
+                 
             </div>
-            
-            <div class="registerbox-textbox">
-                <input class="form-control" id="txtParola" name="txtParola" type="password" placeholder="@Resources.Resource.lblParola" />
-            </div>
-
-            <div class="registerbox-textbox">
-                <input class="form-control" id="txtReParola" name="txtReParola" type="password" placeholder="@Resources.Resource.lblParolaTekrar" />
-            </div>
-
-            <hr class="wide" />
-            <div class="registerbox-textbox">
-                <input class="form-control" id="txtAd" name="txtAd" type="text" value="@ad" placeholder="@Resources.Resource.lblAd" />
-                
-            </div>
-            <div class="registerbox-textbox">
-                <input class="form-control" id="txtSoyad" name="txtSoyad" type="text" value="@soyad" placeholder="@Resources.Resource.lblSoyad"/>
-            </div>
-            </form>
-            <div class="registerbox-submit">
-                <button type="button" class="btn btn-primary pull-right" id="btnHesapOlustur" > @Resources.Resource.lblHesabiOlustur</button>
-            </div>
-        </div>
-        
-    </div>
+</div>
 
      <!--Basic Scripts-->
     <script src="@Href("~/Shared/TemaBeyond/assets/js/jquery.min.js")"></script>
@@ -146,12 +254,7 @@
 
     <!--Beyond Scripts-->
     <script src="@Href("~/Shared/TemaBeyond/assets/js/beyond.min.js")"></script>
-    <script src="@Href("~/Shared/Plugins/BlockUI/jquery.blockUI.js")"></script>
-    <script src="@Href("~/Shared/Plugins/jquery.growl/jquery.growl.js")"></script>
-    <script src="@Href(string.Format("~/Shared/Js/Global.Labels.{0}.js",dil))"></script>
-    <script src="@Href("~/Shared/Js/Global.min.js")"></script>
-    <script src="@Href(string.Format("~/Hesap/Js/Hesap.Labels.{0}.js",dil))"></script>
-    <script src="@Href("~/Hesap/Js/Yeni.min.js")"></script>
+ 
 
 </body>
 <!--Body Ends-->
