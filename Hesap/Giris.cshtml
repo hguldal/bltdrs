@@ -69,18 +69,26 @@ if (WebSecurity.IsAuthenticated)
     <div class="col-lg-12 col-sm-12 col-xs-12">
        
        @if (!string.IsNullOrEmpty(mesajGirisBasarisiz))
-        {
-             <p class="alert alert-danger">@mesajGirisBasarisiz</p>
-        }       @if (!string.IsNullOrEmpty(mesajGuvenlikKoduHatasi))
-        {
-             <p class="alert alert-danger">@mesajGuvenlikKoduHatasi</p>
+        {              <div class="alert alert-danger fade in">
+                <button class="close" data-dismiss="alert">×</button>
+                <i class="fa-fw fa fa-times"></i><strong>@Resources.Resource.lblHata</strong> @mesajGirisBasarisiz
+              </div>
+             
+        }       @if (!string.IsNullOrEmpty(mesajGuvenlikKoduHatasi))
+        {              <div class="alert alert-danger fade in">
+                <button class="close" data-dismiss="alert">×</button>
+                <i class="fa-fw fa fa-times"></i><strong>@Resources.Resource.lblHata</strong> @mesajGuvenlikKoduHatasi
+              </div>
         }
 
         @if (!string.IsNullOrEmpty(mesajHesapPasif))
-        {
-            <p class="alert alert-danger">@mesajHesapPasif</p>
+        {              <div class="alert alert-danger fade in">
+                <button class="close" data-dismiss="alert">×</button>
+                <i class="fa-fw fa fa-times"></i><strong>@Resources.Resource.lblHata</strong> @mesajHesapPasif
+              </div>
+            
         }
-                                            <div class="widget">
+        <div class="widget">
                                                 <div class="widget-header bordered-bottom bordered-blue">
                                                     <span class="widget-caption"> <strong><i class="fa fa-lock"></i> Oturum Aç</strong></span>
                                                 </div>
@@ -116,5 +124,5 @@ if (WebSecurity.IsAuthenticated)
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+     </div>
 </div>

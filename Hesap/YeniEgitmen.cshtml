@@ -99,25 +99,34 @@
     <div class="col-lg-12 col-sm-12 col-xs-12">
                    @if (!string.IsNullOrEmpty(mesajDogrulamaKoduHatali))
                     {
-                        <p class="alert alert-danger">@mesajDogrulamaKoduHatali</p>
+                      <div class="alert alert-danger fade in">
+                        <button class="close" data-dismiss="alert">×</button>
+                        <i class="fa-fw fa fa-times"></i><strong>@Resources.Resource.lblHata</strong> @mesajDogrulamaKoduHatali
+                      </div>
                     }
                    
                     @if (!string.IsNullOrEmpty(mesajEPostaKayitli))
                     {
-                        <p class="alert alert-danger">@mesajEPostaKayitli</p>
+                      <div class="alert alert-danger fade in">
+                        <button class="close" data-dismiss="alert">×</button>
+                        <i class="fa-fw fa fa-times"></i><strong>@Resources.Resource.lblHata</strong> @mesajEPostaKayitli
+                      </div>
                     }
 
                     @if (!string.IsNullOrEmpty(mesajGuvenlikKoduHatali))
                     {
-                        <p class="alert alert-danger">@mesajGuvenlikKoduHatali</p>
+                      <div class="alert alert-danger fade in">
+                        <button class="close" data-dismiss="alert">×</button>
+                        <i class="fa-fw fa fa-times"></i><strong>@Resources.Resource.lblHata</strong> @mesajGuvenlikKoduHatali
+                      </div>
                     }
 
 
                     <div class="widget">
-                                                <div class="widget-header bordered-bottom bordered-blue">
+                           <div class="widget-header bordered-bottom bordered-blue">
                                                     <span class="widget-caption"><strong>@Resources.Resource.lblYeniEgitmenHesabi</strong></span>
                                                 </div>
-                                                <div class="widget-body">
+                           <div class="widget-body">
                                                     <div id="registration-form">
                                                         <form role="form" method="post" action="#">
                                                             <div class="form-title">
@@ -178,6 +187,6 @@
                                                         </form>
                                                     </div>
                                                 </div>
-                                            </div>
+                    </div>
         </div>
 </div>
