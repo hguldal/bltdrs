@@ -21,7 +21,7 @@
 
      var db=Database.Open("fb1ae");
 
-      var queryIslem=db.QueryValue("exec dbo.Genel_AbonelikEkle @0,@1",WebSecurity.CurrentUserId,DogrulamaKodu);
+      var queryIslem=db.QueryValue("exec dbo.Genel_AbonelikEkle @0,@1",WebSecurity.CurrentUserName,DogrulamaKodu);
 
     if (queryIslem=="OK")
     {

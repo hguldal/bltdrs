@@ -1,13 +1,4 @@
 ﻿@{
-  
-    var ad="";
-    var soyad="";
-    var ePosta="";     
-    var parola="";   
-    bool hataVar=false;   
-    var mesajEPostaKayitli="";
-    var mesajGuvenlikKoduHatasi="";
-    var returnUrl=Request.QueryString["returnUrl"];
     
    var dil="tr";
    
@@ -21,55 +12,7 @@
          Culture=UICulture="tr-TR";
      }
 
-    var db=Database.Open("fb1ae");
-    
-    
-    if (IsPost)
-    {
-       
-        ad=Request.Form["txtAd"];
-        soyad=Request.Form["txtSoyad"];
-        ePosta=Request.Form["txtEPosta"];
-        parola=Request.Form["txtParola"];
-        
-        if (db.QueryValue("SELECT COUNT(*) FROM Profiles WHERE ePosta=@0",ePosta)!=0)
-        {
-          mesajEPostaKayitli= Resources.Resource.msgGirilenEpostaDahaOnceKayitEdilmis;
-          hataVar=true;
-        }
-
-        if (!ReCaptcha.Validate("6LdM5hwTAAAAAAAjS6NQWI7uVXlCddNNhSJ__Slu")) {
-            hataVar=true;
-            mesajGuvenlikKoduHatasi="Güvenlik kodu hatalı girildi";
-
-         }
-
-        if (hataVar==false)
-        {
-
-            db.Execute("INSERT INTO Profiles(ePosta,Ad,Soyad,Dil) VALUES (@0,@1,@2,@3)",ePosta,ad,soyad,dil);
-       
-            var token= WebSecurity.CreateAccount(ePosta,parola,false);
-      
-            Roles.AddUserToRole(ePosta,"Ogrenci");
-         
-            db.Close();
-            WebSecurity.Login(ePosta,parola);
-           
-            if (string.IsNullOrEmpty(returnUrl))
-            {
-            Response.Redirect("~/Panel");
-            }
-            else
-            {
-                Response.Redirect("~/" + returnUrl);
-            }
-        }
-
-
-       }
-       
-    db.Close();
+ 
 }
 <!DOCTYPE html>
 

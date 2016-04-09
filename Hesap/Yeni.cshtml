@@ -9,6 +9,7 @@
     var mesajEPostaKayitli="";
     var mesajGuvenlikKoduHatasi="";
     var mesajGirilenParolalarUyusmadi="";
+    var mesajGerekliAlanlarBosBirakildi="";
     var returnUrl=Request.QueryString["returnUrl"];
     
    var dil="tr";
@@ -38,8 +39,8 @@
         reParola=Request["txtReParola"].Trim();
 
         if (string.IsNullOrEmpty(ad) || string.IsNullOrEmpty(soyad) || string.IsNullOrEmpty(ePosta) || string.IsNullOrEmpty(parola))         {
-             Response.Redirect("~/Shared/HataGenel");
-             Response.End();
+             hataVar=true;
+             mesajGerekliAlanlarBosBirakildi="Ad,soyad,eposta veya parola alanları boş bırakılamaz";
          }
         
         if (db.QueryValue("SELECT COUNT(*) FROM Profiles WHERE ePosta=@0",ePosta)!=0)
@@ -65,7 +66,7 @@
         {
 
             db.Execute("INSERT INTO Profiles(ePosta,Ad,Soyad,Dil) VALUES (@0,@1,@2,@3)",ePosta,ad,soyad,dil);
-       
+
             var token= WebSecurity.CreateAccount(ePosta,parola,false);
       
             Roles.AddUserToRole(ePosta,"Ogrenci");
@@ -99,6 +100,14 @@
               </div>
             }
 
+           @if (!string.IsNullOrEmpty(mesajGerekliAlanlarBosBirakildi))
+            {
+              <div class="alert alert-danger fade in">
+                <button class="close" data-dismiss="alert">×</button>
+                <i class="fa-fw fa fa-times"></i><strong>@Resources.Resource.lblHata</strong> @mesajGerekliAlanlarBosBirakildi
+              </div>
+            }
+
          @if (!string.IsNullOrEmpty(mesajGirilenParolalarUyusmadi))
             {
               <div class="alert alert-danger fade in">
@@ -114,13 +123,13 @@
                 <i class="fa-fw fa fa-times"></i><strong>@Resources.Resource.lblHata</strong> @mesajGuvenlikKoduHatasi
               </div>
             }
-                                            <div class="widget">
+         <div class="widget">
                                                 <div class="widget-header bordered-bottom bordered-blue">
                                                     <span class="widget-caption"><strong>Yeni Öğrenci Hesabı</strong></span>
                                                 </div>
                                                 <div class="widget-body">
                                                     <div id="registration-form">
-                                                        <form role="form" method="post" action="#">
+                                                        <form method="post" action="#">
                                                             <div class="form-title">
                                                                Kullanıcı Bilgileri
                                                             </div>
@@ -173,5 +182,5 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+      </div>
 </div>
