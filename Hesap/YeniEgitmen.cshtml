@@ -34,6 +34,11 @@
         ePosta=Request.Form["txtEPosta"];
         parola=Request.Form["txtParola"];
         dogrulamaKodu=Request.Form["txtDogrulamaKodu"];
+
+        if (string.IsNullOrEmpty(ad) || string.IsNullOrEmpty(soyad) || string.IsNullOrEmpty(ePosta) || string.IsNullOrEmpty(parola) || string.IsNullOrEmpty(dogrulamaKodu))         {
+             Response.Redirect("~/Shared/HataGenel");
+             Response.End();
+         }
         
         if (db.QueryValue("SELECT COUNT(*) FROM Profiles WHERE ePosta=@0",ePosta)!=0)
         {

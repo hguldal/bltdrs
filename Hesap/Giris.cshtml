@@ -4,12 +4,9 @@ if (WebSecurity.IsAuthenticated)
     {
         Response.Redirect("~/Panel");
     }
-  
-  var returnUrl="Panel";
-
+  var returnUrl="Panel";
   var dil="tr";
-   
-   if (Request.Url.GetLeftPart(UriPartial.Authority).Contains("azureboard.com"))
+  if (Request.Url.GetLeftPart(UriPartial.Authority).Contains("azureboard.com"))
      {
          dil="en";
      }
@@ -23,13 +20,16 @@ if (WebSecurity.IsAuthenticated)
    {
     returnUrl=Request.QueryString["returnUrl"];
    }
-   var ePosta=Request["txtEposta"];
-   var parola=Request["txtParola"];
-   var mesajGirisBasarisiz="";   var hataVar=false;
-   var mesajHesapPasif="";   var mesajGuvenlikKoduHatasi="";
+  
+   var mesajGirisBasarisiz="";   var hataVar=false;
+   var mesajHesapPasif="";   var mesajGuvenlikKoduHatasi="";   var ePosta="";   var parola="";
   Layout = "~/Shared/_LayoutYeniMisafir.cshtml";
-   if (IsPost)
-   {
+   if (IsPost)
+   {      ePosta=Request["txtEposta"];
+      parola=Request["txtParola"];       if (string.IsNullOrEmpty(ePosta) || string.IsNullOrEmpty(parola))         {
+             Response.Redirect("~/Shared/HataGenel");
+             Response.End();
+         }
        if (!ReCaptcha.Validate("6LdM5hwTAAAAAAAjS6NQWI7uVXlCddNNhSJ__Slu")) {
             hataVar=true;
             mesajGuvenlikKoduHatasi="Güvenlik kodu hatalı girildi";
@@ -37,13 +37,11 @@ if (WebSecurity.IsAuthenticated)
          }
 
 
-       var db=Database.Open("fb1ae");
-       
-       if (db.QueryValue("SELECT count(*) FROM Profiles WHERE ePosta=@0 AND Aktif=0",ePosta)>0)
+       var db=Database.Open("fb1ae");
+       if (db.QueryValue("SELECT count(*) FROM Profiles WHERE ePosta=@0 AND Aktif=0",ePosta)>0)
        {                     hataVar=true;
-           mesajHesapPasif="Bu kullanıcı hesabı sistem yöneticisi tarafından askıya alındı.";
+           mesajHesapPasif="Bu kullanıcı hesabı sistem yöneticisi tarafından askıya alındı.";
        }
-
        if (hataVar==false)
        {
             if (WebSecurity.Login(ePosta.Trim(),parola.Trim(),true))
