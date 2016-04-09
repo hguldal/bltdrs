@@ -25,7 +25,7 @@
       
         var db=Database.Open("fb1ae");
         
-        ePosta=Request.Form["txtEPosta"];
+        ePosta=Request.Form["txtEPosta"].Trim();
        
 
          if (string.IsNullOrEmpty(ePosta))

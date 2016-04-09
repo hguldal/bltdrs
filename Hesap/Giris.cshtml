@@ -22,13 +22,13 @@ if (WebSecurity.IsAuthenticated)
    }
   
    var mesajGirisBasarisiz="";   var hataVar=false;
-   var mesajHesapPasif="";   var mesajGuvenlikKoduHatasi="";   var ePosta="";   var parola="";
+   var mesajHesapPasif="";   var mesajGuvenlikKoduHatasi="";   var mesajKullaniciAdiveyaParolaBos="";   var ePosta="";   var parola="";
   Layout = "~/Shared/_LayoutYeniMisafir.cshtml";
    if (IsPost)
-   {      ePosta=Request["txtEposta"];
-      parola=Request["txtParola"];       if (string.IsNullOrEmpty(ePosta) || string.IsNullOrEmpty(parola))         {
-             Response.Redirect("~/Shared/HataGenel");
-             Response.End();
+   {      ePosta=Request["txtEposta"].Trim();
+      parola=Request["txtParola"].Trim();       if (string.IsNullOrEmpty(ePosta) || string.IsNullOrEmpty(parola))         {
+             hataVar=true;
+             mesajKullaniciAdiveyaParolaBos="Kullanıcı adı veya parola boş bırakılamaz";
          }
        if (!ReCaptcha.Validate("6LdM5hwTAAAAAAAjS6NQWI7uVXlCddNNhSJ__Slu")) {
             hataVar=true;
@@ -70,6 +70,12 @@ if (WebSecurity.IsAuthenticated)
         {              <div class="alert alert-danger fade in">
                 <button class="close" data-dismiss="alert">×</button>
                 <i class="fa-fw fa fa-times"></i><strong>@Resources.Resource.lblHata</strong> @mesajGirisBasarisiz
+              </div>
+             
+        }       @if (!string.IsNullOrEmpty(mesajKullaniciAdiveyaParolaBos))
+        {              <div class="alert alert-danger fade in">
+                <button class="close" data-dismiss="alert">×</button>
+                <i class="fa-fw fa fa-times"></i><strong>@Resources.Resource.lblHata</strong> @mesajKullaniciAdiveyaParolaBos
               </div>
              
         }       @if (!string.IsNullOrEmpty(mesajGuvenlikKoduHatasi))

@@ -3,10 +3,12 @@
     var ad="";
     var soyad="";
     var ePosta="";     
-    var parola="";   
+    var parola="";
+    var reParola="";
     bool hataVar=false;   
     var mesajEPostaKayitli="";
     var mesajGuvenlikKoduHatasi="";
+    var mesajGirilenParolalarUyusmadi="";
     var returnUrl=Request.QueryString["returnUrl"];
     
    var dil="tr";
@@ -29,10 +31,11 @@
     if (IsPost)
     {
        
-        ad=Request.Form["txtAd"];
-        soyad=Request.Form["txtSoyad"];
-        ePosta=Request.Form["txtEPosta"];
-        parola=Request.Form["txtParola"];
+        ad=Request.Form["txtAd"].Trim();
+        soyad=Request.Form["txtSoyad"].Trim();
+        ePosta=Request.Form["txtEPosta"].Trim();
+        parola=Request.Form["txtParola"].Trim();
+        reParola=Request["txtReParola"].Trim();
 
         if (string.IsNullOrEmpty(ad) || string.IsNullOrEmpty(soyad) || string.IsNullOrEmpty(ePosta) || string.IsNullOrEmpty(parola))         {
              Response.Redirect("~/Shared/HataGenel");
@@ -50,6 +53,13 @@
             mesajGuvenlikKoduHatasi="Güvenlik kodu hatalı girildi";
 
          }
+
+         if (parola!=reParola)
+         {
+             hataVar=true;
+             mesajGirilenParolalarUyusmadi="Girilen parolalar birbiriyle uyuşmadı";
+         }
+         
 
         if (hataVar==false)
         {
@@ -86,6 +96,14 @@
               <div class="alert alert-danger fade in">
                 <button class="close" data-dismiss="alert">×</button>
                 <i class="fa-fw fa fa-times"></i><strong>@Resources.Resource.lblHata</strong> @mesajEPostaKayitli
+              </div>
+            }
+
+         @if (!string.IsNullOrEmpty(mesajGirilenParolalarUyusmadi))
+            {
+              <div class="alert alert-danger fade in">
+                <button class="close" data-dismiss="alert">×</button>
+                <i class="fa-fw fa fa-times"></i><strong>@Resources.Resource.lblHata</strong> @mesajGirilenParolalarUyusmadi
               </div>
             }
 

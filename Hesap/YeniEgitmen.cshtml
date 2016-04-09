@@ -3,13 +3,15 @@
     var ad="";
     var soyad="";
     var ePosta="";     
-    var parola="";   
+    var parola="";
+    var reParola=""; 
     var dogrulamaKodu="";
     
     bool hataVar=false;   
     var mesajEPostaKayitli="";
     var mesajDogrulamaKoduHatali="";
     var mesajGuvenlikKoduHatali="";
+    var mesajGirilenParolalarUyusmadi="";
     var returnUrl=Request.QueryString["returnUrl"];
     var db=Database.Open("fb1ae");
    
@@ -29,11 +31,12 @@
     if (IsPost)
     {
        
-        ad=Request.Form["txtAd"];
-        soyad=Request.Form["txtSoyad"];
-        ePosta=Request.Form["txtEPosta"];
-        parola=Request.Form["txtParola"];
-        dogrulamaKodu=Request.Form["txtDogrulamaKodu"];
+        ad=Request.Form["txtAd"].Trim();
+        soyad=Request.Form["txtSoyad"].Trim();
+        ePosta=Request.Form["txtEPosta"].Trim();
+        parola=Request.Form["txtParola"].Trim();
+        reParola=Request["txtReParola"].Trim();
+        dogrulamaKodu=Request.Form["txtDogrulamaKodu"].Trim();
 
         if (string.IsNullOrEmpty(ad) || string.IsNullOrEmpty(soyad) || string.IsNullOrEmpty(ePosta) || string.IsNullOrEmpty(parola) || string.IsNullOrEmpty(dogrulamaKodu))         {
              Response.Redirect("~/Shared/HataGenel");
@@ -65,6 +68,12 @@
                     hataVar=true;
                     mesajGuvenlikKoduHatali="Güvenlik kodu hatalı girildi";
                   }
+         }
+
+         if (parola!=reParola)
+         {
+             hataVar=true;
+             mesajGirilenParolalarUyusmadi="Girilen parolalar birbiriyle uyuşmadı";
          }
 
         if (hataVar==false)
@@ -109,7 +118,14 @@
                         <i class="fa-fw fa fa-times"></i><strong>@Resources.Resource.lblHata</strong> @mesajDogrulamaKoduHatali
                       </div>
                     }
-                   
+
+         @if (!string.IsNullOrEmpty(mesajGirilenParolalarUyusmadi))
+            {
+              <div class="alert alert-danger fade in">
+                <button class="close" data-dismiss="alert">×</button>
+                <i class="fa-fw fa fa-times"></i><strong>@Resources.Resource.lblHata</strong> @mesajGirilenParolalarUyusmadi
+              </div>
+            }                  
                     @if (!string.IsNullOrEmpty(mesajEPostaKayitli))
                     {
                       <div class="alert alert-danger fade in">
