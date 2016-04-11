@@ -70,9 +70,16 @@
             var token= WebSecurity.CreateAccount(ePosta,parola,false);
       
             Roles.AddUserToRole(ePosta,"Ogrenci");
+            
+            WebSecurity.Login(ePosta,parola);
+            var queryEpostaMesaji=db.QuerySingle("SELECT * FROM epostamesajlari WHERE ID=1");
+
+            var epostaMesaji=string.Format(queryEpostaMesaji.mesaj_tr,ad + " " + soyad);
+
+            WebMail.Send(ePosta,"BulutDers'e Hoşgeldiniz",epostaMesaji ,"BulutDers <destek@bulutders.com>", isBodyHtml:true);
          
             db.Close();
-            WebSecurity.Login(ePosta,parola);
+           
            
             if (string.IsNullOrEmpty(returnUrl))
             {

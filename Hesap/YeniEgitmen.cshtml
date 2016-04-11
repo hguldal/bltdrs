@@ -90,6 +90,11 @@
            
             var queryIslem=db.QueryValue("exec dbo.Genel_AbonelikEkle @0,@1",ePosta,dogrulamaKodu);
          
+            var queryEpostaMesaji=db.QuerySingle("SELECT * FROM epostamesajlari WHERE ID=2");
+
+            var epostaMesaji=string.Format(queryEpostaMesaji.mesaj_tr,ad + " " + soyad);
+
+            WebMail.Send(ePosta,"BulutDers'e Hoşgeldiniz",epostaMesaji ,"BulutDers <destek@bulutders.com>", isBodyHtml:true);
 
             db.Close();
 
