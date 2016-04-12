@@ -8,6 +8,13 @@ using System.Text.RegularExpressions;
 /// </summary>
 public class Genel
 {
+
+    public static bool EmailGecerliMi(string metin)
+    {
+        bool donenDeger = Regex.IsMatch(metin, @"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z", RegexOptions.IgnoreCase);
+        
+        return donenDeger;
+    }
  
  public static string BaslikDuzeni(string metin)
  {
