@@ -42,17 +42,17 @@
         {
             if (Genel.EmailGecerliMi(kisi.ePosta))
             {
-                ePostalar=ePostalar + kisi.ePosta+";";
+               ePostalar=ePostalar +  kisi.Ad + " " + kisi.Soyad + "<" + kisi.ePosta+">,";
             }
         }
         
-        ePostalar=ePostalar.TrimEnd(';');
+        ePostalar=ePostalar.TrimEnd(',');
         
         var queryEpostaMesaji=db.QuerySingle("SELECT * FROM epostamesajlari WHERE ID=3");
 
         var epostaMesaji=string.Format(queryEpostaMesaji.mesaj_tr,queryKullanici.Ad + " " + queryKullanici.Soyad,queryDers.DersAdi, Genel.BildirimEylemindenMetne(11,"tr"),Aciklama);
 
-        WebMail.Send("destek@bulutders.com","BulutDers Bildirim",epostaMesaji ,from:"BulutDers <destek@bulutders.com>", isBodyHtml:true,bcc:ePostalar);
+        WebMail.Send("Undisclosed Recipients <destek@bulutders.com>","BulutDers Bildirim",epostaMesaji ,from:"BulutDers <destek@bulutders.com>", isBodyHtml:true,bcc:ePostalar);
 
 
       Json.Write(queryEklenenOdev, Response.Output);
