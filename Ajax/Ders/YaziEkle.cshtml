@@ -51,7 +51,7 @@
         
         var queryEpostaMesaji=db.QuerySingle("SELECT * FROM epostamesajlari WHERE ID=3");
 
-        var epostaMesaji=string.Format(queryEpostaMesaji.mesaj_tr,queryKullanici.Ad + " " + queryKullanici.Soyad,queryDers.DersAdi, Genel.BildirimEylemindenMetne(4,"tr"),yazi);
+        var epostaMesaji=string.Format(queryEpostaMesaji.mesaj_tr,queryKullanici.Ad + " " + queryKullanici.Soyad,queryDers.DersAdi, Genel.BildirimEylemindenMetne(4,"tr"),yazi,"http://bulutders.com/Ders/?DersID="+ DersID.ToString());
 
         WebMail.Send("Undisclosed Recipients <destek@bulutders.com>","BulutDers Bildirim",epostaMesaji ,from:"BulutDers <destek@bulutders.com>", isBodyHtml:true,bcc:ePostalar);
 
