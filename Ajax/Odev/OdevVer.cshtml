@@ -35,7 +35,7 @@
 
         var queryKullanici=db.QuerySingle("SELECT * FROM Profiles WHERE UserID=@0",WebSecurity.CurrentUserId);
         var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0",DersID);
-        var queryEmailGonderilecekAdresler=db.Query("(SELECT ePosta FROM DersTakip INNER JOIN Profiles ON DersTakip.UserID=Profiles.UserID WHERE DersTakip.DersID=@0 AND Durum=2 AND Profiles.Aktif=1 AND Profiles.UserID<>@1) UNION (SELECT ePosta FROM Profiles WHERE userID=@2)",DersID,WebSecurity.CurrentUserId,queryDers.UserID);
+        var queryEmailGonderilecekAdresler=db.Query("(SELECT Ad,Soyad,ePosta FROM DersTakip INNER JOIN Profiles ON DersTakip.UserID=Profiles.UserID WHERE DersTakip.DersID=@0 AND Durum=2 AND Profiles.Aktif=1 AND Profiles.UserID<>@1) UNION (SELECT Ad,Soyad,ePosta FROM Profiles WHERE userID=@2)",DersID,WebSecurity.CurrentUserId,queryDers.UserID);
         var ePostalar="";
       
         foreach (var kisi in queryEmailGonderilecekAdresler)
