@@ -45,6 +45,29 @@
       }
     else
     {
+
+        var queryKullanici=db.QuerySingle("SELECT * FROM Profiles WHERE UserID=@0",WebSecurity.CurrentUserId);
+        var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0",DersID);
+        var queryEmailGonderilecekAdresler=db.Query("(SELECT ePosta FROM DersTakip INNER JOIN Profiles ON DersTakip.UserID=Profiles.UserID WHERE DersTakip.DersID=@0 AND Durum=2 AND Profiles.Aktif=1 AND Profiles.UserID<>@1) UNION (SELECT ePosta FROM Profiles WHERE userID=@2)",DersID,WebSecurity.CurrentUserId,queryDers.UserID);
+        var ePostalar="";
+      
+        foreach (var kisi in queryEmailGonderilecekAdresler)
+        {
+            if (Genel.EmailGecerliMi(kisi.ePosta))
+            {
+                ePostalar=ePostalar + kisi.ePosta+";";
+            }
+        }
+        
+        ePostalar=ePostalar.TrimEnd(';');
+        
+        var queryEpostaMesaji=db.QuerySingle("SELECT * FROM epostamesajlari WHERE ID=3");
+
+        var epostaMesaji=string.Format(queryEpostaMesaji.mesaj_tr,queryKullanici.Ad + " " + queryKullanici.Soyad,queryDers.DersAdi, Genel.BildirimEylemindenMetne(2,"tr"),dosyaAdi);
+
+        WebMail.Send("destek@bulutders.com","BulutDers Bildirim",epostaMesaji ,from:"BulutDers <destek@bulutders.com>", isBodyHtml:true,bcc:ePostalar);
+
+
       db.Close();   
       Json.Write(queryEklenenDosya, Response.Output);
       Response.ContentType = "application/json";
