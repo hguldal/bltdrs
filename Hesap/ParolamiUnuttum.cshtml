@@ -44,13 +44,12 @@
         {
             var token=WebSecurity.GeneratePasswordResetToken(ePosta);
 
-            Random r=new Random();
-     
-            var geciciParola=r.Next(1000,1000000);
-       
-            SendGridServisi.MailGonder(ePosta,"BulutDers Geçici Parola","<strong>BulutDers Geçici Parolanız:</strong>" + geciciParola.ToString());
-            
-            WebSecurity.ResetPassword(token,geciciParola.ToString());
+            var queryEpostaMesaji=db.QuerySingle("SELECT * FROM epostamesajlari WHERE ID=4");
+
+            var epostaMesaji=string.Format(queryEpostaMesaji.mesaj_tr,token);
+
+            SendGridServisi.MailGonder(ePosta,"BulutDers Yeni Parola Oluştur",epostaMesaji);
+
             islemTamam=true;
 
         }
@@ -78,7 +77,7 @@
           {
               <div class="alert alert-success fade in">
                 <button class="close" data-dismiss="alert">×</button>
-                <i class="fa-fw fa fa-check"></i><strong>İşlem Tamam</strong> Yeni parolanız girdiğiniz e-posta adresine başarıyla gönderildi.
+                <i class="fa-fw fa fa-check"></i><strong>İşlem Tamam</strong> Yeni parola oluşturmak için gerekli olan ve sıfırlama kodu içeren link e-posta adresinize gönderildi. Lütfen e-posta kutunuzu kontrol ediniz ve gönderilen linke tıklarak işlemi tamamlayınız. <br> Not: E-postanın ulaşması posta sunucularının yoğunluğuna göre bazı durumlarda zaman alabilmektedir.
               </div>
              
           }

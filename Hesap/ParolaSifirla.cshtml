@@ -1,0 +1,136 @@
+﻿@{
+  
+  
+    var parola="";
+    var reParola="";
+    bool hataVar=false;   
+    var mesajGirilenParolalarUyusmadi="";
+    var mesajGerekliAlanlarBosBirakildi="";
+    var token=Request.QueryString["Token"];
+    var islemTamam=false;
+    
+   var dil="tr";
+   
+   if (Request.Url.GetLeftPart(UriPartial.Authority).Contains("azureboard.com"))
+     {
+         dil="en";
+     }
+     else
+     {
+         dil="tr";
+         Culture=UICulture="tr-TR";
+     }
+
+     if (string.IsNullOrEmpty(token))
+     {
+        Response.Redirect("~/Shared/HataGenel");
+        Response.End();
+     }
+
+    Layout = "~/Shared/_LayoutYeniMisafir.cshtml";
+
+  
+    if (IsPost)
+    {
+       
+        parola=Request["txtParola"];
+        reParola=Request["txtReParola"];
+
+        if (string.IsNullOrEmpty(parola) ||  string.IsNullOrEmpty(reParola))         {
+             hataVar=true;
+             mesajGerekliAlanlarBosBirakildi="Parola alanları boş bırakılamaz";
+         }
+
+         if (parola!=reParola)
+         {
+             hataVar=true;
+             mesajGirilenParolalarUyusmadi="Girilen parolalar birbiriyle uyuşmadı";
+         }
+         
+
+        if (hataVar==false)
+        {
+
+            islemTamam=WebSecurity.ResetPassword(token,parola);
+
+        }
+
+
+       }
+       
+   
+}
+
+<div class="row">
+    <div class="col-lg-12 col-sm-12 col-xs-12">
+           @if (!string.IsNullOrEmpty(mesajGerekliAlanlarBosBirakildi))
+            {
+              <div class="alert alert-danger fade in">
+                <button class="close" data-dismiss="alert">×</button>
+                <i class="fa-fw fa fa-times"></i><strong>@Resources.Resource.lblHata</strong> @mesajGerekliAlanlarBosBirakildi
+              </div>
+            }
+
+           @if (!string.IsNullOrEmpty(mesajGirilenParolalarUyusmadi))
+            {
+              <div class="alert alert-danger fade in">
+                <button class="close" data-dismiss="alert">×</button>
+                <i class="fa-fw fa fa-times"></i><strong>@Resources.Resource.lblHata</strong> @mesajGirilenParolalarUyusmadi
+              </div>
+            }
+
+           @if (IsPost==true && islemTamam==false)
+            {
+              <div class="alert alert-danger fade in">
+                <button class="close" data-dismiss="alert">×</button>
+                <i class="fa-fw fa fa-times"></i><strong>@Resources.Resource.lblHata</strong> 
+                  Parola Sıfırlanamadı. Parola Sıfırlama Kodunun Süresi Dolmuş. Lütfen aşağıdaki düğmeye tıklayarak
+                  ve Parola sıfırlama işlemini yeniden başlatınız
+                  
+              </div>
+                <p>
+                   <br>
+                  <a href="@Href("~/Hesap/ParolamiUnuttum")" class="btn btn-info">Yeni Bir Sıfırlama Kodu Gönder</a>
+                </p>
+            }
+           @if (IsPost==true && islemTamam==true)
+            {
+              <div class="alert alert-success fade in">
+                <button class="close" data-dismiss="alert">×</button>
+                <i class="fa-fw fa fa-times"></i><strong>İşlem Tamam</strong> 
+                  Parolanız başarıyla değiştirildi. Yeni parolanızla oturum açmak için lütfen <a href="@Href("~/Hesap/Giris")">Buraya</a>
+                  Tıklayınız.
+              </div>  
+            }
+        @if (IsPost==false)
+        {
+         <div class="widget">
+             <div class="widget-header bordered-bottom bordered-blue">
+                  <span class="widget-caption"><strong>Yeni Parola Oluştur</strong></span>
+             </div>
+              <div class="widget-body">
+                   <div id="registration-form">
+                       <form method="post" action="#">
+
+                            <div class="form-group">
+                               <span class="input-icon icon-right">
+                                                                    <input class="form-control" id="txtParola" name="txtParola" type="password" required placeholder="@Resources.Resource.lblParola" />
+                                                                    <i class="fa fa-lock circular"></i>
+                                                                </span>
+                             </div>
+                             <div class="form-group">
+                                                                <span class="input-icon icon-right">
+                                                                    <input class="form-control" id="txtReParola" name="txtReParola" type="password" required placeholder="@Resources.Resource.lblParolaTekrar" />
+                                                                    <i class="fa fa-lock circular"></i>
+                                                                </span>
+                                                            </div>
+
+                            <button type="submit" class="btn btn-blue">Yeni Parola Oluştur</button>
+                       </form>
+                   </div>
+              </div>
+         </div>
+        }
+      </div>
+</div>
+

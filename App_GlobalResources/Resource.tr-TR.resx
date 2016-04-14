@@ -256,7 +256,7 @@
 <value>BulutDers'e Hoşgeldiniz</value>
 </data>
 <data name="msgEPostaGirGondereBas" xml:space="preserve">
-<value>Aşağıdaki alana,hesabınızı oluştururken belirlediğiniz e-posta adresinizi giriniz ve Gönder düğmesine tıklayınız. Geçici parolanız bu adrese gönderilecektir.</value>
+<value>Aşağıdaki alana,hesabınızı oluştururken belirlediğiniz e-posta adresinizi giriniz ve Gönder düğmesine tıklayınız. Yeni parolanızı oluşturmak için gerekli olan ve sıfırlama kodu içeren link e-posta adresinize gönderilecektir.</value>
 </data>
 <data name="lblErisimKodu" xml:space="preserve">
 <value>Erişim Kodu</value>
