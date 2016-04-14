@@ -48,8 +48,8 @@
      
             var geciciParola=r.Next(1000,1000000);
        
-
-            WebMail.Send(ePosta,"BulutDers Geçici Parola","<strong>BulutDers Geçici Parolanız:</strong>" + geciciParola.ToString(),"BulutDers Destek <destek@bulutders.com>",isBodyHtml:true);
+            SendGridServisi.MailGonder(ePosta,"BulutDers Geçici Parola","<strong>BulutDers Geçici Parolanız:</strong>" + geciciParola.ToString());
+            
             WebSecurity.ResetPassword(token,geciciParola.ToString());
             islemTamam=true;
 

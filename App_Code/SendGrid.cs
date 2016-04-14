@@ -30,5 +30,21 @@ public static class SendGridServisi
     
   }
 
+  public static void MailGonder(string Alici,string Konu,string Html)
+   {           
+   
+    SendGridMessage mesaj = new SendGridMessage();
+   
+    var bulutDersMail=System.Configuration.ConfigurationManager.AppSettings["BulutDersMail"];
+    mesaj.AddTo(Alici);
+   
+    mesaj.From = new MailAddress(bulutDersMail, "BulutDers");
+    mesaj.Subject = Konu;
+    mesaj.Html=Html;
+    var transportWeb = new Web(System.Configuration.ConfigurationManager.AppSettings["SendGridApiKey"]);
+    transportWeb.DeliverAsync(mesaj);
+    
+  }
+
   
 }

@@ -76,8 +76,8 @@
 
             var epostaMesaji=string.Format(queryEpostaMesaji.mesaj_tr,ad + " " + soyad);
 
-            WebMail.Send(ePosta,"BulutDers'e Hoşgeldiniz",epostaMesaji ,"BulutDers <destek@bulutders.com>", isBodyHtml:true);
-         
+            SendGridServisi.MailGonder(ePosta,"BulutDers'e Hoşgeldiniz",epostaMesaji);
+
             db.Close();
            
            
