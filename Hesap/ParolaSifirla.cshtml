@@ -35,6 +35,7 @@
        
         parola=Request["txtParola"];
         reParola=Request["txtReParola"];
+        token=Request["txtToken"];
 
         if (string.IsNullOrEmpty(parola) ||  string.IsNullOrEmpty(reParola))         {
              hataVar=true;
@@ -111,7 +112,7 @@
               <div class="widget-body">
                    <div id="registration-form">
                        <form method="post" action="#">
-
+                           <input type="hidden" value="@token" name="txtToken">
                             <div class="form-group">
                                <span class="input-icon icon-right">
                                                                     <input class="form-control" id="txtParola" name="txtParola" type="password" required placeholder="@Resources.Resource.lblParola" />
