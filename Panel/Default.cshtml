@@ -26,7 +26,6 @@
      }
     else if (roller.Contains("Ogrenci"))
     {
-        
       queryAktiviteler=db.Query("SELECT top 25 * FROM Aktivite WHERE Silindi=0 AND Aktivite.DersID IN (SELECT DersID FROM DersTakip WHERE UserID=@0 AND Durum=2) AND Aktivite.DersID NOT IN (SELECT DersID FROM Ders WHERE Arsivlendi=1 AND Ders.Silindi=1) ORDER BY AktiviteID DESC",WebSecurity.CurrentUserId);        queryDerslerim=db.Query("SELECT  * FROM Ders WHERE Silindi=0 AND Arsivlendi=0 AND DersID IN (SELECT DersID FROM DersTakip WHERE UserID=@0 AND Durum=2)",WebSecurity.CurrentUserId);
   
     }
