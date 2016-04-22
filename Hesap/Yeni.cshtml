@@ -37,7 +37,7 @@
         ePosta=Request.Form["txtEPosta"].Trim();
         parola=Request.Form["txtParola"].Trim();
         reParola=Request["txtReParola"].Trim();
-
+        string EncodedResponse = Request.Form["g-Recaptcha-Response"];
         if (string.IsNullOrEmpty(ad) || string.IsNullOrEmpty(soyad) || string.IsNullOrEmpty(ePosta) || string.IsNullOrEmpty(parola))         {
              hataVar=true;
              mesajGerekliAlanlarBosBirakildi="Ad,soyad,eposta veya parola alanları boş bırakılamaz";
@@ -49,11 +49,13 @@
           hataVar=true;
         }
 
-        if (!ReCaptcha.Validate("6LdM5hwTAAAAAAAjS6NQWI7uVXlCddNNhSJ__Slu")) {
+        
+        bool IsCaptchaValid = (ReCaptchaClass.Validate(EncodedResponse) == "True" ? true : false);
+
+        if (!IsCaptchaValid) {
             hataVar=true;
             mesajGuvenlikKoduHatasi="Güvenlik kodu hatalı girildi";
-
-         }
+        }
 
          if (parola!=reParola)
          {
@@ -182,7 +184,8 @@
                                                            
                                                             
                                                             <div class="form-group">
-                                                                @ReCaptcha.GetHtml("6LdM5hwTAAAAAG7LVuSifeauuY5FR3vOXrXtZcz9", theme: "white",language:"tr")
+                                                                 <div class="g-recaptcha" data-sitekey="6LdM5hwTAAAAAG7LVuSifeauuY5FR3vOXrXtZcz9" data-size="normal"></div>
+                                                                 <script type="text/javascript" src="https://www.google.com/recaptcha/api.js?hl=tr"></script>
                                                             </div>
                                                             <button type="submit" class="btn btn-blue">Hesabı Oluştur</button>
                                                         </form>
