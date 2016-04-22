@@ -43,6 +43,27 @@
     
     if (islemGerceklesti)
     {
+        var queryKullanici=db.QuerySingle("SELECT * FROM Profiles WHERE UserID=@0",WebSecurity.CurrentUserId);
+        var queryDosya=db.QuerySingle("SELECT * FROM Dosya WHERE DosyaID=@0",DosyaID);
+        var queryDers=db.QuerySingle("SELECT * FROM Ders WHERE DersID=@0",DersID);
+        var queryEmailGonderilecekAdresler=db.Query("(SELECT Ad,Soyad,ePosta FROM DersTakip INNER JOIN Profiles ON DersTakip.UserID=Profiles.UserID WHERE DersTakip.DersID=@0 AND Durum=2 AND Profiles.Aktif=1 AND Profiles.UserID<>@1) UNION (SELECT Ad,Soyad,ePosta FROM Profiles WHERE userID=@2)",DersID,WebSecurity.CurrentUserId,queryDers.UserID);
+        
+        List<string> ePostalar=new List<string>();
+      
+        foreach (var kisi in queryEmailGonderilecekAdresler)
+        {
+            if (Genel.EmailGecerliMi(kisi.ePosta))
+            {
+                ePostalar.Add(kisi.Ad + " " + kisi.Soyad + "<" + kisi.ePosta+">");
+            }
+        }
+        
+        var queryEpostaMesaji=db.QuerySingle("SELECT * FROM epostamesajlari WHERE ID=3");
+
+        var epostaMesaji=string.Format(queryEpostaMesaji.mesaj_tr,queryKullanici.Ad + " " + queryKullanici.Soyad,queryDers.DersAdi, Genel.BildirimEylemindenMetne(2,"tr"),queryDosya.Aciklama,"http://bulutders.com/Dosya/Indir?DosyaID="+ DosyaID.ToString());
+
+        SendGridServisi.TopluMailGonder(ePostalar,"BulutDers Bildirim",epostaMesaji);
+        
         Response.Write("OK");
         Response.End();    
     }
