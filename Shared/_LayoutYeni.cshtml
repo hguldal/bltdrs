@@ -16,7 +16,7 @@
     DateTime bitis=new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,0,0,0);
 
    var queryBildirimler=db.Query("exec dbo.Bildirim_KullaniciyaGoreBildirimler @0",WebSecurity.CurrentUserId);
-   
+   var abonelikKalanGun=Convert.ToInt32((db.QueryValue("exec dbo.Genel_AbonelikKalanGun @0",WebSecurity.CurrentUserId)));
    List<Bildirim> listeBildirimler=new List<Bildirim>();
 
     foreach(var bildirim in queryBildirimler)
@@ -699,6 +699,12 @@
                 <!-- Page Body -->
 
                 <div class="page-body">
+                    @if (abonelikKalanGun==0 && roller.Contains("Ogretici"))
+                        {
+                            <p class="alert alert-info">Abonelik Süreniz Doldu. <a href="@Href("~/Hesap/Ayarlar")" class="btn btn-default"><i class="fa fa-shopping-cart"></i> Yeni Abonelik Ekle</a> </p>
+                        }
+                      else if (abonelikKalanGun>0 && abonelikKalanGun<=30 && roller.Contains("Ogretici"))                        {                            <p class="alert alert-info">Abonelik Sürenizin Dolmasına @abonelikKalanGun Gün Kaldı <a href="@Href("~/Hesap/Ayarlar")" class="btn btn-default"><i class="fa fa-shopping-cart"></i> Yeni Abonelik Ekle</a></p>                        }
+                        
 
                  @RenderBody()
 
