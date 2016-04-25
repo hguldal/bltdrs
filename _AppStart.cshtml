@@ -1,13 +1,6 @@
 ﻿@using System.Web.Routing
 @{ 
   WebSecurity.InitializeDatabaseConnection("fb1ae", "Profiles", "userID", "ePosta",true);       
-  WebMail.SmtpServer=System.Configuration.ConfigurationManager.AppSettings["SmtpSunucusu"];
-  WebMail.UserName=System.Configuration.ConfigurationManager.AppSettings["SmtpKullaniciAdi"];
-  WebMail.Password=System.Configuration.ConfigurationManager.AppSettings["SmtpParola"];
-  WebMail.SmtpPort= Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["SmtpPort"]);
   RouteTable.Routes.MapWebPageRoute("{*kod}", "~/Yonlendir.cshtml");
-  
-  
-
   
 }
