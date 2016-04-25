@@ -15,7 +15,7 @@
        {
            Culture=UICulture="tr-TR";
        }
-    var roller=Roles.GetRolesForUser(WebSecurity.CurrentUserName);    var abonelikVar=(db.QueryValue("exec dbo.Genel_AbonelikKontrol @0",WebSecurity.CurrentUserId)=="OK");
+    var roller=Roles.GetRolesForUser(WebSecurity.CurrentUserName);    var abonelikKalanGun=Convert.ToInt32((db.QueryValue("exec dbo.Genel_AbonelikKalanGun @0",WebSecurity.CurrentUserId)));
     var sonAktiviteID="";
     List<Aktivite> listeAktiviteler=new List<Aktivite>();
     IEnumerable<dynamic> queryAktiviteler=null;    IEnumerable<dynamic> queryDerslerim=null;
@@ -92,7 +92,7 @@
 }
 
 <div class="row"> 
-    <div class="col-lg-12">        @if (abonelikVar==false && roller.Contains("Ogretici"))        {            <p class="alert alert-danger">Aboneliğinizin Süresi Doldu</p>        }
+    <div class="col-lg-12">        @if (abonelikKalanGun==0 && roller.Contains("Ogretici"))        {            <p class="alert alert-danger">Aboneliğinizin Süresi Doldu</p>        }
                             <div class="dropdown">
 
                         
@@ -100,7 +100,7 @@
                                     <i class="fa fa-plus-circle fa-2x"></i>
                                     <span class="caret"></span>
                                   </button>
-                                                    @if (roller.Contains("Ogretici") && abonelikVar)                       {
+                                                    @if (roller.Contains("Ogretici") && abonelikKalanGun>0)                       {
                        
                                <ul class="dropdown-menu" aria-labelledby="dLabel">                                                                             <li><a href="#" data-toggle="modal" data-target="#modalDosyaEkle" title="Dosya Paylaş" data-toggle="tooltip" data-placement="top"><i class="fa fa-file fa-fw"></i> Dosya Ekle </a></li>                                          <li><a href="#" data-toggle="modal" data-target="#modalYeniOdevVer"><i class="fa fa-tasks fa-fw"></i> Ödev Ver </a></li>                                          <li><a href="#" data-toggle="modal" data-target="#modalYaziEkle"><i class="fa fa-tasks fa-fw"></i> İçerik Paylaş </a></li>                                                                             <li><a href="#" data-toggle="modal" data-target="#modalDersEkle"><i class="fa fa-book fa-fw"></i> Yeni  Bir Ders Sayfası Oluştur </a></li>                                  </ul>   
                        
@@ -228,7 +228,7 @@
       </div>
     </div>
   </div>
-</div> @if (roller.Contains("Ogretici") && abonelikVar) {
+</div> @if (roller.Contains("Ogretici") && abonelikKalanGun>0) {
 <div class="modal" id="modalYeniOdevVer" tabindex="-1" role="dialog" aria-labelledby="odevVermyModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
